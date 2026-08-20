@@ -39,7 +39,7 @@ jobs:
           shellcheck install.sh install-lifecycle.sh veleis scripts/*.sh
           ./install.sh --print-compose | diff -u deploy/compose.yaml -
           ./scripts/validate-installer.sh
-          ./scripts/validate-lifecycle.sh
+          sudo ./scripts/validate-lifecycle.sh
       - name: Validate local documentation links
         run: |
           python3 - <<'PY'
