@@ -72,7 +72,10 @@ merely to make a restore start—doing so changes the recovered identity and can
 make encrypted integration credentials unreadable.
 
 The restore command prints the target safety-backup path. Keep it until the
-restored system has been independently checked.
+restored system has been independently checked. During failed-upgrade recovery,
+that snapshot can be captured while the application is stopped; a snapshot of
+a dirty migration state is preserved for forensics but is intentionally not
+accepted later as a normal restore source.
 
 ## Post-restore validation
 

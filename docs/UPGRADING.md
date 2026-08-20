@@ -18,8 +18,9 @@ Veleis retrieves public structured release metadata over HTTPS and validates
 the exact semantic version, supported source versions, schema direction,
 linux/amd64 platform, official Docker repository, and registry digest. It also
 checks disk space, creates and verifies a complete pre-upgrade backup, pulls the
-immutable image by tag and digest, applies the release's migration workflow,
-and verifies schema and HTTPS readiness.
+immutable image by tag and digest, and applies the release's migration workflow
+with a temporary target environment. Persisted version/image metadata changes
+only after the target schema and HTTPS readiness pass.
 
 ## Current release state
 
@@ -36,13 +37,16 @@ unavailable/invalid metadata are rejected before installation state changes.
 ## Failure and recovery boundary
 
 Failures before the mandatory backup or before state mutation leave the running
-installation unchanged. If image pull fails, the pre-upgrade backup is retained
-and the existing environment has not yet been switched.
+installation unchanged. If image pull, migration, or target readiness fails,
+the pre-upgrade backup is retained and persisted source-version metadata has not
+been switched.
 
 Once a migration has begun, Veleis does not claim that swapping the old image
 back is safe and does not automatically downgrade the database. The command
-prints the preserved pre-upgrade backup on failure. Diagnose first; recovery is
-a deliberate same-version restore using the compatible lifecycle environment:
+prints the preserved pre-upgrade backup on failure. Restore can create its
+required target safety snapshot even if the application is stopped. Diagnose
+first; recovery is a deliberate restore while the persisted source version
+still matches the backup:
 
 ```bash
 sudo veleis restore /opt/veleis/backups/<pre-upgrade-backup>.tar.gz --force

@@ -159,18 +159,32 @@ make_work_directory() {
 }
 
 create_backup() {
-  local destination=${1:-$INSTALL_ROOT/backups}
+  local destination=${1:-$INSTALL_ROOT/backups} mode=${2:-official} application_was_running=false
+  local schema_state schema_dirty
+  [[ "$mode" == official || "$mode" == restore-safety ]] || fail "internal backup mode is invalid"
   [[ "$destination" == /* ]] || fail "backup destination must be an absolute path"
   [[ ! -e "$destination" || ( -d "$destination" && ! -L "$destination" ) ]] || fail "backup destination is not a safe directory"
   install -d -m 0700 "$destination"
   service_running database || fail "database service must be running before backup"
-  service_running veleis || fail "Veleis application service must be running before backup"
-  wait_ready 5 || fail "Veleis must be ready before backup"
+  if service_running veleis; then
+    application_was_running=true
+    if [[ "$mode" == official ]]; then
+      wait_ready 5 || fail "Veleis must be ready before backup"
+    fi
+  elif [[ "$mode" == official ]]; then
+    fail "Veleis application service must be running before backup"
+  fi
 
   local version schema database_bytes required_bytes timestamp archive partial sidecar
   local database_version timescale_version architecture os_id os_version image expected_digest
   version=$(current_version)
-  schema=$(current_schema)
+  schema_state=$(database_scalar "SELECT version || ':' || dirty FROM schema_migrations LIMIT 1;")
+  [[ "$schema_state" =~ ^[0-9]+:(true|false)$ ]] || fail "database migration state is missing or invalid: ${schema_state:-unknown}"
+  schema=${schema_state%%:*}
+  schema_dirty=${schema_state##*:}
+  if [[ "$mode" == official && "$schema_dirty" != false ]]; then
+    fail "database migration state is dirty: $schema_state"
+  fi
   database_bytes=$(database_scalar "SELECT pg_database_size('veleis');")
   [[ "$database_bytes" =~ ^[0-9]+$ ]] || fail "could not determine database size"
   required_bytes=$((database_bytes * 2 + 268435456))
@@ -182,9 +196,13 @@ create_backup() {
 
   make_work_directory
   install -d -m 0700 "$WORK_DIRECTORY/package" "$WORK_DIRECTORY/package/files" "$WORK_DIRECTORY/package/files/data"
-  log "Pausing the Veleis application for a consistency-safe logical backup."
-  RESTART_APPLICATION_ON_EXIT=true
-  compose stop -t 30 veleis >/dev/null
+  if [[ "$application_was_running" == true ]]; then
+    log "Pausing the Veleis application for a consistency-safe logical backup."
+    RESTART_APPLICATION_ON_EXIT=true
+    compose stop -t 30 veleis >/dev/null
+  else
+    log "The Veleis application is already stopped; capturing the database and persistent state."
+  fi
 
   log "Creating the PostgreSQL/TimescaleDB logical dump."
   # shellcheck disable=SC2016
@@ -217,6 +235,7 @@ create_backup() {
     --argjson format_version "$BACKUP_FORMAT_VERSION" \
     --arg version "$version" \
     --argjson schema "$schema" \
+    --argjson schema_dirty "$schema_dirty" \
     --arg created_at "$timestamp" \
     --arg os_id "$os_id" \
     --arg os_version "$os_version" \
@@ -225,7 +244,7 @@ create_backup() {
     --arg timescale_version "$timescale_version" \
     --arg image "$image" \
     --arg expected_digest "$expected_digest" \
-    '{format_version:$format_version,product:"Veleis",veleis_version:$version,schema_version:$schema,created_at_utc:$created_at,source:{os:$os_id,os_version:$os_version,architecture:$architecture},database:{engine:"PostgreSQL",version:$database_version,dump_format:"custom"},timescaledb_version:$timescale_version,image:$image,expected_image_digest:$expected_digest,included_components:["database","environment","compose","release_metadata","tls","avatars"]}' \
+    '{format_version:$format_version,product:"Veleis",veleis_version:$version,schema_version:$schema,schema_dirty:$schema_dirty,created_at_utc:$created_at,source:{os:$os_id,os_version:$os_version,architecture:$architecture},database:{engine:"PostgreSQL",version:$database_version,dump_format:"custom"},timescaledb_version:$timescale_version,image:$image,expected_image_digest:$expected_digest,included_components:["database","environment","compose","release_metadata","tls","avatars"]}' \
     >"$WORK_DIRECTORY/package/manifest.json"
 
   (cd "$WORK_DIRECTORY/package" && find manifest.json database.dump files -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum >checksums.sha256)
@@ -240,9 +259,11 @@ create_backup() {
   (cd "$destination" && sha256sum "$(basename "$archive")" >"$(basename "$sidecar")")
   chmod 0600 "$sidecar"
 
-  log "Restarting Veleis and verifying readiness."
-  compose up -d veleis >/dev/null
-  wait_ready 90 || fail "backup was created, but Veleis did not return to readiness"
+  if [[ "$mode" == official ]]; then
+    log "Restarting Veleis and verifying readiness."
+    compose up -d veleis >/dev/null
+    wait_ready 90 || fail "backup was created, but Veleis did not return to readiness"
+  fi
   RESTART_APPLICATION_ON_EXIT=false
 
   LAST_BACKUP="$archive"
@@ -299,7 +320,7 @@ restore_backup() {
     [[ -f "$restore_work/extracted/$required_file" ]] || fail "backup is missing required component: $required_file"
   done
   (cd "$restore_work/extracted" && sha256sum --check --strict checksums.sha256 >/dev/null) || fail "backup component checksum validation failed"
-  jq -e '.format_version == 1 and .product == "Veleis" and (.veleis_version|type=="string") and (.schema_version|type=="number") and .source.architecture == "amd64" and .database.engine == "PostgreSQL" and (.database.version|type=="string") and (.timescaledb_version|type=="string")' "$restore_work/extracted/manifest.json" >/dev/null || fail "backup manifest is invalid or uses an unsupported format"
+  jq -e '.format_version == 1 and .product == "Veleis" and (.veleis_version|type=="string") and (.schema_version|type=="number") and ((.schema_dirty // false) == false) and .source.architecture == "amd64" and .database.engine == "PostgreSQL" and (.database.version|type=="string") and (.timescaledb_version|type=="string")' "$restore_work/extracted/manifest.json" >/dev/null || fail "backup manifest is invalid, dirty, or uses an unsupported format"
 
   manifest_version=$(jq -r .format_version "$restore_work/extracted/manifest.json")
   [[ "$manifest_version" == "$BACKUP_FORMAT_VERSION" ]] || fail "unsupported backup format version: $manifest_version"
@@ -320,7 +341,7 @@ restore_backup() {
   jq -e --arg version "$backup_version" '.product == "Veleis" and .version == $version' "$restore_work/extracted/files/release.json" >/dev/null || fail "backup release metadata is incompatible"
 
   log "Creating a safety backup of the target installation before restore."
-  create_backup "$INSTALL_ROOT/backups"
+  create_backup "$INSTALL_ROOT/backups" restore-safety
   RECOVERY_BACKUP=$LAST_BACKUP
   safety_backup=$RECOVERY_BACKUP
   WORK_DIRECTORY=$restore_work
@@ -455,13 +476,12 @@ upgrade_installation() {
     {print}
   ' "$INSTALL_ROOT/.env" >"$WORK_DIRECTORY/environment"
   validate_environment "$WORK_DIRECTORY/environment"
-  install -m 0600 "$WORK_DIRECTORY/environment" "$INSTALL_ROOT/.env"
-  install -m 0644 "$metadata" "$INSTALL_ROOT/release.json"
-
   log "Applying the accepted migration workflow and starting Veleis $target."
-  compose up -d >/dev/null || fail "migration or service startup failed; use the preserved pre-upgrade backup for recovery"
+  compose --env-file "$WORK_DIRECTORY/environment" up -d >/dev/null || fail "migration or service startup failed; use the preserved pre-upgrade backup for recovery"
   [[ "$(current_schema)" == "$target_schema" ]] || fail "post-upgrade schema does not match release metadata"
   wait_ready 90 || fail "Veleis $target did not become ready; use the preserved pre-upgrade backup for recovery"
+  install -m 0600 "$WORK_DIRECTORY/environment" "$INSTALL_ROOT/.env"
+  install -m 0644 "$metadata" "$INSTALL_ROOT/release.json"
   RECOVERY_BACKUP=""
   printf '\nVeleis upgrade completed.\n\nPrevious version: %s\nCurrent version: %s\nSchema: %s\nPre-upgrade backup: %s\nStatus: Ready\n' "$installed" "$target" "$target_schema" "$preupgrade_backup"
 }

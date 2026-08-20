@@ -11,5 +11,5 @@
   "minimum_upgrade_version": "1.7.0",
   "supported_upgrade_sources": ["1.7.0"],
   "lifecycle_tool": "https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis",
-  "lifecycle_tool_sha256": "de79ab84abe699475e9a7eaf98f66ebfdb0633944c0e609931dd229f83369700"
+  "lifecycle_tool_sha256": "efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
 }

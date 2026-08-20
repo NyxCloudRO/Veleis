@@ -3,9 +3,9 @@ set -Eeuo pipefail
 
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly TOOL_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
-readonly TOOL_SHA256="de79ab84abe699475e9a7eaf98f66ebfdb0633944c0e609931dd229f83369700"
+readonly TOOL_SHA256="efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
 readonly RELEASE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_SHA256="ae2230ee26872d1c818c442d85ea714ad50ffe58f45035b514f957574dd3941d"
+readonly RELEASE_SHA256="0342433c67d0576d0abd96fb8a50b2584032387b8b938c9406a9d3f9904b7899"
 
 SUDO=()
 TEMPORARY_DIRECTORY=""
