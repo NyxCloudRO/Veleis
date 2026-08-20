@@ -20,13 +20,26 @@ jobs:
           jq -e '.version == "1.7.0" and .git_tag == "v1.7.0" and .installer_image_tag == "1.7.0" and .platform == "linux/amd64"' release.json >/dev/null
           grep -Fq 'readonly VELEIS_VERSION="1.7.0"' install.sh
           grep -Fq 'docker.io/nyxmael/veleis:${VELEIS_VERSION}' install.sh
+          jq -e '.schema == 32 and .backup_format_version == 1 and .supported_upgrade_sources == ["1.7.0"]' release.json >/dev/null
+          expected=$(jq -r .lifecycle_tool_sha256 release.json)
+          actual=$(sha256sum veleis | cut -d' ' -f1)
+          test "$actual" = "$expected"
+          sha256sum --check SHA256SUMS
+          grep -Fq "readonly LIFECYCLE_SHA256=\"$actual\"" install.sh
+          grep -Fq "readonly TOOL_SHA256=\"$actual\"" install-lifecycle.sh
+          metadata=$(sha256sum release.json | cut -d' ' -f1)
+          grep -Fq "readonly RELEASE_METADATA_SHA256=\"$metadata\"" install.sh
+          grep -Fq "readonly RELEASE_SHA256=\"$metadata\"" install-lifecycle.sh
       - name: Validate installer and Compose parity
         run: |
           set -Eeuo pipefail
           bash -n install.sh
-          shellcheck install.sh
+          bash -n install-lifecycle.sh
+          bash -n veleis
+          shellcheck install.sh install-lifecycle.sh veleis scripts/*.sh
           ./install.sh --print-compose | diff -u deploy/compose.yaml -
           ./scripts/validate-installer.sh
+          ./scripts/validate-lifecycle.sh
       - name: Validate local documentation links
         run: |
           python3 - <<'PY'

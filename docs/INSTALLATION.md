@@ -52,7 +52,9 @@ Both the main-branch and release installers target the exact immutable image
 9. Pulls the immutable Veleis image and pinned TimescaleDB image.
 10. Starts the database, applies migrations, and starts Veleis.
 11. Waits for database, schema, application, and HTTPS readiness.
-12. Prints the detected HTTPS address and routine operator commands.
+12. Installs the verified `/usr/local/bin/veleis` lifecycle command and release
+    metadata.
+13. Prints the detected HTTPS address and routine operator commands.
 
 The installer never prints generated secrets, changes firewall rules, exposes
 PostgreSQL on the host, or creates default application credentials.
@@ -82,7 +84,20 @@ Both `database` and `veleis` should be healthy, and readiness returns
 
 The v1 installer is intentionally a clean-install tool. If `/opt/veleis`
 already exists, it stops without overwriting configuration, secrets,
-certificate, or database state. See [Upgrading](UPGRADING.md).
+certificate, or database state. Do not rerun it to add lifecycle tooling.
+
+Install the lifecycle command on an accepted Veleis 1.7.0 installation created
+before this tooling was published with:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install-lifecycle.sh | bash
+sudo veleis status
+```
+
+The bootstrap requires the existing environment and installation marker,
+downloads only the public lifecycle script and release metadata over HTTPS,
+verifies pinned SHA-256 values, and does not restart Veleis. See
+[Upgrading](UPGRADING.md).
 
 ## Installation location
 
@@ -91,6 +106,8 @@ certificate, or database state. See [Upgrading](UPGRADING.md).
 ├── .env                 # generated secrets and release settings; mode 600
 ├── .veleis-installation # install marker; mode 600
 ├── compose.yaml         # supported production topology
+├── release.json         # compatibility and immutable release identity
+├── backups/             # root-only lifecycle backup archives
 └── data/
     ├── avatars/
     └── tls/
@@ -99,5 +116,6 @@ certificate, or database state. See [Upgrading](UPGRADING.md).
 ```
 
 Database files live in the Docker volume `veleis-database-pg18`.
+The operator command is installed at `/usr/local/bin/veleis`.
 
 Next: [Operations](OPERATIONS.md) · [Troubleshooting](TROUBLESHOOTING.md)

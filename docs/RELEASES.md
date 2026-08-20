@@ -13,6 +13,12 @@ Veleis **1.7.0** is the first public distribution.
 | Installer target | `docker.io/nyxmael/veleis:1.7.0` |
 | Docker manifest | `sha256:5905637213977e8fd5d9f159b65c507a74defe25bac0b0a1b1d66d2602e279fe` |
 | Schema | 32 |
+| Backup format | 1 |
+
+The public distribution on `main` also carries compatible lifecycle tooling for
+complete backup/restore and future upgrades. This does not change application
+version 1.7.0, mutate its Docker image, or replace the immutable `v1.7.0` GitHub
+release assets.
 
 ## Supported versions
 
@@ -34,3 +40,10 @@ supported.
 - Git tags use `v` (`v1.7.0`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
+
+## Lifecycle compatibility metadata
+
+`release.json` is the machine-readable source for the current schema, backup
+format, minimum upgrade source, explicit supported-source list, image digest,
+platform, and lifecycle-tool checksum. Upgrade support is opt-in per target
+release; a floating Docker tag alone never establishes compatibility.

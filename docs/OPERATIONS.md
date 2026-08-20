@@ -2,17 +2,20 @@
 
 [← Documentation home](../README.md)
 
-Run production commands from the installation directory:
+The focused lifecycle command is the supported routine interface:
 
 ```bash
-cd /opt/veleis
+sudo veleis status
+sudo veleis version
+sudo veleis logs --tail=200 veleis
+sudo veleis backup
 ```
 
 ## Status and readiness
 
 ```bash
-sudo docker compose ps
-curl --cacert data/tls/veleis.crt https://127.0.0.1/health/ready
+sudo veleis status
+curl --cacert /opt/veleis/data/tls/veleis.crt https://127.0.0.1/health/ready
 ```
 
 Healthy operation shows `database` and `veleis` as healthy. The one-shot
@@ -29,6 +32,10 @@ sudo docker compose logs -f veleis
 Review logs before sharing them and remove sensitive targets, addresses, or
 personal information. Veleis does not intentionally log generated deployment
 secrets.
+
+Backup, restore, and upgrade operations share an exclusive maintenance lock.
+A second lifecycle operation is rejected rather than run concurrently. See
+[Backup and restore](BACKUP-RESTORE.md) and [Upgrading](UPGRADING.md).
 
 ## Start, stop, and restart
 
@@ -51,6 +58,8 @@ routine operation; deleting the database volume destroys persistent data.
 | Certificate | `/opt/veleis/data/tls/veleis.crt` |
 | Private key | `/opt/veleis/data/tls/veleis.key` |
 | Uploaded avatars | `/opt/veleis/data/avatars/` |
+| Release metadata | `/opt/veleis/release.json` |
+| Local backups | `/opt/veleis/backups/` |
 | Database | Docker volume `veleis-database-pg18` |
 
 ## Firewall

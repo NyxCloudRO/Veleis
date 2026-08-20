@@ -2,21 +2,52 @@
 
 [← Documentation home](../README.md)
 
-Veleis 1.7.0 provides an accepted clean-install workflow. A supported public
-upgrade and rollback workflow is not yet available.
+The supported lifecycle command is:
 
-The installer deliberately stops when `/opt/veleis` already exists. Do not:
+```bash
+sudo veleis upgrade
+```
 
-- rerun the clean installer over an existing instance;
-- edit `VELEIS_IMAGE` to a floating tag and run `docker compose up` as an
-  improvised upgrade;
-- remove the database volume to resolve version or migration errors; or
-- assume an image pull alone performs compatibility, backup, migration, and
-  rollback validation.
+An exact target may be requested when it is the published stable release:
 
-Exact tag `1.7.0` remains immutable. `1.7` and `latest` are documented release
-channels, not instructions to auto-update an installation.
+```bash
+sudo veleis upgrade 1.7.1
+```
 
-Upgrade + backup/restore release engineering is the next planned distribution
-milestone. Release notes will publish a tested process before users are asked to
-move an existing installation.
+Veleis retrieves public structured release metadata over HTTPS and validates
+the exact semantic version, supported source versions, schema direction,
+linux/amd64 platform, official Docker repository, and registry digest. It also
+checks disk space, creates and verifies a complete pre-upgrade backup, pulls the
+immutable image by tag and digest, applies the release's migration workflow,
+and verifies schema and HTTPS readiness.
+
+## Current release state
+
+Veleis 1.7.0 is the current stable release. Its metadata names 1.7.0 as a
+supported source so a future accepted target can explicitly include it. Until a
+newer stable release is published, `sudo veleis upgrade` and
+`sudo veleis upgrade 1.7.0` are safe no-ops: they create no backup, pull no
+image, run no migration, and restart no service.
+
+Downgrades, non-exact versions, unpublished versions, unsupported source
+versions, floating tags, a digest mismatch, an older target schema, and
+unavailable/invalid metadata are rejected before installation state changes.
+
+## Failure and recovery boundary
+
+Failures before the mandatory backup or before state mutation leave the running
+installation unchanged. If image pull fails, the pre-upgrade backup is retained
+and the existing environment has not yet been switched.
+
+Once a migration has begun, Veleis does not claim that swapping the old image
+back is safe and does not automatically downgrade the database. The command
+prints the preserved pre-upgrade backup on failure. Diagnose first; recovery is
+a deliberate same-version restore using the compatible lifecycle environment:
+
+```bash
+sudo veleis restore /opt/veleis/backups/<pre-upgrade-backup>.tar.gz --force
+```
+
+Never remove the database volume, edit `.env` to a floating image tag, or rerun
+the clean installer as an improvised upgrade. Keep backups off-host and review
+the target release notes before every accepted upgrade.

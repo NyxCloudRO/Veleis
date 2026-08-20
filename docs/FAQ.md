@@ -61,15 +61,24 @@ only the external targets/providers/notification services you configure.
 
 ## How do I update?
 
-There is no accepted public upgrade workflow yet. The installer rejects an
-existing instance, and users should not change image tags ad hoc. See
-[Upgrading](UPGRADING.md).
+Use `sudo veleis upgrade`. Because 1.7.0 is currently the newest stable release,
+an upgrade request on 1.7.0 is a no-op. Future targets must explicitly accept
+the installed source version and pass metadata, schema, digest, backup,
+migration, and readiness checks. See [Upgrading](UPGRADING.md).
 
 ## How do I back up?
 
-An official validated backup/restore procedure is pending. Durable data spans
-PostgreSQL plus deployment secrets and TLS/files, so copying one Docker volume
-is not presented as a complete backup. See [Backup and restore](BACKUP-RESTORE.md).
+Run `sudo veleis backup`. It creates a complete, checksummed archive containing
+the logical database plus secrets, TLS identity, avatars, Compose, and release
+metadata. Copy it to protected off-host storage. See
+[Backup and restore](BACKUP-RESTORE.md).
+
+## Can I restore onto another supported operating system?
+
+Yes, within the documented compatibility boundary. The accepted test restored
+a complete Ubuntu 24.04.4 backup onto Debian 13.6 on amd64. The target must have
+the same Veleis version and accepted topology; the restored certificate may not
+cover the new host address.
 
 ## Can I use my own certificate?
 

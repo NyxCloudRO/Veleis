@@ -12,6 +12,9 @@ The clean installer writes:
 - `/opt/veleis/data/tls/veleis.crt` — public self-signed certificate;
 - `/opt/veleis/data/tls/veleis.key` — private key;
 - `/opt/veleis/.veleis-installation` — existing-install marker.
+- `/opt/veleis/release.json` — accepted release, schema, compatibility, and
+  immutable Docker identity metadata.
+- `/usr/local/bin/veleis` — focused public lifecycle command.
 
 The environment file and marker are root-owned mode 600. The private key is
 mode 600 and readable by the non-root application UID. Generated secrets are
@@ -28,8 +31,8 @@ unique per installation and are not printed.
   depends on the database, migrations, secrets, TLS, networks, health checks,
   and persistence defined there.
 
-The release currently has no supported general-purpose configuration-file or
-installer reconfiguration workflow. Product settings—assets, probes, users,
+Do not hand-edit installer-managed files. The release has no supported
+general-purpose reconfiguration workflow. Product settings—assets, probes, users,
 tokens, providers, notifications, dashboards, status pages, and retention—are
 managed through authenticated Veleis screens/APIs.
 
@@ -51,3 +54,15 @@ the supported 7–365 day range with explicit confirmation for reductions.
 Capacity information is visible in application settings. Retention applies to
 raw probe results; current probe health, incident lifecycle, and audit history
 remain separate durable truth.
+
+## Authoritative state model
+
+| Classification | Components |
+| --- | --- |
+| Required for restore | PostgreSQL/TimescaleDB logical data; `.env` secrets and release settings; TLS certificate/private key; avatars and supported persistent files; installation marker; matching Compose and release metadata |
+| Optional or regenerable | `/usr/local/bin/veleis`; verified Docker images and layers; checksum sidecars copied from trusted storage |
+| Ephemeral | Running/stopped containers, one-shot migration container, runtime logs, caches, temporary lifecycle work directories |
+| Must not be backed up as the official method | Live PostgreSQL volume files, container writable layers, Docker socket/state, package caches, unrelated host data |
+
+Routine persistence is not a backup. Use `sudo veleis backup`, store its archive
+off-host, and test restore independently. See [Backup and restore](BACKUP-RESTORE.md).

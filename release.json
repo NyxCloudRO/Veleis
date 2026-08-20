@@ -5,5 +5,11 @@
   "docker_repository": "docker.io/nyxmael/veleis",
   "docker_manifest_digest": "sha256:5905637213977e8fd5d9f159b65c507a74defe25bac0b0a1b1d66d2602e279fe",
   "platform": "linux/amd64",
-  "installer_image_tag": "1.7.0"
+  "schema": 32,
+  "installer_image_tag": "1.7.0",
+  "backup_format_version": 1,
+  "minimum_upgrade_version": "1.7.0",
+  "supported_upgrade_sources": ["1.7.0"],
+  "lifecycle_tool": "https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis",
+  "lifecycle_tool_sha256": "de79ab84abe699475e9a7eaf98f66ebfdb0633944c0e609931dd229f83369700"
 }

@@ -3,6 +3,24 @@
 All notable public Veleis releases are recorded here. Versions follow semantic
 versioning; the corresponding Git tag uses a `v` prefix.
 
+## [Unreleased]
+
+### Distribution operations
+
+- Added a focused `veleis` operator command for status, version, logs, complete
+  logical backups, validated same-version restores, and compatibility-gated
+  future upgrades.
+- Added versioned backup manifests and checksums covering PostgreSQL/TimescaleDB,
+  deployment secrets, TLS identity, avatars, Compose, and release metadata.
+- Added mandatory target safety backups, TimescaleDB-aware restore, exclusive
+  maintenance locking, strict archive validation, disk checks, and readiness
+  verification.
+- Added a verified lifecycle bootstrap for existing 1.7.0 installations and
+  lifecycle installation in the clean installer.
+- Documented rollback boundaries and cross-OS restore acceptance. This public
+  distribution update does not change application version 1.7.0 or its
+  immutable release assets and Docker image.
+
 ## [1.7.0] - 2026-08-20
 
 First public Veleis distribution.
@@ -34,8 +52,7 @@ First public Veleis distribution.
 
 - linux/amd64 only; Ubuntu 24.04.4 LTS and Debian 13.6 are the tested hosts.
 - The generated default certificate is self-signed.
-- Supported upgrade, backup/restore, automated uninstall, and custom-certificate
-  operations are not yet published.
+- Automated uninstall and custom-certificate operations are not yet published.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
 [1.7.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.0

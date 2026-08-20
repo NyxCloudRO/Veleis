@@ -94,6 +94,8 @@ preserving their source truth:
 ### Operations
 
 - Unified Overview and asset details.
+- Supported `veleis` status, log, complete backup, validated restore, and
+  compatibility-gated upgrade commands.
 - User-owned custom dashboards with configurable widgets.
 - Incident acknowledgment, resolution, recovery history, and audit context.
 - Private-by-default public Status Pages with selected probe components and
@@ -153,16 +155,16 @@ network details.
 ## Routine operation
 
 ```bash
-cd /opt/veleis
-sudo docker compose ps
-sudo docker compose logs -f veleis
-sudo docker compose stop
-sudo docker compose up -d
-sudo docker compose restart
+sudo veleis status
+sudo veleis version
+sudo veleis logs --tail=200 veleis
+sudo veleis backup
 ```
 
-Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data when
-performing routine operations. See [Operations](docs/OPERATIONS.md).
+Existing 1.7.0 installations created before the lifecycle command was published
+can add it with the bootstrap documented in [Installation](docs/INSTALLATION.md).
+Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See
+[Operations](docs/OPERATIONS.md) and [Backup and restore](docs/BACKUP-RESTORE.md).
 
 ## Documentation
 
@@ -195,9 +197,11 @@ governed by the [Veleis Proprietary Distribution License](LICENSE).
 
 - linux/amd64 only; tested on Ubuntu 24.04.4 LTS and Debian 13.6.
 - Default HTTPS uses a unique self-signed certificate.
-- A supported public upgrade/rollback workflow is being finalized before later
-  releases. Do not improvise an upgrade by changing image tags.
-- An official backup/restore workflow and automated uninstall are pending.
+- Restore currently requires the same Veleis version, linux/amd64, PostgreSQL
+  18, TimescaleDB 2.28.3, and the accepted Compose topology.
+- There is no newer public version to upgrade to yet; 1.7.0 upgrade requests are
+  deliberate no-ops, and automatic database downgrade is not supported.
+- Automated uninstall is not published.
 - Public custom-certificate/reverse-proxy operations, image signing, SBOM, and
   provenance attestations are pending.
 

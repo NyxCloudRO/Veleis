@@ -2,26 +2,98 @@
 
 [← Documentation home](../README.md)
 
-An official, tested public backup/restore workflow is not yet available for
-Veleis 1.7.0. This document defines the data boundary so operators do not mistake
-persistence for a complete backup.
+Veleis provides a complete, versioned backup rather than treating database
+persistence as disaster recovery. Run lifecycle commands with root privileges
+or as an ordinary sudo-enabled user.
 
-A complete Veleis recovery set must account for:
+## Create a backup
 
-- PostgreSQL/TimescaleDB data in `veleis-database-pg18`;
-- `/opt/veleis/.env`, especially the application master key and database
-  credential;
-- `/opt/veleis/data/tls/`, including the installation's private key;
-- `/opt/veleis/data/avatars/` where used; and
-- the matching Veleis release and supported Compose definition.
+```bash
+sudo veleis backup
+```
 
-Losing the master key can make encrypted integration credentials unrecoverable.
-A database dump without secrets/files is therefore incomplete, while a raw
-volume copy taken without database consistency controls is not automatically a
-valid backup.
+The default destination is `/opt/veleis/backups`. An absolute alternative may
+be supplied:
 
-Until the supported workflow is published, do not rely on undocumented
-copy/paste backup commands for disaster recovery. Never test restore by
-overwriting the only production copy. Preserve persistent data and follow future
-release documentation for a validated backup, verification, and isolated
-restore procedure.
+```bash
+sudo veleis backup /mnt/encrypted-backups/veleis
+```
+
+Veleis first verifies the installation, free space, database state, schema, and
+HTTPS readiness. It stops only the application container while the database
+remains online, creates a PostgreSQL custom-format logical dump, copies the
+other required state, restarts the application, and verifies readiness. The
+bounded pause prevents application writes during the dump.
+
+The resulting mode-600 `.tar.gz` archive contains:
+
+- the PostgreSQL/TimescaleDB database, including hypertables and policies;
+- `.env`, including the database credential and application master key;
+- the Compose definition, installation marker, and release metadata;
+- the TLS certificate and private key; and
+- avatars and other supported persistent files under `/opt/veleis/data`.
+
+Containers, image layers, logs, caches, temporary files, and the raw live
+PostgreSQL volume are not included. The archive has an internal manifest and
+checksums, plus a same-directory `.sha256` sidecar. Integrity checks detect
+damage; they do not authenticate an archive from an untrusted party.
+
+Backups contain secrets. Copy both files to encrypted, access-controlled,
+off-host storage and retain them according to your own policy. Veleis never
+deletes old backups automatically. Before copying, check capacity with `df -h`.
+After copying, verify the sidecar in its destination directory:
+
+```bash
+sha256sum --check veleis-backup-1.7.0-YYYYMMDDTHHMMSSZ.tar.gz.sha256
+```
+
+## Restore
+
+Restore is deliberately explicit and currently requires a working Veleis
+installation at the same application version as the backup:
+
+```bash
+sudo veleis restore /secure/path/veleis-backup-1.7.0-YYYYMMDDTHHMMSSZ.tar.gz --force
+```
+
+Before changing state, the command rejects unreadable, corrupt, malformed,
+unsafe, wrong-architecture, incompatible PostgreSQL/TimescaleDB, wrong-version,
+and mismatched-topology archives. It then creates a complete safety backup of
+the target installation. Only after that succeeds does it stop Veleis, recreate
+the application database, invoke TimescaleDB's pre/post-restore procedures,
+restore secrets and files, recreate services, validate schema 32, and wait for
+HTTPS readiness.
+
+The source installation's TLS identity and configured public URL are preserved.
+On a replacement host, use its current address to connect; a different
+hostname/IP may not be covered by the restored self-signed certificate and can
+therefore produce a certificate-name warning. Do not regenerate TLS or secrets
+merely to make a restore start—doing so changes the recovered identity and can
+make encrypted integration credentials unreadable.
+
+The restore command prints the target safety-backup path. Keep it until the
+restored system has been independently checked.
+
+## Post-restore validation
+
+```bash
+sudo veleis status
+sudo veleis version
+```
+
+Then sign in as an existing user and verify representative assets, probes,
+history, incidents, dashboards, API-token metadata, notification settings,
+retention, and avatars. Restart the host or Compose stack once and repeat the
+readiness and sign-in checks before declaring recovery complete.
+
+## Tested recovery boundary
+
+The public workflow was accepted with PostgreSQL 18, TimescaleDB 2.28.3,
+Veleis 1.7.0/schema 32, and a complete Ubuntu 24.04.4-to-Debian 13.6 restore on
+linux/amd64. TimescaleDB's documented full-database `pg_dump`/`pg_restore` flow
+and `timescaledb_pre_restore()`/`timescaledb_post_restore()` are used. See the
+[official TimescaleDB logical-backup guidance](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
+
+Not supported: partial restores, merging two installations, cross-architecture
+restore, point-in-time recovery, restoring into an older/newer Veleis version,
+or treating a raw copy of the live database volume as an official backup.

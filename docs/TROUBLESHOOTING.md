@@ -98,6 +98,42 @@ force installation. If this is an existing Veleis instance, see
 [Upgrading](UPGRADING.md). If it is an unrelated directory, inspect it and make
 a deliberate operator decision before changing anything.
 
+## Lifecycle command is missing
+
+An early 1.7.0 installation may predate `/usr/local/bin/veleis`. Do not rerun the
+clean installer. Install the verified public bootstrap as documented under
+[Existing installations](INSTALLATION.md#existing-installations).
+
+## Backup is rejected
+
+Run `sudo veleis status` first. Backup requires both services and HTTPS
+readiness, sufficient free space, schema 32 in a clean migration state, and no
+symbolic links or special files under persistent data. The destination must be
+an absolute, non-symlink directory. Resolve the reported condition; do not copy
+the live database volume as a substitute.
+
+## Restore is rejected before changes
+
+This normally means the archive is unreadable/corrupt, has failed checksums or
+unsafe members, or is incompatible by version, architecture, database,
+TimescaleDB, or Compose topology. Confirm the external `.sha256` sidecar and use
+an unmodified archive from protected storage. `--force` is mandatory, but it
+does not bypass validation.
+
+## Restore or upgrade fails after its safety backup
+
+The failure output identifies the preserved pre-operation backup. Do not delete
+it and do not remove the database volume. Collect sanitized `sudo veleis status`
+and `sudo veleis logs --tail=200` output. Once migrations have begun, changing
+an image tag back is not a supported database rollback; follow the deliberate
+restore boundary in [Upgrading](UPGRADING.md#failure-and-recovery-boundary).
+
+## Another lifecycle operation is active
+
+Backup, restore, and upgrade are serialized. Let the active command finish. If
+no command is running after a host/process failure, rerun the desired operation;
+the kernel releases the lock when its process exits.
+
 ## Getting help
 
 Read [Support](../SUPPORT.md), then open an Issue with version, exact OS,

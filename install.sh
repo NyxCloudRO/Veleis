@@ -3,6 +3,10 @@ set -Eeuo pipefail
 
 readonly VELEIS_VERSION="1.7.0"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
+readonly LIFECYCLE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
+readonly LIFECYCLE_SHA256="de79ab84abe699475e9a7eaf98f66ebfdb0633944c0e609931dd229f83369700"
+readonly RELEASE_METADATA_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
+readonly RELEASE_METADATA_SHA256="ae2230ee26872d1c818c442d85ea714ad50ffe58f45035b514f957574dd3941d"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
 readonly CONTAINER_UID=65532
@@ -184,15 +188,18 @@ fi
 if as_root test -e "$INSTALL_ROOT"; then
   fail "existing Veleis installation or path detected at $INSTALL_ROOT; no files were overwritten"
 fi
+if as_root test -e /usr/local/bin/veleis; then
+  fail "existing path detected at /usr/local/bin/veleis; it was not overwritten"
+fi
 
 install_packages=()
-for requirement in curl openssl ip ss; do
+for requirement in curl openssl ip ss jq flock; do
   command -v "$requirement" >/dev/null 2>&1 || install_packages+=("$requirement")
 done
 if ((${#install_packages[@]})); then
   log "Installing required operating-system tools."
   as_root apt-get update
-  package_names=(ca-certificates curl openssl iproute2)
+  package_names=(ca-certificates curl openssl iproute2 jq util-linux)
   as_root env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${package_names[@]}"
 fi
 
@@ -249,6 +256,12 @@ fi
 
 TEMPORARY_DIRECTORY=$(mktemp -d)
 umask 077
+curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$LIFECYCLE_URL" -o "$TEMPORARY_DIRECTORY/veleis"
+curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEASE_METADATA_URL" -o "$TEMPORARY_DIRECTORY/release.json"
+printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
+printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
+bash -n "$TEMPORARY_DIRECTORY/veleis"
+jq -e '.product == "Veleis" and .version == "1.7.0" and .schema == 32 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 
@@ -292,12 +305,14 @@ as_root install -d -m 0755 "$INSTALL_ROOT"
 as_root install -d -m 0750 "$INSTALL_ROOT/data" "$INSTALL_ROOT/data/tls" "$INSTALL_ROOT/data/avatars"
 as_root chown "$CONTAINER_UID:$CONTAINER_GID" "$INSTALL_ROOT/data" "$INSTALL_ROOT/data/tls" "$INSTALL_ROOT/data/avatars"
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/compose.yaml" "$INSTALL_ROOT/compose.yaml"
+as_root install -m 0644 "$TEMPORARY_DIRECTORY/release.json" "$INSTALL_ROOT/release.json"
 as_root install -m 0600 "$TEMPORARY_DIRECTORY/environment" "$INSTALL_ROOT/.env"
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/veleis.crt" "$INSTALL_ROOT/data/tls/veleis.crt"
 as_root install -m 0600 "$TEMPORARY_DIRECTORY/veleis.key" "$INSTALL_ROOT/data/tls/veleis.key"
 as_root chown "$CONTAINER_UID:$CONTAINER_GID" "$INSTALL_ROOT/data/tls/veleis.crt" "$INSTALL_ROOT/data/tls/veleis.key"
 printf 'Veleis %s\n' "$VELEIS_VERSION" >"$TEMPORARY_DIRECTORY/marker"
 as_root install -m 0600 "$TEMPORARY_DIRECTORY/marker" "$INSTALL_ROOT/.veleis-installation"
+as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis" /usr/local/bin/veleis
 
 log "Pulling immutable public images."
 (cd "$INSTALL_ROOT" && docker_command compose pull)
@@ -360,8 +375,10 @@ Installation:
   ${INSTALL_ROOT}
 
 Useful commands:
-  Status:  cd ${INSTALL_ROOT} && sudo docker compose ps
-  Logs:    cd ${INSTALL_ROOT} && sudo docker compose logs -f veleis
+  Status:  sudo veleis status
+  Logs:    sudo veleis logs -f veleis
+  Backup:  sudo veleis backup
+  Upgrade: sudo veleis upgrade <exact-version>
   Start:   cd ${INSTALL_ROOT} && sudo docker compose up -d
   Stop:    cd ${INSTALL_ROOT} && sudo docker compose stop
   Restart: cd ${INSTALL_ROOT} && sudo docker compose restart

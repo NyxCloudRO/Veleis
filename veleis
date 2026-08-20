@@ -1,0 +1,499 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
+readonly BACKUP_FORMAT_VERSION=1
+readonly RELEASE_METADATA_URL="${VELEIS_RELEASE_METADATA_URL:-https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json}"
+readonly EXPECTED_DOCKER_REPOSITORY="docker.io/nyxmael/veleis"
+readonly EXPECTED_ARCHITECTURE="amd64"
+readonly CONTAINER_UID=65532
+readonly CONTAINER_GID=65532
+
+WORK_DIRECTORY=""
+WORK_DIRECTORIES=()
+RESTART_APPLICATION_ON_EXIT=false
+RECOVERY_BACKUP=""
+LAST_BACKUP=""
+
+log() { printf 'Veleis: %s\n' "$*"; }
+fail() {
+  printf 'Veleis lifecycle operation failed: %s\n' "$*" >&2
+  if [[ -n "$RECOVERY_BACKUP" ]]; then
+    printf 'Pre-operation backup preserved at: %s\n' "$RECOVERY_BACKUP" >&2
+  fi
+  exit 1
+}
+
+compose() { (cd "$INSTALL_ROOT" && docker compose "$@"); }
+
+environment_value() {
+  local key=$1 file=${2:-$INSTALL_ROOT/.env} value count
+  count=$(grep -c "^${key}=" "$file" || true)
+  [[ "$count" == 1 ]] || fail "$file must contain exactly one $key entry"
+  value=$(sed -n "s/^${key}=//p" "$file")
+  printf '%s' "$value"
+}
+
+cleanup() {
+  local status=$?
+  trap - EXIT
+  if [[ "$RESTART_APPLICATION_ON_EXIT" == true ]]; then
+    printf '%s\n' 'Veleis: Recovering the application service after an interrupted backup.' >&2
+    if ! compose up -d veleis >/dev/null 2>&1 || ! wait_ready 90; then
+      printf '%s\n' 'Veleis lifecycle operation failed: the application did not recover after backup interruption.' >&2
+      status=1
+    fi
+  fi
+  local directory
+  for directory in "${WORK_DIRECTORIES[@]}"; do
+    if [[ -n "$directory" && -d "$directory" ]]; then
+      find "$directory" -depth -delete 2>/dev/null || true
+    fi
+  done
+  exit "$status"
+}
+trap cleanup EXIT
+
+if ((EUID != 0)); then
+  command -v sudo >/dev/null 2>&1 || fail "root privileges are required and sudo is not installed"
+  exec sudo -- "$0" "$@"
+fi
+
+require_commands() {
+  local command_name
+  for command_name in curl df docker find flock grep jq mktemp sed sha256sum sort stat tar; do
+    command -v "$command_name" >/dev/null 2>&1 || fail "required command is unavailable: $command_name"
+  done
+  docker compose version >/dev/null 2>&1 || fail "Docker Compose v2 is required"
+}
+
+require_installation() {
+  [[ "$INSTALL_ROOT" == /* && "$INSTALL_ROOT" != / ]] || fail "installation root must be a non-root absolute path"
+  [[ -d "$INSTALL_ROOT" && ! -L "$INSTALL_ROOT" ]] || fail "Veleis installation directory is missing or unsafe: $INSTALL_ROOT"
+  local path
+  for path in .env .veleis-installation compose.yaml; do
+    [[ -f "$INSTALL_ROOT/$path" && ! -L "$INSTALL_ROOT/$path" ]] || fail "required installation file is missing or unsafe: $INSTALL_ROOT/$path"
+  done
+  [[ -d "$INSTALL_ROOT/data" && ! -L "$INSTALL_ROOT/data" ]] || fail "persistent data directory is missing or unsafe"
+  validate_environment "$INSTALL_ROOT/.env"
+}
+
+validate_environment() {
+  local file=$1 unknown version image port database_password master_key public_url
+  unknown=$(grep -Ev '^(VELEIS_VERSION|VELEIS_IMAGE|VELEIS_HTTPS_PORT|VELEIS_PUBLIC_BASE_URL|POSTGRES_PASSWORD|VELEIS_MASTER_KEY)=[^[:cntrl:]]*$' "$file" || true)
+  [[ -z "$unknown" ]] || fail "$file contains an unsupported or malformed setting"
+  [[ "$(wc -l <"$file")" -eq 6 ]] || fail "$file must contain exactly the six supported settings"
+  version=$(environment_value VELEIS_VERSION "$file")
+  image=$(environment_value VELEIS_IMAGE "$file")
+  port=$(environment_value VELEIS_HTTPS_PORT "$file")
+  public_url=$(environment_value VELEIS_PUBLIC_BASE_URL "$file")
+  database_password=$(environment_value POSTGRES_PASSWORD "$file")
+  master_key=$(environment_value VELEIS_MASTER_KEY "$file")
+  [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "$file contains an invalid Veleis version"
+  [[ "$image" =~ ^docker\.io/nyxmael/veleis:[0-9]+\.[0-9]+\.[0-9]+(@sha256:[a-f0-9]{64})?$ ]] || fail "$file contains an unsupported Veleis image"
+  if [[ ! "$port" =~ ^[0-9]+$ ]] || ((port < 1 || port > 65535)); then
+    fail "$file contains an invalid HTTPS port"
+  fi
+  [[ "$public_url" == https://* && "$public_url" != *[[:space:]]* ]] || fail "$file contains an invalid public HTTPS URL"
+  [[ "$database_password" =~ ^[a-f0-9]{64}$ ]] || fail "$file contains an invalid database credential"
+  [[ "$master_key" =~ ^[A-Za-z0-9+/]{43}=$ ]] || fail "$file contains an invalid application master key"
+}
+
+acquire_lock() {
+  exec 9>"$INSTALL_ROOT/.maintenance.lock"
+  flock -n 9 || fail "another Veleis backup, restore, or upgrade operation is active"
+}
+
+service_running() {
+  local service=$1 container_id
+  container_id=$(compose ps -q "$service")
+  [[ -n "$container_id" ]] && [[ "$(docker inspect --format '{{.State.Running}}' "$container_id" 2>/dev/null)" == true ]]
+}
+
+wait_ready() {
+  local attempts=${1:-90} port certificate
+  port=$(environment_value VELEIS_HTTPS_PORT)
+  certificate="$INSTALL_ROOT/data/tls/veleis.crt"
+  [[ -f "$certificate" ]] || return 1
+  for _ in $(seq 1 "$attempts"); do
+    if curl --silent --show-error --fail --max-time 5 --cacert "$certificate" "https://127.0.0.1:${port}/health/ready" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+database_scalar() {
+  local sql=$1
+  # shellcheck disable=SC2016
+  compose exec -T database sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" exec psql --no-psqlrc --username=veleis --dbname=veleis --tuples-only --no-align --command="$1"' sh "$sql" | tr -d '[:space:]'
+}
+
+database_admin() {
+  local database=$1 sql=$2
+  # shellcheck disable=SC2016
+  compose exec -T database sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" exec psql --no-psqlrc --username=veleis --dbname="$1" --set=ON_ERROR_STOP=1 --command="$2"' sh "$database" "$sql"
+}
+
+current_version() { environment_value VELEIS_VERSION; }
+
+current_schema() {
+  local state
+  state=$(database_scalar "SELECT version || ':' || dirty FROM schema_migrations LIMIT 1;")
+  [[ "$state" =~ ^[0-9]+:false$ ]] || fail "database migration state is missing or dirty: ${state:-unknown}"
+  printf '%s' "${state%%:*}"
+}
+
+check_space() {
+  local path=$1 required=$2 available
+  available=$(df -PB1 "$path" | awk 'NR==2 {print $4}')
+  [[ "$available" =~ ^[0-9]+$ ]] || fail "could not determine free space at $path"
+  ((available >= required)) || fail "insufficient free space at $path; approximately $required bytes are required"
+}
+
+make_work_directory() {
+  WORK_DIRECTORY=$(mktemp -d "$INSTALL_ROOT/.lifecycle-work.XXXXXX")
+  chmod 0700 "$WORK_DIRECTORY"
+  WORK_DIRECTORIES+=("$WORK_DIRECTORY")
+}
+
+create_backup() {
+  local destination=${1:-$INSTALL_ROOT/backups}
+  [[ "$destination" == /* ]] || fail "backup destination must be an absolute path"
+  [[ ! -e "$destination" || ( -d "$destination" && ! -L "$destination" ) ]] || fail "backup destination is not a safe directory"
+  install -d -m 0700 "$destination"
+  service_running database || fail "database service must be running before backup"
+  service_running veleis || fail "Veleis application service must be running before backup"
+  wait_ready 5 || fail "Veleis must be ready before backup"
+
+  local version schema database_bytes required_bytes timestamp archive partial sidecar
+  local database_version timescale_version architecture os_id os_version image expected_digest
+  version=$(current_version)
+  schema=$(current_schema)
+  database_bytes=$(database_scalar "SELECT pg_database_size('veleis');")
+  [[ "$database_bytes" =~ ^[0-9]+$ ]] || fail "could not determine database size"
+  required_bytes=$((database_bytes * 2 + 268435456))
+  check_space "$destination" "$required_bytes"
+
+  if find "$INSTALL_ROOT/data" \( -type l -o \( ! -type d ! -type f \) \) -print -quit | grep -q .; then
+    fail "persistent data contains a symbolic link or unsupported special file"
+  fi
+
+  make_work_directory
+  install -d -m 0700 "$WORK_DIRECTORY/package" "$WORK_DIRECTORY/package/files" "$WORK_DIRECTORY/package/files/data"
+  log "Pausing the Veleis application for a consistency-safe logical backup."
+  RESTART_APPLICATION_ON_EXIT=true
+  compose stop -t 30 veleis >/dev/null
+
+  log "Creating the PostgreSQL/TimescaleDB logical dump."
+  # shellcheck disable=SC2016
+  if ! compose exec -T database sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" exec pg_dump --username=veleis --dbname=veleis --format=custom --compress=6 --no-owner --no-privileges' \
+    >"$WORK_DIRECTORY/package/database.dump" 2>"$WORK_DIRECTORY/pg-dump.log"; then
+    fail "PostgreSQL/TimescaleDB logical dump failed"
+  fi
+
+  install -m 0600 "$INSTALL_ROOT/.env" "$WORK_DIRECTORY/package/files/.env"
+  install -m 0600 "$INSTALL_ROOT/.veleis-installation" "$WORK_DIRECTORY/package/files/.veleis-installation"
+  install -m 0644 "$INSTALL_ROOT/compose.yaml" "$WORK_DIRECTORY/package/files/compose.yaml"
+  if [[ -f "$INSTALL_ROOT/release.json" && ! -L "$INSTALL_ROOT/release.json" ]]; then
+    install -m 0644 "$INSTALL_ROOT/release.json" "$WORK_DIRECTORY/package/files/release.json"
+  else
+    printf '{"product":"Veleis","version":"%s"}\n' "$version" >"$WORK_DIRECTORY/package/files/release.json"
+    chmod 0644 "$WORK_DIRECTORY/package/files/release.json"
+  fi
+  cp -a "$INSTALL_ROOT/data/." "$WORK_DIRECTORY/package/files/data/"
+
+  database_version=$(database_scalar "SHOW server_version;")
+  timescale_version=$(database_scalar "SELECT extversion FROM pg_extension WHERE extname='timescaledb';")
+  architecture=$(uname -m)
+  case "$architecture" in x86_64 | amd64) architecture=amd64 ;; esac
+  os_id=$(sed -n 's/^ID=//p' /etc/os-release | tr -d '"')
+  os_version=$(sed -n 's/^VERSION_ID=//p' /etc/os-release | tr -d '"')
+  image=$(environment_value VELEIS_IMAGE)
+  expected_digest=$(jq -r '.docker_manifest_digest // "unknown"' "$WORK_DIRECTORY/package/files/release.json")
+  timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  jq -n \
+    --argjson format_version "$BACKUP_FORMAT_VERSION" \
+    --arg version "$version" \
+    --argjson schema "$schema" \
+    --arg created_at "$timestamp" \
+    --arg os_id "$os_id" \
+    --arg os_version "$os_version" \
+    --arg architecture "$architecture" \
+    --arg database_version "$database_version" \
+    --arg timescale_version "$timescale_version" \
+    --arg image "$image" \
+    --arg expected_digest "$expected_digest" \
+    '{format_version:$format_version,product:"Veleis",veleis_version:$version,schema_version:$schema,created_at_utc:$created_at,source:{os:$os_id,os_version:$os_version,architecture:$architecture},database:{engine:"PostgreSQL",version:$database_version,dump_format:"custom"},timescaledb_version:$timescale_version,image:$image,expected_image_digest:$expected_digest,included_components:["database","environment","compose","release_metadata","tls","avatars"]}' \
+    >"$WORK_DIRECTORY/package/manifest.json"
+
+  (cd "$WORK_DIRECTORY/package" && find manifest.json database.dump files -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum >checksums.sha256)
+  timestamp=$(date -u +%Y%m%dT%H%M%SZ)
+  archive="$destination/veleis-backup-${version}-${timestamp}.tar.gz"
+  partial="$destination/.veleis-backup-${version}-${timestamp}.$$.partial"
+  [[ ! -e "$archive" && ! -e "$partial" ]] || fail "backup filename collision at $archive"
+  tar --create --gzip --file="$partial" --directory="$WORK_DIRECTORY/package" manifest.json database.dump files checksums.sha256
+  chmod 0600 "$partial"
+  mv "$partial" "$archive"
+  sidecar="${archive}.sha256"
+  (cd "$destination" && sha256sum "$(basename "$archive")" >"$(basename "$sidecar")")
+  chmod 0600 "$sidecar"
+
+  log "Restarting Veleis and verifying readiness."
+  compose up -d veleis >/dev/null
+  wait_ready 90 || fail "backup was created, but Veleis did not return to readiness"
+  RESTART_APPLICATION_ON_EXIT=false
+
+  LAST_BACKUP="$archive"
+  printf '\nVeleis backup completed.\n\nVersion: %s\nSchema: %s\nBackup: %s\nSHA-256: %s\nSize: %s bytes\n\nBackups contain secrets. Store this archive securely and copy it off-host.\n' \
+    "$version" "$schema" "$archive" "$(sha256sum "$archive" | awk '{print $1}')" "$(stat -c %s "$archive")"
+}
+
+validate_archive_members() {
+  local archive=$1 members=$2 verbose=$3 member normalized component
+  tar --list --gzip --file="$archive" >"$members" 2>/dev/null || fail "backup archive cannot be read"
+  tar --list --verbose --gzip --file="$archive" >"$verbose" 2>/dev/null || fail "backup archive metadata cannot be read"
+  [[ -s "$members" ]] || fail "backup archive is empty"
+  if LC_ALL=C sort "$members" | uniq -d | grep -q .; then
+    fail "backup archive contains duplicate member names"
+  fi
+  while IFS= read -r member; do
+    [[ -n "$member" && "$member" != /* ]] || fail "backup archive contains an absolute or empty path"
+    normalized=${member%/}
+    [[ -n "$normalized" ]] || fail "backup archive contains an empty path"
+    IFS='/' read -r -a components <<<"$normalized"
+    for component in "${components[@]}"; do
+      [[ "$component" != '..' && "$component" != '.' && -n "$component" ]] || fail "backup archive contains path traversal"
+    done
+    case "$normalized" in
+      manifest.json | database.dump | checksums.sha256 | files | files/.env | files/.veleis-installation | files/compose.yaml | files/release.json | files/data | files/data/*) ;;
+      *) fail "backup archive contains an unexpected member: $member" ;;
+    esac
+  done <"$members"
+  if grep -Eq '^[^-d]' "$verbose"; then
+    fail "backup archive contains a link or unsupported special file"
+  fi
+}
+
+restore_backup() {
+  local archive=$1 confirmation=${2:-} restore_work
+  [[ "$confirmation" == --force ]] || fail "restore replaces the installed state; rerun with: veleis restore <backup.tar.gz> --force"
+  [[ -f "$archive" && ! -L "$archive" ]] || fail "backup archive is missing or unsafe: $archive"
+  archive=$(readlink -f "$archive")
+  local archive_bytes required_bytes manifest_version backup_version backup_schema backup_architecture
+  local database_version timescale_version installed_version source_password source_certificate_hash restored_certificate_hash safety_backup
+  archive_bytes=$(stat -c %s "$archive")
+  required_bytes=$((archive_bytes * 3 + 2147483648))
+  check_space "$INSTALL_ROOT" "$required_bytes"
+  make_work_directory
+  restore_work=$WORK_DIRECTORY
+  validate_archive_members "$archive" "$restore_work/members" "$restore_work/verbose"
+  install -d -m 0700 "$restore_work/extracted"
+  tar --extract --gzip --file="$archive" --directory="$restore_work/extracted" --no-same-owner --no-same-permissions
+  if find "$restore_work/extracted" \( -type l -o \( ! -type d ! -type f \) \) -print -quit | grep -q .; then
+    fail "extracted backup contains a link or unsupported special file"
+  fi
+  local required_file
+  for required_file in manifest.json database.dump checksums.sha256 files/.env files/.veleis-installation files/compose.yaml files/release.json files/data/tls/veleis.crt files/data/tls/veleis.key; do
+    [[ -f "$restore_work/extracted/$required_file" ]] || fail "backup is missing required component: $required_file"
+  done
+  (cd "$restore_work/extracted" && sha256sum --check --strict checksums.sha256 >/dev/null) || fail "backup component checksum validation failed"
+  jq -e '.format_version == 1 and .product == "Veleis" and (.veleis_version|type=="string") and (.schema_version|type=="number") and .source.architecture == "amd64" and .database.engine == "PostgreSQL" and (.database.version|type=="string") and (.timescaledb_version|type=="string")' "$restore_work/extracted/manifest.json" >/dev/null || fail "backup manifest is invalid or uses an unsupported format"
+
+  manifest_version=$(jq -r .format_version "$restore_work/extracted/manifest.json")
+  [[ "$manifest_version" == "$BACKUP_FORMAT_VERSION" ]] || fail "unsupported backup format version: $manifest_version"
+  backup_version=$(jq -r .veleis_version "$restore_work/extracted/manifest.json")
+  backup_schema=$(jq -r .schema_version "$restore_work/extracted/manifest.json")
+  backup_architecture=$(jq -r .source.architecture "$restore_work/extracted/manifest.json")
+  database_version=$(jq -r .database.version "$restore_work/extracted/manifest.json")
+  timescale_version=$(jq -r .timescaledb_version "$restore_work/extracted/manifest.json")
+  [[ "$backup_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && "$backup_schema" =~ ^[0-9]+$ ]] || fail "backup version or schema metadata is invalid"
+  [[ "$backup_architecture" == "$EXPECTED_ARCHITECTURE" ]] || fail "backup architecture is unsupported: $backup_architecture"
+  [[ "$database_version" == 18.* ]] || fail "backup requires an unsupported PostgreSQL version: $database_version"
+  [[ "$timescale_version" == 2.28.3 ]] || fail "backup requires an unsupported TimescaleDB version: $timescale_version"
+  validate_environment "$restore_work/extracted/files/.env"
+  [[ "$(environment_value VELEIS_VERSION "$restore_work/extracted/files/.env")" == "$backup_version" ]] || fail "backup manifest and environment version do not match"
+  installed_version=$(current_version)
+  [[ "$backup_version" == "$installed_version" ]] || fail "restore currently requires the same Veleis version; backup is $backup_version and target is $installed_version"
+  cmp -s "$restore_work/extracted/files/compose.yaml" "$INSTALL_ROOT/compose.yaml" || fail "backup Compose definition does not match the installed release topology"
+  jq -e --arg version "$backup_version" '.product == "Veleis" and .version == $version' "$restore_work/extracted/files/release.json" >/dev/null || fail "backup release metadata is incompatible"
+
+  log "Creating a safety backup of the target installation before restore."
+  create_backup "$INSTALL_ROOT/backups"
+  RECOVERY_BACKUP=$LAST_BACKUP
+  safety_backup=$RECOVERY_BACKUP
+  WORK_DIRECTORY=$restore_work
+  source_certificate_hash=$(sha256sum "$restore_work/extracted/files/data/tls/veleis.crt" | awk '{print $1}')
+  source_password=$(environment_value POSTGRES_PASSWORD "$restore_work/extracted/files/.env")
+
+  log "Stopping Veleis before replacing persistent state."
+  compose stop -t 30 veleis >/dev/null
+  log "Recreating the application database for the validated restore."
+  database_admin postgres "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='veleis' AND pid <> pg_backend_pid();"
+  database_admin postgres "DROP DATABASE veleis;"
+  database_admin postgres "CREATE DATABASE veleis OWNER veleis;"
+  database_admin veleis "CREATE EXTENSION IF NOT EXISTS timescaledb;"
+  database_admin veleis "SELECT timescaledb_pre_restore();"
+  log "Restoring the PostgreSQL/TimescaleDB logical dump."
+  # shellcheck disable=SC2016
+  compose exec -T database sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" exec pg_restore --username=veleis --dbname=veleis --no-owner --no-privileges --exit-on-error' <"$restore_work/extracted/database.dump"
+  database_admin veleis "SELECT timescaledb_post_restore();"
+  database_admin postgres "ALTER ROLE veleis PASSWORD '${source_password}';"
+
+  log "Restoring secrets, TLS identity, configuration, and persistent files."
+  find "$INSTALL_ROOT/data" -mindepth 1 -depth -delete
+  cp -a "$restore_work/extracted/files/data/." "$INSTALL_ROOT/data/"
+  chown -R "$CONTAINER_UID:$CONTAINER_GID" "$INSTALL_ROOT/data"
+  find "$INSTALL_ROOT/data" -type d -exec chmod 0750 {} +
+  find "$INSTALL_ROOT/data" -type f -exec chmod 0640 {} +
+  chmod 0644 "$INSTALL_ROOT/data/tls/veleis.crt"
+  chmod 0600 "$INSTALL_ROOT/data/tls/veleis.key"
+  install -m 0600 "$restore_work/extracted/files/.env" "$INSTALL_ROOT/.env"
+  install -m 0600 "$restore_work/extracted/files/.veleis-installation" "$INSTALL_ROOT/.veleis-installation"
+  install -m 0644 "$restore_work/extracted/files/release.json" "$INSTALL_ROOT/release.json"
+
+  log "Recreating services with the restored credentials and validating migrations."
+  compose up -d --force-recreate database >/dev/null
+  service_running database || fail "database did not restart after restore"
+  for _ in $(seq 1 60); do
+    if database_scalar 'SELECT 1;' >/dev/null 2>&1; then break; fi
+    sleep 2
+  done
+  [[ "$(database_scalar 'SELECT 1;')" == 1 ]] || fail "database did not become ready after restore"
+  compose up -d >/dev/null || fail "Veleis migration/startup failed after restore"
+  [[ "$(current_schema)" == "$backup_schema" ]] || fail "restored schema does not match the backup manifest"
+  wait_ready 90 || fail "Veleis did not become ready after restore"
+  restored_certificate_hash=$(sha256sum "$INSTALL_ROOT/data/tls/veleis.crt" | awk '{print $1}')
+  [[ "$restored_certificate_hash" == "$source_certificate_hash" ]] || fail "restored TLS certificate does not match the backup"
+  RECOVERY_BACKUP=""
+
+  printf '\nVeleis restore completed.\n\nVersion: %s\nSchema: %s\nSource backup: %s\nTarget safety backup: %s\nStatus: Ready\n\nThe backed-up TLS certificate was preserved. A new hostname or IP may produce a certificate-name warning.\n' "$backup_version" "$backup_schema" "$archive" "$safety_backup"
+}
+
+version_component() {
+  local version=$1 index=$2
+  IFS=. read -r -a components <<<"$version"
+  printf '%s' "${components[$index]}"
+}
+
+compare_versions() {
+  local left=$1 right=$2 index left_part right_part
+  for index in 0 1 2; do
+    left_part=$(version_component "$left" "$index")
+    right_part=$(version_component "$right" "$index")
+    if ((10#$left_part < 10#$right_part)); then printf '%s' -1; return; fi
+    if ((10#$left_part > 10#$right_part)); then printf '%s' 1; return; fi
+  done
+  printf '%s' 0
+}
+
+registry_digest() {
+  local tag=$1 token
+  token=$(curl -fsSL "https://auth.docker.io/token?service=registry.docker.io&scope=repository:nyxmael/veleis:pull" | jq -er .token) || return 1
+  curl -fsSI \
+    -H "Authorization: Bearer $token" \
+    -H 'Accept: application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json' \
+    "https://registry-1.docker.io/v2/nyxmael/veleis/manifests/$tag" |
+    tr -d '\r' | awk -F': ' 'tolower($1)=="docker-content-digest" {print $2}'
+}
+
+upgrade_installation() {
+  local requested=${1:-} installed target comparison metadata expected_digest actual_digest image
+  local target_schema database_bytes required_bytes minimum_supported preupgrade_backup
+  installed=$(current_version)
+  [[ "$installed" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "installed version is invalid"
+  if [[ -n "$requested" ]]; then
+    [[ "$requested" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "target must be an exact semantic version such as 1.7.1"
+    comparison=$(compare_versions "$requested" "$installed")
+    if [[ "$comparison" == 0 ]]; then
+      printf 'Veleis %s is already installed. No backup, pull, migration, or restart was performed.\n' "$installed"
+      return
+    fi
+    [[ "$comparison" == 1 ]] || fail "downgrade from $installed to $requested is not supported; restore a compatible backup instead"
+  fi
+
+  make_work_directory
+  metadata="$WORK_DIRECTORY/release.json"
+  log "Retrieving trusted structured release metadata."
+  curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEASE_METADATA_URL" -o "$metadata" || fail "trusted release metadata could not be retrieved"
+  jq -e '.product == "Veleis" and (.version|type=="string") and .docker_repository == "docker.io/nyxmael/veleis" and (.docker_manifest_digest|test("^sha256:[a-f0-9]{64}$")) and .platform == "linux/amd64" and (.schema|type=="number") and (.supported_upgrade_sources|type=="array")' "$metadata" >/dev/null || fail "release metadata is invalid"
+  target=$(jq -r .version "$metadata")
+  [[ "$target" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "release metadata contains an invalid stable version"
+  [[ -z "$requested" || "$requested" == "$target" ]] || fail "requested version $requested is not the published stable release $target"
+  comparison=$(compare_versions "$target" "$installed")
+  if [[ "$comparison" == 0 ]]; then
+    printf 'Veleis %s is already installed. No backup, pull, migration, or restart was performed.\n' "$installed"
+    return
+  fi
+  [[ "$comparison" == 1 ]] || fail "published stable version $target is older than installed version $installed"
+  jq -e --arg source "$installed" '.supported_upgrade_sources | index($source) != null' "$metadata" >/dev/null || fail "upgrade from $installed to $target is not in the published supported-source list"
+  minimum_supported=$(jq -r '.minimum_upgrade_version // ""' "$metadata")
+  [[ -z "$minimum_supported" || "$(compare_versions "$installed" "$minimum_supported")" != -1 ]] || fail "installed version $installed is below the minimum supported upgrade source $minimum_supported"
+  target_schema=$(jq -r .schema "$metadata")
+  [[ "$target_schema" =~ ^[0-9]+$ && "$target_schema" -ge "$(current_schema)" ]] || fail "target schema metadata is invalid or older than the installed schema"
+
+  expected_digest=$(jq -r .docker_manifest_digest "$metadata")
+  actual_digest=$(registry_digest "$target") || fail "target Docker image manifest is unavailable"
+  [[ "$actual_digest" == "$expected_digest" ]] || fail "target Docker digest does not match trusted release metadata"
+  image="${EXPECTED_DOCKER_REPOSITORY}:${target}@${expected_digest}"
+  database_bytes=$(database_scalar "SELECT pg_database_size('veleis');")
+  required_bytes=$((database_bytes * 2 + 2147483648))
+  check_space "$INSTALL_ROOT" "$required_bytes"
+
+  log "Creating the mandatory pre-upgrade backup."
+  create_backup "$INSTALL_ROOT/backups"
+  RECOVERY_BACKUP=$LAST_BACKUP
+  preupgrade_backup=$RECOVERY_BACKUP
+  log "Pulling and verifying the immutable target image."
+  docker pull "$image" >/dev/null || fail "target Docker image could not be pulled"
+  docker image inspect "$image" >/dev/null 2>&1 || fail "pulled target image identity could not be verified"
+
+  awk -v version="$target" -v image="$image" '
+    /^VELEIS_VERSION=/ {$0="VELEIS_VERSION=" version}
+    /^VELEIS_IMAGE=/ {$0="VELEIS_IMAGE=" image}
+    {print}
+  ' "$INSTALL_ROOT/.env" >"$WORK_DIRECTORY/environment"
+  validate_environment "$WORK_DIRECTORY/environment"
+  install -m 0600 "$WORK_DIRECTORY/environment" "$INSTALL_ROOT/.env"
+  install -m 0644 "$metadata" "$INSTALL_ROOT/release.json"
+
+  log "Applying the accepted migration workflow and starting Veleis $target."
+  compose up -d >/dev/null || fail "migration or service startup failed; use the preserved pre-upgrade backup for recovery"
+  [[ "$(current_schema)" == "$target_schema" ]] || fail "post-upgrade schema does not match release metadata"
+  wait_ready 90 || fail "Veleis $target did not become ready; use the preserved pre-upgrade backup for recovery"
+  RECOVERY_BACKUP=""
+  printf '\nVeleis upgrade completed.\n\nPrevious version: %s\nCurrent version: %s\nSchema: %s\nPre-upgrade backup: %s\nStatus: Ready\n' "$installed" "$target" "$target_schema" "$preupgrade_backup"
+}
+
+show_status() {
+  printf 'Veleis %s\nSchema: %s\n\n' "$(current_version)" "$(current_schema)"
+  compose ps
+  if wait_ready 1; then printf '\nHTTPS readiness: ready\n'; else printf '\nHTTPS readiness: not ready\n'; return 1; fi
+}
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  veleis status
+  veleis version
+  veleis logs [docker-compose-log-options]
+  veleis backup [absolute-destination-directory]
+  veleis restore <backup.tar.gz> --force
+  veleis upgrade [exact-version]
+USAGE
+}
+
+require_commands
+require_installation
+command_name=${1:-}
+case "$command_name" in
+  status) (($# == 1)) || fail "status accepts no arguments"; show_status ;;
+  version) (($# == 1)) || fail "version accepts no arguments"; printf 'Veleis %s (schema %s)\n' "$(current_version)" "$(current_schema)" ;;
+  logs) shift; compose logs "$@" ;;
+  backup) (($# <= 2)) || fail "backup accepts at most one destination"; acquire_lock; create_backup "${2:-$INSTALL_ROOT/backups}" ;;
+  restore) (($# == 3)) || fail "restore requires an archive and --force"; acquire_lock; restore_backup "$2" "$3" ;;
+  upgrade) (($# <= 2)) || fail "upgrade accepts at most one exact version"; acquire_lock; upgrade_installation "${2:-}" ;;
+  help | --help | -h) usage ;;
+  *) usage >&2; exit 2 ;;
+esac
