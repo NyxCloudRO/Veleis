@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a focused improvement to Veleis
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What operational problem should Veleis help solve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe the behavior, not private infrastructure details.
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Read-only boundary
+      description: Explain how this can remain observational without infrastructure control or remediation.

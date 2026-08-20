@@ -1,0 +1,88 @@
+name: veleis
+
+services:
+  database:
+    image: timescale/timescaledb:2.28.3-pg18@sha256:2c718e700b1c75b93488085596f2254c991c3aa29584fc282ebbe62fd8335791
+    environment:
+      POSTGRES_USER: veleis
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: veleis
+    volumes:
+      - database:/var/lib/postgresql
+    networks:
+      - database
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'PGPASSWORD="$${POSTGRES_PASSWORD}" psql --no-psqlrc --host=127.0.0.1 --username=veleis --dbname=veleis --tuples-only --no-align --command="SELECT 1" | grep -qx 1',
+        ]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+      start_period: 10s
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  migrate:
+    image: ${VELEIS_IMAGE:?VELEIS_IMAGE must be set}
+    entrypoint: ["/usr/local/bin/veleis-migrate"]
+    environment:
+      VELEIS_DATABASE_URL: postgres://veleis:${POSTGRES_PASSWORD}@database:5432/veleis?sslmode=disable
+      VELEIS_MIGRATIONS_PATH: file:///srv/veleis/migrations
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - database
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"
+
+  veleis:
+    image: ${VELEIS_IMAGE:?VELEIS_IMAGE must be set}
+    environment:
+      VELEIS_DATABASE_URL: postgres://veleis:${POSTGRES_PASSWORD}@database:5432/veleis?sslmode=disable
+      VELEIS_MASTER_KEY: ${VELEIS_MASTER_KEY:?VELEIS_MASTER_KEY must be set}
+      VELEIS_LOG_LEVEL: info
+      VELEIS_INSTANCE_ID: veleis-production
+      VELEIS_TLS_ENABLED: "true"
+      VELEIS_TLS_SOURCE: custom
+      VELEIS_TLS_CERTIFICATE_PATH: /var/lib/veleis/tls/veleis.crt
+      VELEIS_TLS_PRIVATE_KEY_PATH: /var/lib/veleis/tls/veleis.key
+      VELEIS_HTTPS_ADDRESS: :8443
+      VELEIS_PUBLIC_BASE_URL: ${VELEIS_PUBLIC_BASE_URL:?VELEIS_PUBLIC_BASE_URL must be set}
+    ports:
+      - "${VELEIS_HTTPS_PORT:-443}:8443"
+    volumes:
+      - ./data:/var/lib/veleis
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m
+    networks:
+      - database
+      - public
+    depends_on:
+      database:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    restart: unless-stopped
+
+volumes:
+  database:
+    name: veleis-database-pg18
+
+networks:
+  database:
+    internal: true
+  public:

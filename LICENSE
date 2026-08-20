@@ -1,0 +1,87 @@
+Veleis Proprietary Distribution License
+Version 1.0, 20 August 2026
+
+Copyright (c) 2026 Nyxmael. All rights reserved.
+
+1. Scope
+
+This license applies to the official Veleis software binaries and container
+images, and to the installer, documentation, release metadata, and other
+distribution materials published by Nyxmael for Veleis (collectively, the
+"Software"). Veleis is proprietary software. The public Veleis distribution
+and documentation repository does not publish or license the Veleis
+application source code.
+
+2. Permitted use
+
+Subject to this license, you may:
+
+- download and use official, unmodified Veleis binaries and container images
+  for personal or organizational self-hosted use, including evaluation; and
+- use and reproduce the published installer and documentation internally only
+  as reasonably necessary to install, evaluate, operate, and support your
+  authorized Veleis installations.
+
+Official Veleis container images are distributed through
+docker.io/nyxmael/veleis.
+
+3. Restrictions
+
+No rights are granted except those expressly stated above. You may not:
+
+- redistribute modified Veleis binaries or container images;
+- reverse engineer, decompile, disassemble, or otherwise attempt to derive the
+  Veleis application source code, except and only to the extent that applicable
+  law expressly permits this restriction to be overridden;
+- sell, resell, sublicense, repackage, rent, lease, host for third parties as a
+  commercial service, or otherwise commercially redistribute the Software;
+- represent a modified or repackaged copy as an official Veleis release;
+- use the Veleis or Nyxmael names, branding, marks, or visual identity in a
+  misleading manner or in a way that suggests unauthorized endorsement;
+- publish, redistribute, or disclose private or proprietary Veleis application
+  source code; or
+- republish the installer or documentation as part of another product or
+  distribution without prior written permission from Nyxmael.
+
+4. Ownership
+
+The Software is licensed, not sold. Nyxmael retains all right, title, and
+interest in Veleis, including its application source code, binaries, container
+images, installer, documentation, branding, and all associated intellectual
+property. No trademark rights or rights to unpublished source code are granted.
+
+5. Termination
+
+Your rights under this license terminate automatically if you materially breach
+its terms. Upon termination, you must stop using and delete copies of the
+Software in your possession or control, except where retention is required by
+law.
+
+6. Disclaimer of warranty
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE," WITHOUT WARRANTIES OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, AVAILABILITY, ACCURACY, OR
+SECURITY. YOU ASSUME ALL RISK ARISING FROM INSTALLATION AND USE OF THE SOFTWARE.
+
+7. Limitation of liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NYXMAEL, THE VELEIS PROJECT
+OWNER, WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR FOR ANY LOSS OF DATA, REVENUE,
+PROFITS, BUSINESS, OR GOODWILL, ARISING FROM OR RELATED TO THE SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. TO THE MAXIMUM EXTENT PERMITTED BY
+APPLICABLE LAW, TOTAL LIABILITY ARISING FROM OR RELATED TO THE SOFTWARE WILL NOT
+EXCEED THE AMOUNT YOU PAID FOR THE SOFTWARE DURING THE TWELVE MONTHS BEFORE THE
+EVENT GIVING RISE TO THE CLAIM, OR USD 10 IF YOU PAID NOTHING.
+
+8. Mandatory law
+
+Nothing in this license excludes rights or liabilities that cannot lawfully be
+excluded or limited. If a provision is unenforceable, it will be limited to the
+minimum extent necessary, and the remaining provisions will continue in effect.
+
+9. Additional permission
+
+Any use not expressly permitted by this license requires prior written
+permission from Nyxmael.

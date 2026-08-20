@@ -1,0 +1,103 @@
+# Installation
+
+[← Documentation home](../README.md)
+
+## Supported installation
+
+Veleis 1.7.0 supports clean installation on:
+
+- Ubuntu 24.04.4 LTS, amd64
+- Debian 13.6, amd64
+
+The installer works when run as root or as a normal user with functional
+`sudo`. It does not request, read, or store a sudo password itself; the normal
+sudo mechanism may prompt through the terminal.
+
+The one-command form requires `curl` to already be available so it can retrieve
+the installer. If `curl` is absent, install it with the operating-system package
+manager or download `install.sh` from the GitHub release on another machine.
+
+## Quick start
+
+Run the same primary command shown in the README:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh | bash
+```
+
+For review-before-execution, the equivalent supported flow is:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh -o install-veleis.sh
+less install-veleis.sh
+chmod +x install-veleis.sh
+./install-veleis.sh
+```
+
+Release `v1.7.0` also provides `install.sh` and `SHA256SUMS` as release assets.
+Both the main-branch and release installers target the exact immutable image
+`docker.io/nyxmael/veleis:1.7.0`.
+
+## What the installer does
+
+1. Reads structured OS information from `/etc/os-release`.
+2. Detects amd64 and rejects unsupported architectures.
+3. Selects direct-root or ordinary sudo operation.
+4. Installs missing system tools, Docker Engine/CLI, and Compose v2 from the OS
+   package repositories.
+5. Verifies the Docker daemon and checks that TCP 443 is free.
+6. Creates the persistent installation at `/opt/veleis`.
+7. Generates independent database and application secrets.
+8. Generates an installation-specific self-signed TLS certificate.
+9. Pulls the immutable Veleis image and pinned TimescaleDB image.
+10. Starts the database, applies migrations, and starts Veleis.
+11. Waits for database, schema, application, and HTTPS readiness.
+12. Prints the detected HTTPS address and routine operator commands.
+
+The installer never prints generated secrets, changes firewall rules, exposes
+PostgreSQL on the host, or creates default application credentials.
+
+## First Owner
+
+After the success banner:
+
+1. Open the printed `https://<detected-ip>/` URL.
+2. Confirm it is your host. A trust warning is expected for the generated
+   certificate; do not disable browser security globally.
+3. Create the first Owner with your own login and password.
+4. Sign in. The first-owner endpoint closes after the account is created.
+
+## Verify installation
+
+```bash
+cd /opt/veleis
+sudo docker compose ps
+curl --cacert data/tls/veleis.crt https://127.0.0.1/health/ready
+```
+
+Both `database` and `veleis` should be healthy, and readiness returns
+`{"status":"ready"}`.
+
+## Existing installations
+
+The v1 installer is intentionally a clean-install tool. If `/opt/veleis`
+already exists, it stops without overwriting configuration, secrets,
+certificate, or database state. See [Upgrading](UPGRADING.md).
+
+## Installation location
+
+```text
+/opt/veleis/
+├── .env                 # generated secrets and release settings; mode 600
+├── .veleis-installation # install marker; mode 600
+├── compose.yaml         # supported production topology
+└── data/
+    ├── avatars/
+    └── tls/
+        ├── veleis.crt
+        └── veleis.key   # mode 600
+```
+
+Database files live in the Docker volume `veleis-database-pg18`.
+
+Next: [Operations](OPERATIONS.md) · [Troubleshooting](TROUBLESHOOTING.md)

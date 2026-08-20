@@ -1,0 +1,9 @@
+{
+  "product": "Veleis",
+  "version": "1.7.0",
+  "git_tag": "v1.7.0",
+  "docker_repository": "docker.io/nyxmael/veleis",
+  "docker_manifest_digest": "sha256:5905637213977e8fd5d9f159b65c507a74defe25bac0b0a1b1d66d2602e279fe",
+  "platform": "linux/amd64",
+  "installer_image_tag": "1.7.0"
+}
