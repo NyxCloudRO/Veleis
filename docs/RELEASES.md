@@ -46,3 +46,20 @@ See [Docker image and tag policy](DOCKER.md).
 format, minimum upgrade source, explicit supported-source list, image digest,
 platform, and lifecycle-tool checksum. Upgrade support is opt-in per target
 release; a floating Docker tag alone never establishes compatibility.
+
+## Persistent release-history policy
+
+`CHANGELOG.md` is the canonical persistent release history for Veleis. Every
+release—including patch, minor, and major releases—must update its corresponding
+changelog entry before publication. GitHub Release notes must be written or
+generated from that entry.
+
+Do not create per-version `RELEASE-NOTES-<version>.md` files. Release preparation
+must instead update the README and existing documentation whenever a release
+changes features, installation, operation, compatibility, security,
+requirements, or other user-facing behavior.
+
+The public validation workflow enforces the durable parts of this policy: it
+rejects per-version release-note files and requires the version declared in
+`release.json` to have a matching `CHANGELOG.md` entry. These checks apply to
+all future releases, including 1.7.2, 1.8.0, 2.0.0, and later versions.

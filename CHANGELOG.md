@@ -36,6 +36,9 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 - Supported upgrade: `1.7.0` to `1.7.1`.
 - Schema remains 32; backup format remains 1.
+- Accepted upgrade testing preserved dashboards and widget layouts, assets,
+  probes, users, incidents, Discovery provider configuration and inventory,
+  and the installation TLS identity through the mandatory backup workflow.
 - Docker image: `docker.io/nyxmael/veleis:1.7.1`
 - Manifest digest:
   `sha256:5fe5948c818a58cda38ded206c594669f6edbbb647703e6cd0055ebf3720c73a`

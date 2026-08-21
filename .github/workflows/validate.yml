@@ -18,6 +18,12 @@ jobs:
         run: |
           set -Eeuo pipefail
           jq -e '.version == "1.7.1" and .git_tag == "v1.7.1" and .installer_image_tag == "1.7.1" and .platform == "linux/amd64"' release.json >/dev/null
+          version=$(jq -r '.version' release.json)
+          grep -Fq "## [$version]" CHANGELOG.md
+          if find . -type f -name 'RELEASE-NOTES-*.md' -print -quit | grep -q .; then
+            echo 'per-version release-note files are forbidden; update CHANGELOG.md instead' >&2
+            exit 1
+          fi
           grep -Fq 'readonly VELEIS_VERSION="1.7.1"' install.sh
           grep -Fq 'docker.io/nyxmael/veleis:${VELEIS_VERSION}' install.sh
           jq -e '.schema == 32 and .backup_format_version == 1 and .supported_upgrade_sources == ["1.7.0"]' release.json >/dev/null

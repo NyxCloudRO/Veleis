@@ -58,4 +58,5 @@ sudo veleis restore /opt/veleis/backups/<pre-upgrade-backup>.tar.gz --force
 
 Never remove the database volume, edit `.env` to a floating image tag, or rerun
 the clean installer as an improvised upgrade. Keep backups off-host and review
-the target release notes before every accepted upgrade.
+the target version's entry in [the canonical changelog](../CHANGELOG.md) before
+every accepted upgrade.
