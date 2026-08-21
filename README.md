@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v1.7.0-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.0)
+[![Current release](https://img.shields.io/badge/release-v1.7.1-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.1)
 [![Docker pulls](https://img.shields.io/docker/pulls/nyxmael/veleis)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-Ubuntu_24.04.4_%7C_Debian_13.6-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 1.7.0** · Schema 32 · linux/amd64
+Current stable release: **Veleis 1.7.1** · Schema 32 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:1.7.0` image, provisions TimescaleDB, applies schema migrations,
+`nyxmael/veleis:1.7.1` image, provisions TimescaleDB, applies schema migrations,
 and waits for HTTPS readiness.
 
 When installation finishes, open the printed `https://<detected-ip>/` address.
@@ -63,7 +63,7 @@ preserving their source truth:
 
 ## What Veleis monitors
 
-| Area | Included in 1.7.0 |
+| Area | Included in 1.7.1 |
 | ---- | ----------------- |
 | Service availability | HTTP/HTTPS, ICMP/Ping, TCP, DNS, SMTP, IMAP, and dedicated TLS certificate probes |
 | Linux hosts | Optional Ravyr agents: CPU, memory, storage, network, runtime, service, process, and inventory observations |
@@ -96,7 +96,8 @@ preserving their source truth:
 - Unified Overview and asset details.
 - Supported `veleis` status, log, complete backup, validated restore, and
   compatibility-gated upgrade commands.
-- User-owned custom dashboards with configurable widgets.
+- User-owned custom dashboards with first-class Discovery and Proxmox widgets,
+  deterministic provider scope, bounded operational lists, and freshness state.
 - Incident acknowledgment, resolution, recovery history, and audit context.
 - Private-by-default public Status Pages with selected probe components and
   privacy-safe incident updates.
@@ -161,8 +162,10 @@ sudo veleis logs --tail=200 veleis
 sudo veleis backup
 ```
 
-Existing 1.7.0 installations created before the lifecycle command was published
-can add it with the bootstrap documented in [Installation](docs/INSTALLATION.md).
+Existing 1.7.0 installations can upgrade with `sudo veleis upgrade`; the exact
+version alternative is `sudo veleis upgrade 1.7.1`. Installations created before
+the lifecycle command was published can add it with the bootstrap documented in
+[Installation](docs/INSTALLATION.md).
 Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See
 [Operations](docs/OPERATIONS.md) and [Backup and restore](docs/BACKUP-RESTORE.md).
 
@@ -171,6 +174,8 @@ Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See
 - [Installation](docs/INSTALLATION.md)
 - [System requirements](docs/SYSTEM-REQUIREMENTS.md)
 - [Features](docs/FEATURES.md)
+- [Custom dashboards](docs/DASHBOARDS.md)
+- [Proxmox setup](docs/PROXMOX.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Configuration and data](docs/CONFIGURATION.md)
 - [Operations](docs/OPERATIONS.md)
@@ -199,8 +204,9 @@ governed by the [Veleis Proprietary Distribution License](LICENSE).
 - Default HTTPS uses a unique self-signed certificate.
 - Restore currently requires the same Veleis version, linux/amd64, PostgreSQL
   18, TimescaleDB 2.28.3, and the accepted Compose topology.
-- There is no newer public version to upgrade to yet; 1.7.0 upgrade requests are
-  deliberate no-ops, and automatic database downgrade is not supported.
+- Proxmox dashboard widgets show normalized inventory/state; historical Proxmox
+  CPU and memory timeseries are not persisted in this release.
+- Automatic database downgrade is not supported.
 - Automated uninstall is not published.
 - Public custom-certificate/reverse-proxy operations, image signing, SBOM, and
   provenance attestations are pending.

@@ -6,7 +6,7 @@ Official repository:
 [docker.io/nyxmael/veleis](https://hub.docker.com/r/nyxmael/veleis)
 
 ```bash
-docker pull nyxmael/veleis:1.7.0
+docker pull nyxmael/veleis:1.7.1
 ```
 
 ## Tags
@@ -14,16 +14,17 @@ docker pull nyxmael/veleis:1.7.0
 | Tag | Meaning | Current digest |
 | --- | ------- | -------------- |
 | `1.7.0` | Immutable exact release. It will not move to another build. | `sha256:5905637213977e8fd5d9f159b65c507a74defe25bac0b0a1b1d66d2602e279fe` |
-| `1.7` | Floating minor track: newest accepted stable `1.7.x`. | Same as `1.7.0` |
-| `latest` | Floating newest accepted stable release. | Same as `1.7.0` |
+| `1.7.1` | Immutable exact current release. It will not move to another build. | `sha256:5fe5948c818a58cda38ded206c594669f6edbbb647703e6cd0055ebf3720c73a` |
+| `1.7` | Floating minor track: newest accepted stable `1.7.x`. | Same as `1.7.1` |
+| `latest` | Floating newest accepted stable release. | Same as `1.7.1` |
 
 The `1.7` tag exists so operators who deliberately follow compatible 1.7 patch
-releases have a minor channel. For example, after a future accepted `1.7.1`,
-`1.7.0` remains unchanged while `1.7` and `latest` may advance to `1.7.1`.
+releases have a minor channel. Veleis `1.7.0` remains unchanged while `1.7` and
+`latest` now resolve to the accepted `1.7.1` image.
 When `1.8.0` becomes stable, `1.7` remains on the newest accepted 1.7 patch,
 `1.8` tracks 1.8, and `latest` advances to the newest stable line.
 
-The 1.7.0 installer deliberately uses the immutable exact tag, not a floating
+Each release installer deliberately uses its immutable exact tag, not a floating
 channel. Old release installers therefore cannot silently install a future
 image.
 

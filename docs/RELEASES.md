@@ -4,21 +4,20 @@
 
 ## Current stable release
 
-Veleis **1.7.0** is the first public distribution.
+Veleis **1.7.1** is the current stable release.
 
 | Component | Release identity |
 | --------- | ---------------- |
-| Application | `1.7.0` |
-| Git tag and GitHub Release | `v1.7.0` |
-| Installer target | `docker.io/nyxmael/veleis:1.7.0` |
-| Docker manifest | `sha256:5905637213977e8fd5d9f159b65c507a74defe25bac0b0a1b1d66d2602e279fe` |
+| Application | `1.7.1` |
+| Git tag and GitHub Release | `v1.7.1` |
+| Installer target | `docker.io/nyxmael/veleis:1.7.1` |
+| Docker manifest | `sha256:5fe5948c818a58cda38ded206c594669f6edbbb647703e6cd0055ebf3720c73a` |
 | Schema | 32 |
 | Backup format | 1 |
 
-The public distribution on `main` also carries compatible lifecycle tooling for
-complete backup/restore and future upgrades. This does not change application
-version 1.7.0, mutate its Docker image, or replace the immutable `v1.7.0` GitHub
-release assets.
+Veleis 1.7.0 remains immutable at its original Docker digest and GitHub release.
+The supported transition from 1.7.0 to 1.7.1 uses a mandatory pre-upgrade backup
+and keeps schema 32.
 
 ## Supported versions
 
@@ -37,7 +36,7 @@ supported.
 - Minor tags such as `1.7` move only to the newest accepted stable patch in that
   minor line.
 - `latest` moves only to the newest accepted stable public release.
-- Git tags use `v` (`v1.7.0`); application and Docker versions do not.
+- Git tags use `v` (`v1.7.1`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
 

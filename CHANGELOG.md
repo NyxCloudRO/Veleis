@@ -5,6 +5,41 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-08-21
+
+### Added
+
+- Added first-class Proxmox overview, workloads, and storage widgets to Custom
+  Dashboards.
+- Added Discovery summary and recent activity widgets with bounded,
+  newest-first normalized data.
+- Added deterministic per-provider or explicit all-provider widget scope,
+  including safe empty, disabled, deleted, issue, and stale states.
+- Added public Custom Dashboard and Proxmox setup guides.
+
+### Changed
+
+- Expanded Infrastructure summary to represent configured providers,
+  discovered infrastructure, and Proxmox workloads alongside incidents, agents,
+  and Docker runtime state.
+- Clarified least-privilege Proxmox setup with a dedicated user/token,
+  `PVEAuditor` on `/` with Propagate, and Privilege Separation behavior.
+- Stable Docker channels `1.7` and `latest` now resolve to 1.7.1.
+
+### Fixed
+
+- Prevented Viewer sessions from rendering the asset-creation action.
+- Preserved provider freshness and issue context in dashboards instead of
+  presenting stale normalized observations as current.
+
+### Compatibility
+
+- Supported upgrade: `1.7.0` to `1.7.1`.
+- Schema remains 32; backup format remains 1.
+- Docker image: `docker.io/nyxmael/veleis:1.7.1`
+- Manifest digest:
+  `sha256:5fe5948c818a58cda38ded206c594669f6edbbb647703e6cd0055ebf3720c73a`
+
 ### Distribution operations
 
 - Added a focused `veleis` operator command for status, version, logs, complete
@@ -17,9 +52,8 @@ versioning; the corresponding Git tag uses a `v` prefix.
   verification.
 - Added a verified lifecycle bootstrap for existing 1.7.0 installations and
   lifecycle installation in the clean installer.
-- Documented rollback boundaries and cross-OS restore acceptance. This public
-  distribution update does not change application version 1.7.0 or its
-  immutable release assets and Docker image.
+- Documented rollback boundaries and cross-OS restore acceptance while keeping
+  the prior 1.7.0 release assets and Docker image immutable.
 
 ## [1.7.0] - 2026-08-20
 
@@ -55,4 +89,5 @@ First public Veleis distribution.
 - Automated uninstall and custom-certificate operations are not yet published.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
+[1.7.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.1
 [1.7.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.0

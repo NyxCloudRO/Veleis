@@ -24,11 +24,15 @@ only after the target schema and HTTPS readiness pass.
 
 ## Current release state
 
-Veleis 1.7.0 is the current stable release. Its metadata names 1.7.0 as a
-supported source so a future accepted target can explicitly include it. Until a
-newer stable release is published, `sudo veleis upgrade` and
-`sudo veleis upgrade 1.7.0` are safe no-ops: they create no backup, pull no
-image, run no migration, and restart no service.
+Veleis 1.7.1 is the current stable release, and 1.7.0 is an explicitly supported
+upgrade source. `sudo veleis upgrade` on 1.7.0 discovers 1.7.1; the exact target
+form is `sudo veleis upgrade 1.7.1`. Schema remains 32. Existing dashboards,
+assets, probes, users, incidents, Discovery provider configuration/inventory,
+TLS identity, and login state are preserved.
+
+On 1.7.1, `sudo veleis upgrade` and `sudo veleis upgrade 1.7.1` are safe
+no-ops: they create no backup, pull no image, run no migration, and restart no
+service. A 1.7.1 to 1.7.0 downgrade remains rejected.
 
 Downgrades, non-exact versions, unpublished versions, unsupported source
 versions, floating tags, a digest mismatch, an older target schema, and

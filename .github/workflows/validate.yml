@@ -17,8 +17,8 @@ jobs:
       - name: Validate release identity
         run: |
           set -Eeuo pipefail
-          jq -e '.version == "1.7.0" and .git_tag == "v1.7.0" and .installer_image_tag == "1.7.0" and .platform == "linux/amd64"' release.json >/dev/null
-          grep -Fq 'readonly VELEIS_VERSION="1.7.0"' install.sh
+          jq -e '.version == "1.7.1" and .git_tag == "v1.7.1" and .installer_image_tag == "1.7.1" and .platform == "linux/amd64"' release.json >/dev/null
+          grep -Fq 'readonly VELEIS_VERSION="1.7.1"' install.sh
           grep -Fq 'docker.io/nyxmael/veleis:${VELEIS_VERSION}' install.sh
           jq -e '.schema == 32 and .backup_format_version == 1 and .supported_upgrade_sources == ["1.7.0"]' release.json >/dev/null
           expected=$(jq -r .lifecycle_tool_sha256 release.json)
@@ -79,5 +79,5 @@ jobs:
           set -Eeuo pipefail
           expected=$(jq -r '.docker_manifest_digest' release.json)
           token=$(curl -fsSL 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:nyxmael/veleis:pull' | jq -r .token)
-          actual=$(curl -fsSI -H "Authorization: Bearer $token" -H 'Accept: application/vnd.oci.image.manifest.v1+json' 'https://registry-1.docker.io/v2/nyxmael/veleis/manifests/1.7.0' | tr -d '\r' | awk -F': ' 'tolower($1)=="docker-content-digest"{print $2}')
+          actual=$(curl -fsSI -H "Authorization: Bearer $token" -H 'Accept: application/vnd.oci.image.manifest.v1+json' 'https://registry-1.docker.io/v2/nyxmael/veleis/manifests/1.7.1' | tr -d '\r' | awk -F': ' 'tolower($1)=="docker-content-digest"{print $2}')
           test "$actual" = "$expected"

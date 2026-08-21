@@ -44,7 +44,7 @@ deletes old backups automatically. Before copying, check capacity with `df -h`.
 After copying, verify the sidecar in its destination directory:
 
 ```bash
-sha256sum --check veleis-backup-1.7.0-YYYYMMDDTHHMMSSZ.tar.gz.sha256
+sha256sum --check veleis-backup-1.7.1-YYYYMMDDTHHMMSSZ.tar.gz.sha256
 ```
 
 ## Restore
@@ -53,7 +53,7 @@ Restore is deliberately explicit and currently requires a working Veleis
 installation at the same application version as the backup:
 
 ```bash
-sudo veleis restore /secure/path/veleis-backup-1.7.0-YYYYMMDDTHHMMSSZ.tar.gz --force
+sudo veleis restore /secure/path/veleis-backup-1.7.1-YYYYMMDDTHHMMSSZ.tar.gz --force
 ```
 
 Before changing state, the command rejects unreadable, corrupt, malformed,
@@ -92,8 +92,10 @@ readiness and sign-in checks before declaring recovery complete.
 ## Tested recovery boundary
 
 The public workflow was accepted with PostgreSQL 18, TimescaleDB 2.28.3,
-Veleis 1.7.0/schema 32, and a complete Ubuntu 24.04.4-to-Debian 13.6 restore on
-linux/amd64. TimescaleDB's documented full-database `pg_dump`/`pg_restore` flow
+Veleis 1.7.1/schema 32, and a complete Ubuntu 24.04.4-to-Debian 13.6 restore on
+linux/amd64. The supported 1.7.0 to 1.7.1 upgrade was also accepted with a
+populated backup and preserved TLS identity. TimescaleDB's documented
+full-database `pg_dump`/`pg_restore` flow
 and `timescaledb_pre_restore()`/`timescaledb_post_restore()` are used. See the
 [official TimescaleDB logical-backup guidance](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
 

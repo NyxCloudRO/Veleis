@@ -1,4 +1,4 @@
-# Features in Veleis 1.7.0
+# Features in Veleis 1.7.1
 
 [← Documentation home](../README.md)
 
@@ -48,6 +48,10 @@ relationships. Create a least-privilege read-only token in Proxmox and enter it
 through the authenticated provider configuration screen. Veleis provides no VM
 or LXC start, stop, reboot, delete, or configuration actions.
 
+Custom Dashboards include bounded Proxmox overview, workload, and storage
+widgets with explicit provider scope and collection freshness. See
+[Proxmox setup](PROXMOX.md) and [Custom Dashboards](DASHBOARDS.md).
+
 ## Discovery and topology
 
 - Normalized inventory from typed providers while preserving provider source.
@@ -61,8 +65,10 @@ or LXC start, stop, reboot, delete, or configuration actions.
 
 ## Operations
 
-- Unified Overview, asset details, and current attention summaries.
-- User-owned custom dashboards and configurable monitoring widgets.
+- Unified Overview, asset details, and an Infrastructure summary that includes
+  Discovery providers/inventory and Proxmox workloads.
+- User-owned custom dashboards and configurable monitoring, Discovery, and
+  Proxmox widgets.
 - Alert rules, silences, maintenance windows, and no-data handling.
 - Open/acknowledged/resolved incident lifecycle and recovery history.
 - Dependency-aware incident explanations with optional notification-only
