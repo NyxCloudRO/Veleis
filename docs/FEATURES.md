@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.0
+# Features in Veleis 1.8.1
 
 [← Documentation home](../README.md)
 
@@ -76,7 +76,8 @@ widgets with explicit provider scope and collection freshness. See
 - Open/acknowledged/resolved incident lifecycle and recovery history.
 - Dependency-aware incident explanations with optional notification-only
   suppression; raw alerts and incidents remain visible.
-- Durable generic webhook, Discord webhook, and SMTP email delivery with retry.
+- Durable schema-v1 generic webhooks, semantic Discord embeds, and readable
+  SMTP email delivery with deduplication and bounded retry/rate-limit handling.
 - Private-by-default Status Pages with compact paginated component administration,
   search/filter/sort, safe bulk actions, scalable ordering, and bounded,
   privacy-safe public incident communication.

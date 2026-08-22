@@ -5,6 +5,45 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-08-22
+
+### Added
+
+- Added one bounded canonical notification event model with channel-specific
+  Discord embed, UTF-8 email, and versioned generic-webhook renderers.
+- Added explicit **Any time** and recurring **Maintenance window** Ravyr update
+  timing, searchable IANA timezones, first-use browser timezone suggestion, and
+  clear Follow Global, Canary, Stable, and Manual/Pinned explanations.
+
+### Changed
+
+- Discord firing, warning, recovery, and test delivery now uses concise semantic
+  embeds; SMTP uses operator-readable subjects and plaintext bodies.
+- Fleet policy saves no longer resume a paused rollout. Resume is a separate,
+  confirmed action, and installed/recommended/compatibility/update state remain
+  visibly distinct.
+- Generic webhooks now receive documented schema-v1 JSON. Discord 429 handling
+  honors bounded `Retry-After`; other provider failures retain bounded retry.
+
+### Fixed
+
+- Prevented raw Go map syntax, `<nil>`, internal fields, and credential material
+  from appearing in normal operator notifications.
+- Corrected Status Page incident-update grouping so empty collections encode as
+  `[]`, eliminating the intermittent administration crash during empty, rapid
+  mutation, refresh, and upgraded-page flows.
+- Clarified rollback, paused rollout, pinned-agent, overnight-window, and DST
+  behavior without changing signed Ravyr 1.8.0 compatibility metadata.
+
+### Compatibility
+
+- Supported upgrade sources: Veleis 1.7.1 and 1.8.0.
+- Schema remains 33; backup format remains 1.
+- Recommended Ravyr remains signed 1.8.0; no agent re-enrollment or credential
+  rotation is required.
+- Docker image: `docker.io/nyxmael/veleis:1.8.1`
+- Manifest digest: `sha256:5afeb90ec365282990a080c0cc26e84d2fffe69986a87c48612abb9a3260fcfe`
+
 ## [1.8.0] - 2026-08-22
 
 ### Added
@@ -138,5 +177,6 @@ First public Veleis distribution.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
 [1.8.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.0
+[1.8.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.1
 [1.7.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.1
 [1.7.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.0

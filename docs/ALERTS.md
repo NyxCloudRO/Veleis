@@ -53,9 +53,62 @@ active condition. Dependency-based notification suppression leaves raw alerts
 and incidents visible. Webhook and SMTP credentials remain encrypted/write-only
 and are never returned by alert search or details.
 
+### Human-readable channel rendering
+
+Every delivery is built from one bounded canonical event containing only the
+operator-facing lifecycle, severity, title/summary, target and rule names,
+state, relevant times/duration, safe details, and an optional Veleis link. The
+alert engine never hands implementation maps to channel providers.
+
+- Discord receives one semantic embed: critical red, warning amber, recovery
+  green, and test/informational neutral. Firing, warning, recovery, and test
+  messages have distinct titles and concise fields. Opaque IDs are not shown;
+  with a configured public HTTPS base URL, an ID may occur only in an
+  investigation link.
+- SMTP receives a UTF-8 plaintext message with a lifecycle subject such as
+  `[CRITICAL] Service is down` or `[RECOVERED] Service is healthy`.
+- Generic webhooks receive stable JSON schema version 1 rather than Discord
+  markup. Optional values are omitted intentionally and collections remain
+  arrays. A signing secret produces `X-Veleis-Signature` over the exact body.
+
+A representative test notification uses the same renderer as real delivery and
+names the configured channel. No production incident is required to verify
+formatting. Discord setup requires only a webhook for the chosen channel; treat
+its URL as a credential, restrict who can manage it, and rotate it if exposed.
+
+### Retry, rate limits, and troubleshooting
+
+Delivery claims are bounded to five attempts. HTTP 408 and 5xx failures retry
+with bounded backoff; ordinary 4xx responses fail permanently. HTTP 429 honors
+`Retry-After` up to 15 minutes, preventing an aggressive retry storm. History
+shows channel, event, result, attempts, time, and a sanitized error summary
+without the destination URL or secret.
+
+If a test fails, verify outbound DNS/HTTPS or SMTP connectivity, the provider's
+response, sender/recipient policy, and whether a Discord webhook was revoked.
+Repeated evaluations do not create repeated lifecycle deliveries because
+deduplication happens before rendering. Silence, alert maintenance, and
+dependency suppression remain authoritative.
+
+Generic webhook schema-v1 shape:
+
+```json
+{
+  "schema_version": 1,
+  "event": "incident.opened",
+  "severity": "critical",
+  "title": "Public API",
+  "summary": "Probe availability is down.",
+  "target": { "name": "Public API" },
+  "rule": { "name": "Probe Down" },
+  "state": { "current": "Down", "previous": "Up" },
+  "timestamps": { "occurred_at": "2026-08-22T19:42:00Z" },
+  "details": []
+}
+```
+
 For large estates, leave the default active-state selection in place, filter by
 severity/source/target when triaging, and request Normal only for deliberate
 diagnosis. With 1,000 healthy targets and three firing targets, the default view
 represents the three operational problems rather than rendering 1,000 green
 rows.
-

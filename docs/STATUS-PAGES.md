@@ -43,6 +43,13 @@ written public title and copy. Resolving or removing the public presentation
 does not mutate the real incident. Public updates and history are bounded and
 contain only the explicit public presentation.
 
+Empty component, incident, and incident-update collections are always JSON
+arrays (`[]`), never `null`. Administration and public clients also normalize a
+transient legacy null collection at the data boundary without turning request
+failures into empty success. This keeps newly created/empty pages,
+remove-last-item flows, rapid tab changes, refresh-after-save, search and
+pagination edges, and upgraded 1.8.0 pages stable.
+
 ## Public behavior and privacy
 
 Aggregate health is computed over every enabled component, not merely the
@@ -59,4 +66,3 @@ For a large page, use specific public names, server search/filters, 25–100 row
 pages, move-to-position, and bounded bulk actions. If a public aggregate looks
 wrong, check disabled components and source health in the authenticated
 workspace; never expose a private probe target to troubleshoot a public view.
-

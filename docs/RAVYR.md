@@ -37,19 +37,46 @@ cohort; offline agents catch up after their next authenticated connection.
 Progressive rollout uses deterministic 1%, 5%, 25%, 50%, and 100% cohorts based
 on agent identity and release identity. Healthy stages advance automatically.
 Operators may set an agent to Follow Global, Canary, Stable, or exceptional
-Manual/Pinned policy. A maintenance window uses its configured IANA timezone;
-without one, stable cohort and concurrency limits still prevent restart storms.
+Manual/Pinned policy. Update timing is explicit:
+
+- **Any time** means an eligible cohort may update whenever its concurrency slot
+  is available. Window fields are inactive and cleared.
+- **Maintenance window** means a recurring daily local-time range, not a
+  calendar appointment. Start, end, and an IANA timezone are required. An
+  overnight range such as 23:00–03:00 is valid.
+
+The timezone selector is searchable (`Bucharest` finds
+`Europe/Bucharest`). On first use only, the browser's valid IANA timezone is
+suggested; a saved policy is never overwritten. IANA rules automatically apply
+daylight-saving changes, so operators do not manually convert EET/EEST or other
+seasonal offsets. Existing `UTC` policies remain valid.
+
+Per-agent policies mean:
+
+- **Follow Global** uses the fleet-wide rollout and timing policy.
+- **Canary** receives compatible releases first for safety validation.
+- **Stable** receives stable releases automatically without canary priority.
+- **Manual / pinned** disables automatic updates for that agent.
+
+Without a maintenance window, stable cohort and concurrency limits still
+prevent restart storms.
 
 The Agents workspace shows fleet totals, recommended/minimum versions, and each
 agent's installed version, compatibility, connectivity, channel, and update
-state. Normal compatible updates require no per-host SSH action.
+state as separate facts. An older manual agent is **Pinned**, never misleadingly
+**Current**. A rollback names the restored and failed target versions plus a
+human reason. A failed canary produces a clear paused-rollout banner; remaining
+agents stay put. Saving timing or concurrency cannot resume a pause—**Resume
+rollout** is a separate confirmed action. Normal compatible updates require no
+per-host SSH action.
 
 ## Verification and rollback
 
 Ravyr downloads the strict same-origin release manifest and candidate into
 private staging. Before activation it validates server/protocol compatibility,
 Linux/amd64, exact path, bounded size, SHA-256, Ed25519 signature, and trusted
-key ID. Veleis 1.8.0 trusts key `226fc31b6ee01ca3`; unsigned metadata cannot
+key ID. Veleis 1.8.1 continues to trust the signed Ravyr 1.8.0 key
+`226fc31b6ee01ca3`; unsigned metadata cannot
 replace the trusted key.
 
 Activation preflights disk and permissions, retains one previous binary, stages
@@ -89,4 +116,3 @@ sudo systemctl disable --now ravyr-updater.timer ravyr-updater.service ravyr.ser
 An automated destructive uninstall is not published. Retain the Ravyr identity,
 configuration, spool, and previous binary until the retirement is confirmed;
 remove Ravyr-owned files only under the host operator's normal change process.
-
