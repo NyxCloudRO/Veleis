@@ -5,6 +5,51 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-08-22
+
+### Added
+
+- Added signed, same-origin Ravyr artifacts and a separate constrained updater
+  service/timer for zero-touch supported agent upgrades.
+- Added explicit recommended/minimum agent compatibility, deterministic staged
+  cohorts, concurrency and maintenance controls, offline catch-up, fleet UI,
+  per-agent policy overrides, rollback events, and failed-release fleet pause.
+- Added paginated Status Page component and incident administration with search,
+  filters, sorting, scalable ordering, overview counts, and safe bulk actions.
+- Added Active Alert acknowledgement, active-only summary counts, explicit Normal
+  filtering, compact pagination, and overlapping-rule guidance.
+
+### Changed
+
+- Active Alerts now defaults to operational attention states; healthy Normal
+  evaluations remain available only when explicitly requested.
+- Public Status Page health still aggregates all enabled components while each
+  response and browser render remains bounded.
+- Stable Docker channels `1.8` and `latest` now resolve to 1.8.0. The `1.7`
+  channel remains on the accepted 1.7.1 image.
+
+### Security and safety
+
+- Ravyr update manifests bind version, protocol, server compatibility, platform,
+  exact path, size, SHA-256, Ed25519 signature, and trusted key ID.
+- The updater exposes no arbitrary command, service, URL, package, or filesystem
+  surface; it changes only Ravyr-owned binaries/state and restarts only
+  `ravyr.service`.
+- Activation is disk-preflighted and atomic, requires a resumed heartbeat plus
+  telemetry, and restores the previous binary on failure.
+
+### Compatibility
+
+- Supported upgrade: `1.7.1` to `1.8.0` through the mandatory backup workflow.
+- Schema advances from 32 to 33; backup format remains 1.
+- Accepted upgrade testing preserved users, assets, probes, dashboards,
+  incidents, provider configuration/inventory, and TLS identity.
+- DEV Ubuntu and Debian Ravyr hosts upgraded from 1.7.0 to 1.8.0 without
+  re-enrollment; a signed faulty canary proved rollback, local release blocking,
+  and server fleet pause.
+- Docker image: `docker.io/nyxmael/veleis:1.8.0`
+- Manifest digest: `sha256:b1a3b106599d8b297f48a4573051c3dc646e12bd69c35cfbdae4d49edafff85b`
+
 ## [1.7.1] - 2026-08-21
 
 ### Added
@@ -92,5 +137,6 @@ First public Veleis distribution.
 - Automated uninstall and custom-certificate operations are not yet published.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
+[1.8.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.0
 [1.7.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.1
 [1.7.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.0

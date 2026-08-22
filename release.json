@@ -1,15 +1,15 @@
 {
   "product": "Veleis",
-  "version": "1.7.1",
-  "git_tag": "v1.7.1",
+  "version": "1.8.0",
+  "git_tag": "v1.8.0",
   "docker_repository": "docker.io/nyxmael/veleis",
-  "docker_manifest_digest": "sha256:5fe5948c818a58cda38ded206c594669f6edbbb647703e6cd0055ebf3720c73a",
+  "docker_manifest_digest": "sha256:b1a3b106599d8b297f48a4573051c3dc646e12bd69c35cfbdae4d49edafff85b",
   "platform": "linux/amd64",
-  "schema": 32,
-  "installer_image_tag": "1.7.1",
+  "schema": 33,
+  "installer_image_tag": "1.8.0",
   "backup_format_version": 1,
-  "minimum_upgrade_version": "1.7.0",
-  "supported_upgrade_sources": ["1.7.0"],
+  "minimum_upgrade_version": "1.7.1",
+  "supported_upgrade_sources": ["1.7.1"],
   "lifecycle_tool": "https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis",
   "lifecycle_tool_sha256": "efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
 }

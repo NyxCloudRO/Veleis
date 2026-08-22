@@ -4,26 +4,28 @@
 
 ## Current stable release
 
-Veleis **1.7.1** is the current stable release.
+Veleis **1.8.0** is the current stable release.
 
 | Component | Release identity |
 | --------- | ---------------- |
-| Application | `1.7.1` |
-| Git tag and GitHub Release | `v1.7.1` |
-| Installer target | `docker.io/nyxmael/veleis:1.7.1` |
-| Docker manifest | `sha256:5fe5948c818a58cda38ded206c594669f6edbbb647703e6cd0055ebf3720c73a` |
-| Schema | 32 |
+| Application | `1.8.0` |
+| Git tag and GitHub Release | `v1.8.0` |
+| Installer target | `docker.io/nyxmael/veleis:1.8.0` |
+| Docker manifest | `sha256:b1a3b106599d8b297f48a4573051c3dc646e12bd69c35cfbdae4d49edafff85b` |
+| Schema | 33 |
 | Backup format | 1 |
 
-Veleis 1.7.0 remains immutable at its original Docker digest and GitHub release.
-The supported transition from 1.7.0 to 1.7.1 uses a mandatory pre-upgrade backup
-and keeps schema 32.
+Veleis 1.7.0 and 1.7.1 remain immutable at their original Docker digests and
+GitHub releases. The supported transition from 1.7.1 to 1.8.0 uses a mandatory
+pre-upgrade backup and advances schema 32 to 33.
 
 ## Supported versions
 
 | Version | Status |
 | ------- | ------ |
-| 1.7.x | Current public stable line; eligible for security and correctness fixes |
+| 1.8.x | Current public stable line; eligible for security and correctness fixes |
+| 1.7.1 | Supported upgrade source for 1.8.0 |
+| 1.7.0 | Prior immutable release; upgrade to 1.7.1 first |
 | <1.7 | Pre-public development; no public support |
 
 This policy is a conservative community release policy, not a contractual SLA.
@@ -32,11 +34,11 @@ supported.
 
 ## Version and channel policy
 
-- Exact version tags such as `1.7.0` are immutable.
-- Minor tags such as `1.7` move only to the newest accepted stable patch in that
+- Exact version tags such as `1.8.0` are immutable.
+- Minor tags such as `1.8` move only to the newest accepted stable patch in that
   minor line.
 - `latest` moves only to the newest accepted stable public release.
-- Git tags use `v` (`v1.7.1`); application and Docker versions do not.
+- Git tags use `v` (`v1.8.0`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
 

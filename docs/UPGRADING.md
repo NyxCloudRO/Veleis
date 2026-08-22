@@ -11,7 +11,7 @@ sudo veleis upgrade
 An exact target may be requested when it is the published stable release:
 
 ```bash
-sudo veleis upgrade 1.7.1
+sudo veleis upgrade 1.8.0
 ```
 
 Veleis retrieves public structured release metadata over HTTPS and validates
@@ -24,15 +24,15 @@ only after the target schema and HTTPS readiness pass.
 
 ## Current release state
 
-Veleis 1.7.1 is the current stable release, and 1.7.0 is an explicitly supported
-upgrade source. `sudo veleis upgrade` on 1.7.0 discovers 1.7.1; the exact target
-form is `sudo veleis upgrade 1.7.1`. Schema remains 32. Existing dashboards,
+Veleis 1.8.0 is the current stable release, and 1.7.1 is its explicitly supported
+upgrade source. `sudo veleis upgrade` on 1.7.1 discovers 1.8.0; the exact target
+form is `sudo veleis upgrade 1.8.0`. Schema advances from 32 to 33. Existing dashboards,
 assets, probes, users, incidents, Discovery provider configuration/inventory,
 TLS identity, and login state are preserved.
 
-On 1.7.1, `sudo veleis upgrade` and `sudo veleis upgrade 1.7.1` are safe
+On 1.8.0, `sudo veleis upgrade` and `sudo veleis upgrade 1.8.0` are safe
 no-ops: they create no backup, pull no image, run no migration, and restart no
-service. A 1.7.1 to 1.7.0 downgrade remains rejected.
+service. A 1.8.0 to 1.7.x downgrade remains rejected.
 
 Downgrades, non-exact versions, unpublished versions, unsupported source
 versions, floating tags, a digest mismatch, an older target schema, and

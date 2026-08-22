@@ -1,4 +1,4 @@
-# Features in Veleis 1.7.1
+# Features in Veleis 1.8.0
 
 [← Documentation home](../README.md)
 
@@ -26,8 +26,10 @@ a one-time token that becomes a host credential. Ravyr exposes no inbound remote
 shell or remediation interface.
 
 Agent enrollment instructions are generated inside the authenticated Veleis
-Agents screen. A separate public standalone agent packaging workflow is not yet
-published.
+Agents screen. A separate signed updater and jittered timer perform only the
+Ravyr-owned binary lifecycle. Stable policy supports deterministic progressive
+cohorts, concurrency and maintenance bounds, offline catch-up, atomic activation,
+telemetry-gated success, automatic rollback, and failed-release fleet pause.
 
 ## Docker monitoring
 
@@ -69,12 +71,14 @@ widgets with explicit provider scope and collection freshness. See
   Discovery providers/inventory and Proxmox workloads.
 - User-owned custom dashboards and configurable monitoring, Discovery, and
   Proxmox widgets.
-- Alert rules, silences, maintenance windows, and no-data handling.
+- Alert rules, silences, maintenance windows, no-data handling, overlap guidance,
+  acknowledgement, and an active-by-default operational view.
 - Open/acknowledged/resolved incident lifecycle and recovery history.
 - Dependency-aware incident explanations with optional notification-only
   suppression; raw alerts and incidents remain visible.
 - Durable generic webhook, Discord webhook, and SMTP email delivery with retry.
-- Private-by-default Status Pages with selected probe components and bounded,
+- Private-by-default Status Pages with compact paginated component administration,
+  search/filter/sort, safe bulk actions, scalable ordering, and bounded,
   privacy-safe public incident communication.
 - Configurable raw probe-result retention (7–365 days, 90-day clean-install
   default) and capacity visibility. Incident and audit truth is separate from
