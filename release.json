@@ -21,6 +21,6 @@
     "manifest_sha256": "6271fb4ad6a408798187266288396cb6ec7d35e648abcbf07c43cd8f26f01782",
     "signature_algorithm": "Ed25519",
     "key_id": "226fc31b6ee01ca3",
-    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.0/ravyr-release-public-key.pem"
+    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.0/release-public-key.pem"
   }
 }
