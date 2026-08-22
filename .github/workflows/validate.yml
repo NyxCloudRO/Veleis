@@ -27,6 +27,7 @@ jobs:
           grep -Fq 'readonly VELEIS_VERSION="1.8.0"' install.sh
           grep -Fq 'docker.io/nyxmael/veleis:${VELEIS_VERSION}' install.sh
           jq -e '.schema == 33 and .backup_format_version == 1 and .supported_upgrade_sources == ["1.7.1"]' release.json >/dev/null
+          jq -e '.ravyr.recommended_version == "1.8.0" and .ravyr.minimum_supported_version == "1.7.0" and .ravyr.protocol_minimum == 1 and .ravyr.protocol_maximum == 1 and (.ravyr.manifest_sha256 | test("^[a-f0-9]{64}$")) and .ravyr.signature_algorithm == "Ed25519" and .ravyr.key_id == "226fc31b6ee01ca3"' release.json >/dev/null
           expected=$(jq -r .lifecycle_tool_sha256 release.json)
           actual=$(sha256sum veleis | cut -d' ' -f1)
           test "$actual" = "$expected"

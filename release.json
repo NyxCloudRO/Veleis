@@ -11,5 +11,16 @@
   "minimum_upgrade_version": "1.7.1",
   "supported_upgrade_sources": ["1.7.1"],
   "lifecycle_tool": "https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis",
-  "lifecycle_tool_sha256": "efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
+  "lifecycle_tool_sha256": "efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18",
+  "ravyr": {
+    "recommended_version": "1.8.0",
+    "minimum_supported_version": "1.7.0",
+    "protocol_minimum": 1,
+    "protocol_maximum": 1,
+    "manifest": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.0/manifest.json",
+    "manifest_sha256": "6271fb4ad6a408798187266288396cb6ec7d35e648abcbf07c43cd8f26f01782",
+    "signature_algorithm": "Ed25519",
+    "key_id": "226fc31b6ee01ca3",
+    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.0/ravyr-release-public-key.pem"
+  }
 }

@@ -5,7 +5,7 @@ readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly TOOL_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
 readonly TOOL_SHA256="efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
 readonly RELEASE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_SHA256="dacfaac224ad1e445a55414ca91e56d42f22b1edd4fdf1fb4ae3a30a2b6cfd04"
+readonly RELEASE_SHA256="2671efe0bbcbc628c1eea99690c4c355e87e091bd11ceeaba70ad272522032c9"
 
 SUDO=()
 TEMPORARY_DIRECTORY=""
