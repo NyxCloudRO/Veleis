@@ -8,7 +8,7 @@ preserved at `/opt/veleis` for diagnosis.
 
 ## Unsupported operating system
 
-Error contains `unsupported operating system`. Veleis 1.8.2 is accepted only on
+Error contains `unsupported operating system`. Veleis 1.8.3 is accepted only on
 Ubuntu 24.04.4 LTS and Debian 13.6. Do not bypass OS detection on a production
 host.
 
@@ -55,7 +55,7 @@ Check DNS, outbound HTTPS, Docker Hub reachability, proxy policy, and available
 disk space:
 
 ```bash
-sudo docker pull nyxmael/veleis:1.8.2
+sudo docker pull nyxmael/veleis:1.8.3
 sudo docker system df
 ```
 

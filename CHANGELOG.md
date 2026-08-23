@@ -5,6 +5,28 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.3] - 2026-08-23
+
+### Fixed
+
+- Rebuilt the expanded Automatic Update Policy editor around one responsive
+  form grid with aligned fields, compact timing controls, coherent lower-right
+  actions, meaningful dirty-state saving, non-mutating cancellation, and
+  visible validation/API failures across desktop, tablet, and mobile layouts.
+- Hardened the shortened Ravyr HTTPS bootstrap so it retrieves the server
+  certificate first, verifies its authenticated fingerprint, installs it as a
+  temporary CA, and downloads the checksum and installer with normal TLS
+  verification—without `curl -k` or another insecure transport bypass.
+
+### Compatibility
+
+- Supported upgrade sources: Veleis 1.7.1, 1.8.0, 1.8.1, and 1.8.2.
+- Schema remains 33; backup format remains 1; no database migration is added.
+- Recommended Ravyr remains the signed 1.8.2 release; minimum supported Ravyr
+  remains 1.7.0 and lifecycle protocol remains 1. No re-enrollment is required.
+- Docker image: `docker.io/nyxmael/veleis:1.8.3`
+- Manifest digest: `sha256:b8f0f01242371128a3ad8f559d535781f99b7c3ee9bc035781116a8644cf8901`
+
 ## [1.8.2] - 2026-08-23
 
 ### Added

@@ -4,7 +4,7 @@
 
 ## Supported installation
 
-Veleis 1.8.2 supports clean installation on:
+Veleis 1.8.3 supports clean installation on:
 
 - Ubuntu 24.04.4 LTS, amd64
 - Debian 13.6, amd64
@@ -34,9 +34,9 @@ chmod +x install-veleis.sh
 ./install-veleis.sh
 ```
 
-Release `v1.8.2` also provides `install.sh` and `SHA256SUMS` as release assets.
+Release `v1.8.3` also provides `install.sh` and `SHA256SUMS` as release assets.
 Both the main-branch and release installers target the exact immutable image
-`docker.io/nyxmael/veleis:1.8.2`.
+`docker.io/nyxmael/veleis:1.8.3`.
 
 ## What the installer does
 
