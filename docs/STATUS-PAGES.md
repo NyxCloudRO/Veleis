@@ -8,10 +8,12 @@ published; an unpublished public slug returns 404.
 
 ## Create and publish
 
-Create a page in the authenticated Status Pages workspace. **Settings** owns
-the internal name, slug, public title, public description, and publication
-state. The compact header shows the public path and opens the public page when
-published. Internal names and source details remain authenticated-only.
+Create or select a page in the authenticated Status Pages workspace. The compact
+header shows its name, explicit **Published** or **Unpublished** state, copyable
+public path, and direct **Publish** or **Unpublish** action. **View public page**
+appears only while published. The configuration revision remains available as
+secondary concurrency context instead of competing with the page identity.
+Internal names and source details remain authenticated-only.
 
 ## Workspace
 
@@ -24,6 +26,10 @@ published. Internal names and source details remain authenticated-only.
 - **Incidents** separates the linked-incident publish flow, active public
   incidents, and bounded history from component administration.
 - **Settings** contains page-level identity and publication configuration.
+
+Overview, Components, Incidents, and Settings remain on the active tab after a
+save or server refresh. Selecting a different page is deliberate and does not
+depend on whichever page happened to arrive first in a request.
 
 Editing opens a bounded editor for public name, public description, private
 source context, enabled state, and order. Move-to-position supports large lists

@@ -5,8 +5,14 @@ response times.
 
 ## Get help
 
+- Start with the public documentation and
+  [Troubleshooting](docs/TROUBLESHOOTING.md).
+- Join [NyxCloud Support / Community](https://community.nyxcloud.ro/) for
+  installation, configuration, usage, troubleshooting discussion, general
+  help, and community conversation.
 - Use [GitHub Issues](https://github.com/NyxCloudRO/Veleis/issues) for confirmed
-  bugs and documentation problems.
+  reproducible bugs and documentation problems, not general chat or private
+  security reports.
 - Use the feature-request Issue template for focused product suggestions.
 - Read [Troubleshooting](docs/TROUBLESHOOTING.md) before filing an installation
   issue.
@@ -15,8 +21,9 @@ Include the Veleis version, operating system, architecture, installation method,
 reproduction steps, and sanitized logs. Remove credentials, tokens, cookies,
 private keys, internal addresses, and personal information.
 
-Security vulnerabilities must follow [SECURITY.md](SECURITY.md), not public
-Issues.
+Security vulnerabilities must follow [SECURITY.md](SECURITY.md) and private
+vulnerability reporting. Never post a vulnerability to the community or a
+public Issue.
 
 ## Support Veleis
 

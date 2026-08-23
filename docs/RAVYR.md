@@ -9,11 +9,21 @@ handler, infrastructure-control API, or package-management facility.
 
 ## Install and enroll
 
-Create an enrollment in the authenticated **Agents** workspace and run the
-generated one-time installation instructions on the intended Linux host. The
-token is exchanged for that host's durable identity and is not its continuing
-credential. Protect the generated command while it is valid and never reuse it
-on another host.
+Open **Agents → Install Ravyr**, name the intended host, and generate the
+one-time command. The command downloads only the small installer, verifies its
+exact authenticated SHA-256, and passes the Veleis server certificate
+fingerprint into bootstrap. The installer then establishes CA-validated HTTPS;
+permanent enrollment and telemetry traffic never rely on `curl -k`. The token
+is exchanged once for that host's durable identity and is not its continuing
+credential. Protect the command while it is valid and never reuse it on another
+host. The UI reports a successful clipboard copy and provides manual selection
+if browser clipboard access is unavailable.
+
+The installer supports direct root execution and ordinary `sudo` on the tested
+Ubuntu and Debian hosts. It creates `/etc/veleis` for configuration,
+`/var/lib/veleis-ravyr` for private state, and
+`/usr/local/lib/veleis-ravyr` for updater-owned lifecycle files before enabling
+the hardened units.
 
 Installation creates three narrowly scoped systemd units:
 
@@ -75,7 +85,7 @@ per-host SSH action.
 Ravyr downloads the strict same-origin release manifest and candidate into
 private staging. Before activation it validates server/protocol compatibility,
 Linux/amd64, exact path, bounded size, SHA-256, Ed25519 signature, and trusted
-key ID. Veleis 1.8.1 continues to trust the signed Ravyr 1.8.0 key
+key ID. Veleis 1.8.2 trusts the signed Ravyr 1.8.2 key
 `226fc31b6ee01ca3`; unsigned metadata cannot
 replace the trusted key.
 

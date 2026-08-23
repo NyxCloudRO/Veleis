@@ -1,26 +1,26 @@
 {
   "product": "Veleis",
-  "version": "1.8.1",
-  "git_tag": "v1.8.1",
+  "version": "1.8.2",
+  "git_tag": "v1.8.2",
   "docker_repository": "docker.io/nyxmael/veleis",
-  "docker_manifest_digest": "sha256:5afeb90ec365282990a080c0cc26e84d2fffe69986a87c48612abb9a3260fcfe",
+  "docker_manifest_digest": "sha256:074c9a6584873e07a793fdb0eaff24f32e292aa387a57314109380f6d1efbda4",
   "platform": "linux/amd64",
   "schema": 33,
-  "installer_image_tag": "1.8.1",
+  "installer_image_tag": "1.8.2",
   "backup_format_version": 1,
   "minimum_upgrade_version": "1.7.1",
-  "supported_upgrade_sources": ["1.7.1", "1.8.0"],
+  "supported_upgrade_sources": ["1.7.1", "1.8.0", "1.8.1"],
   "lifecycle_tool": "https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis",
   "lifecycle_tool_sha256": "efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18",
   "ravyr": {
-    "recommended_version": "1.8.0",
+    "recommended_version": "1.8.2",
     "minimum_supported_version": "1.7.0",
     "protocol_minimum": 1,
     "protocol_maximum": 1,
-    "manifest": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.0/manifest.json",
-    "manifest_sha256": "6271fb4a09bc778e7286a7ac291e29788738d55aa026027f78573ff05edcc3d1",
+    "manifest": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.2/manifest.json",
+    "manifest_sha256": "72e18de44026e129af049d87d35e3dc4e35fc61db4836c21d8f8aebfa5025739",
     "signature_algorithm": "Ed25519",
     "key_id": "226fc31b6ee01ca3",
-    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.0/release-public-key.pem"
+    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.2/release-public-key.pem"
   }
 }

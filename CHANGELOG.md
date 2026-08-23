@@ -5,6 +5,55 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.2] - 2026-08-23
+
+### Added
+
+- Added server-side name, heartbeat, CPU, memory, storage, version, OS, and
+  search controls for bounded Managed Hosts pages, with deterministic identity
+  tie-breaking across a 1,001-agent fleet.
+- Added a short Ravyr enrollment command that downloads one installer, verifies
+  its authenticated SHA-256, pins the server certificate fingerprint during
+  bootstrap, and persists CA-validated HTTPS for all continuing traffic.
+- Added explicit clipboard success feedback and a manual-selection fallback,
+  plus direct Community access at `https://community.nyxcloud.ro/`.
+
+### Changed
+
+- Agents now opens with a compact fleet summary, collapsed update-policy
+  configuration, dense 25/50/100-row management, and clearly separate
+  connectivity, compatibility, installed/recommended version, update state,
+  and policy facts.
+- Live Host, Probe, Docker, Proxmox workload, and Proxmox storage widgets retain
+  deterministic identity order and scroll position while telemetry refreshes.
+- Status Page management now uses a compact page selector and header with
+  explicit Published/Unpublished state, copyable public path, conditional public
+  link, direct Publish/Unpublish actions, stable tabs, and deemphasized revision.
+- Ravyr's recommended signed release advances to 1.8.2 while the minimum
+  supported version remains 1.7.0 and lifecycle protocol remains 1.
+
+### Fixed
+
+- Deduplicated semantically identical Linux socket observations before
+  Discovery ingestion and added a defensive server normalization layer, fixing
+  qBittorrent-style repeated wildcard UDP descriptors without merging distinct
+  owners, address families, ports, or protocols.
+- Ensured fresh and repair Ravyr installation creates
+  `/usr/local/lib/veleis-ravyr` and its config/state parents with the ownership
+  and modes required by the hardened updater systemd namespace.
+- Clarified disabled stable-channel controls, zero-agent policy setup, copy
+  failures, and Status Page publication actions without weakening token,
+  signature, TLS, RBAC, or monitoring-only boundaries.
+
+### Compatibility
+
+- Supported upgrade sources: Veleis 1.7.1, 1.8.0, and 1.8.1.
+- Schema remains 33; backup format remains 1; no database migration is added.
+- Existing Ravyr identities, credentials, policy overrides, configuration, CA
+  trust, and buffered telemetry are preserved; re-enrollment is not required.
+- Docker image: `docker.io/nyxmael/veleis:1.8.2`
+- Manifest digest: `sha256:074c9a6584873e07a793fdb0eaff24f32e292aa387a57314109380f6d1efbda4`
+
 ## [1.8.1] - 2026-08-22
 
 ### Added
@@ -178,5 +227,6 @@ First public Veleis distribution.
 
 [1.8.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.0
 [1.8.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.1
+[1.8.2]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.2
 [1.7.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.1
 [1.7.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.7.0
