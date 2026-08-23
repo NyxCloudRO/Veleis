@@ -61,11 +61,11 @@ only the external targets/providers/notification services you configure.
 
 ## How do I update?
 
-Use `sudo veleis upgrade`. Veleis 1.7.1, 1.8.0, and 1.8.1 upgrade to the current
-1.8.3 stable release after a mandatory backup and immutable-digest verification. On 1.8.3,
-the same command is a no-op. Targets must explicitly accept the installed source
-version and pass metadata, schema, digest, backup, migration, and readiness
-checks. See [Upgrading](UPGRADING.md).
+Use `sudo veleis upgrade`. Veleis 1.7.1, 1.8.0, 1.8.1, and 1.8.2 upgrade to the
+current 1.8.3 stable release after a mandatory backup and immutable-digest
+verification. On 1.8.3, the same command is a no-op. Targets must explicitly
+accept the installed source version and pass metadata, schema, digest, backup,
+migration, and readiness checks. See [Upgrading](UPGRADING.md).
 
 ## How do I back up?
 
