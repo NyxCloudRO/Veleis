@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v1.8.3-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.3)
+[![Current release](https://img.shields.io/badge/release-v1.8.4-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.4)
 [![Docker pulls](https://img.shields.io/docker/pulls/nyxmael/veleis)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-Ubuntu_24.04.4_%7C_Debian_13.6-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 1.8.3** · Schema 33 · linux/amd64
+Current stable release: **Veleis 1.8.4** · Schema 34 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:1.8.3` image, provisions TimescaleDB, applies schema migrations,
+`nyxmael/veleis:1.8.4` image, provisions TimescaleDB, applies schema migrations,
 and waits for HTTPS readiness.
 
 When installation finishes, open the printed `https://<detected-ip>/` address.
@@ -63,7 +63,7 @@ preserving their source truth:
 
 ## What Veleis monitors
 
-| Area | Included in 1.8.3 |
+| Area | Included in 1.8.4 |
 | ---- | ----------------- |
 | Service availability | HTTP/HTTPS, ICMP/Ping, TCP, DNS, SMTP, IMAP, and dedicated TLS certificate probes |
 | Linux hosts | Optional Ravyr agents: CPU, memory, storage, network, runtime, service, process, and inventory observations |
@@ -163,9 +163,9 @@ sudo veleis logs --tail=200 veleis
 sudo veleis backup
 ```
 
-Existing 1.7.1, 1.8.0, 1.8.1, and 1.8.2 installations can upgrade with
+Existing 1.7.1, 1.8.0, 1.8.1, 1.8.2, and 1.8.3 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 1.8.3`. Installations created before the lifecycle command
+`sudo veleis upgrade 1.8.4`. Installations created before the lifecycle command
 was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).
 Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See

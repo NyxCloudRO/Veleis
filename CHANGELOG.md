@@ -5,6 +5,35 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.4] - 2026-08-23
+
+### Fixed
+
+- Replaced time-percentage Ravyr rollout admission with serialized, bounded
+  five-minute leases, canary-first admission, stale-lease reconciliation, and
+  a strict maximum-concurrent limit so small fleets continue making progress.
+- Made installed version authoritative for agent lifecycle presentation: an
+  older follow-global agent cannot appear Current, pinned agents remain
+  explicit, malformed/newer versions fail safely, and summary counters agree
+  with effective row state without double-counting offline agents.
+- Added concise safe reasons for waiting, paused, pinned, failed, updating, and
+  current states, plus live lifecycle events so rows advance without a manual
+  browser refresh.
+- Published an idempotent, narrowly scoped legacy Ravyr repair script for the
+  historical missing `/usr/local/lib/veleis-ravyr` systemd namespace path. It
+  preserves identity, credentials, CA, configuration, and buffered telemetry.
+- Refined the Automatic Update Policy editor into one aligned responsive form
+  with coherent timing controls and attached Cancel/Save actions.
+
+### Compatibility
+
+- Supported upgrade sources: Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2, and 1.8.3.
+- Schema advances from 33 to 34; backup format remains 1.
+- Recommended Ravyr remains the unchanged signed 1.8.2 release; minimum
+  supported Ravyr remains 1.7.0 and lifecycle protocol remains 1.
+- Docker image: `docker.io/nyxmael/veleis:1.8.4`
+- Manifest digest: `sha256:40e5927272fc2fc415cea2b50d1d3d5bf63de6876094335b855ab26395415cd3`
+
 ## [1.8.3] - 2026-08-23
 
 ### Fixed

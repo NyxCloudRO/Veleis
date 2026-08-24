@@ -14,7 +14,7 @@
 | Database port | Not host-published; internal Compose network only |
 
 Other Debian/Ubuntu releases, derivatives, and arm64 have not completed public
-clean-install acceptance and are not claimed as supported for 1.8.3.
+clean-install acceptance and are not claimed as supported for 1.8.4.
 
 ## Host sizing
 

@@ -45,10 +45,14 @@ supported version, protocol range, concurrency limit, and optional maintenance
 window. Compatible older agents continue monitoring while waiting for their
 cohort; offline agents catch up after their next authenticated connection.
 
-Progressive rollout uses deterministic 1%, 5%, 25%, 50%, and 100% cohorts based
-on agent identity and release identity. Healthy stages advance automatically.
-Operators may set an agent to Follow Global, Canary, Stable, or exceptional
-Manual/Pinned policy. Update timing is explicit:
+Progressive rollout is canary-first and reserves at most the configured number
+of agents at once. Admission is serialized, so concurrent policy checks cannot
+oversubscribe the fleet. Each reservation is a five-minute renewable lease;
+an updater that never starts, disconnects, or stops reporting cannot occupy a
+slot permanently. Expired leases are reclaimed during normal policy checks and
+server startup, then the next eligible agent advances. Operators may set an
+agent to Follow Global, Canary, Stable, or exceptional Manual/Pinned policy.
+Update timing is explicit:
 
 - **Any time** means an eligible cohort may update whenever its concurrency slot
   is available. Window fields are inactive and cleared.
@@ -69,8 +73,8 @@ Per-agent policies mean:
 - **Stable** receives stable releases automatically without canary priority.
 - **Manual / pinned** disables automatic updates for that agent.
 
-Without a maintenance window, stable cohort and concurrency limits still
-prevent restart storms.
+Without a maintenance window, canary priority and the concurrency limit still
+prevent restart storms while guaranteeing forward progress for small fleets.
 
 The Agents workspace shows fleet totals, recommended/minimum versions, and each
 agent's installed version, compatibility, connectivity, channel, and update
@@ -86,7 +90,7 @@ per-host SSH action.
 Ravyr downloads the strict same-origin release manifest and candidate into
 private staging. Before activation it validates server/protocol compatibility,
 Linux/amd64, exact path, bounded size, SHA-256, Ed25519 signature, and trusted
-key ID. Veleis 1.8.3 trusts the signed Ravyr 1.8.2 key
+key ID. Veleis 1.8.4 trusts the signed Ravyr 1.8.2 key
 `226fc31b6ee01ca3`; unsigned metadata cannot
 replace the trusted key.
 
@@ -98,6 +102,41 @@ records the rollback, blocks that release for the host, and pauses wider fleet
 rollout. A newer release or explicit policy revision is required before another
 attempt, preventing an update/rollback loop. Identity, credentials,
 configuration, and the bounded telemetry spool are not replaced.
+
+## Legacy 1.8.0 filesystem repair
+
+Some historical Ravyr 1.8.0 installations can have an active updater timer but
+fail every updater start with `status=226/NAMESPACE` because
+`/usr/local/lib/veleis-ravyr` is absent. A successful timer alone is not proof
+of upgrade: verify the installed binary with `ravyr version` and confirm the
+Agents workspace reaches **Current** only after it reports 1.8.2.
+
+The updater cannot repair a privileged systemd namespace path when systemd
+refuses to start it. Run the official one-time repair through the operator's
+existing SSH/configuration-management process:
+
+```bash
+curl --fail --silent --show-error --location \
+  https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/repair-ravyr.sh \
+  --output /tmp/repair-ravyr.sh
+printf '%s  %s\n' '3dc0ee6cf771ba6693175553dcf322db50cc2dd038626ea9a82e29ab5a03db89' \
+  /tmp/repair-ravyr.sh | sha256sum --check -
+sudo sh /tmp/repair-ravyr.sh
+```
+
+The script requires local root privilege and is deliberately limited to the
+three Ravyr directories and existing lifecycle units. It does not reinstall,
+re-enroll, rotate credentials, replace CA/configuration/binaries, or provide a
+remote-execution feature. Verify afterward:
+
+```bash
+sudo systemctl status ravyr.service ravyr-updater.timer
+sudo systemctl start ravyr-updater.service
+/usr/local/bin/ravyr version
+```
+
+Fresh current installers create all required paths before enabling the units,
+so they do not need this repair.
 
 ## Troubleshooting
 

@@ -47,7 +47,7 @@ survive routine restart but are not, by themselves, a backup.
 
 ## Can I install on ARM?
 
-Not in 1.8.3. The accepted public image is linux/amd64 only.
+Not in 1.8.4. The accepted public image is linux/amd64 only.
 
 ## Which Linux releases are supported?
 
@@ -61,9 +61,9 @@ only the external targets/providers/notification services you configure.
 
 ## How do I update?
 
-Use `sudo veleis upgrade`. Veleis 1.7.1, 1.8.0, 1.8.1, and 1.8.2 upgrade to the
-current 1.8.3 stable release after a mandatory backup and immutable-digest
-verification. On 1.8.3, the same command is a no-op. Targets must explicitly
+Use `sudo veleis upgrade`. Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2, and 1.8.3 upgrade
+to the current 1.8.4 stable release after a mandatory backup and immutable-digest
+verification. On 1.8.4, the same command is a no-op. Targets must explicitly
 accept the installed source version and pass metadata, schema, digest, backup,
 migration, and readiness checks. See [Upgrading](UPGRADING.md).
 
@@ -85,7 +85,7 @@ cover the new host address.
 
 The application can consume custom TLS material internally, but public-safe
 replacement/reverse-proxy operations have not completed release acceptance.
-The supported 1.8.3 installer uses its generated certificate.
+The supported 1.8.4 installer uses its generated certificate.
 
 ## What happens to monitoring history?
 
