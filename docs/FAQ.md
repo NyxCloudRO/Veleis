@@ -51,7 +51,10 @@ Not in 1.8.4. The accepted public image is linux/amd64 only.
 
 ## Which Linux releases are supported?
 
-Ubuntu 24.04.4 LTS and Debian 13.6 are the exact clean-install-tested releases.
+Veleis 1.8.4 installation is supported and validated on Ubuntu 24.04 LTS,
+Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie),
+on amd64/x86_64. Other releases, derivatives, and architectures are not part
+of the supported installation matrix.
 
 ## Does Veleis require a cloud service?
 

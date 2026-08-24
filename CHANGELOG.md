@@ -5,6 +5,13 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+### Compatibility
+
+- Expanded and synchronized the Veleis 1.8.4 validated amd64 installation
+  matrix: Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12
+  (Bookworm), and Debian 13 (Trixie). The maintained installer now enforces
+  these exact releases and continues rejecting unknown or unvalidated hosts.
+
 ## [1.8.4] - 2026-08-23
 
 ### Fixed

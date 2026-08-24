@@ -163,11 +163,13 @@ fi
 
 os_release="${VELEIS_OS_RELEASE_FILE:-/etc/os-release}"
 [[ -r "$os_release" ]] || fail "cannot read $os_release"
+unset ID VERSION_ID PRETTY_NAME
 # shellcheck disable=SC1090
 source "$os_release"
-case "${ID:-}" in
-  debian | ubuntu) ;;
-  *) fail "unsupported operating system '${ID:-unknown}'; Veleis 1.8.4 supports tested Debian and Ubuntu releases" ;;
+readonly SUPPORTED_PLATFORMS="Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie), on amd64/x86_64"
+case "${ID:-}:${VERSION_ID:-}" in
+  ubuntu:24.04 | ubuntu:25.04 | ubuntu:26.04 | debian:12 | debian:13) ;;
+  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.4 supports $SUPPORTED_PLATFORMS" ;;
 esac
 os_name="${PRETTY_NAME:-${ID} ${VERSION_ID:-unknown}}"
 

@@ -2,19 +2,34 @@
 
 [← Documentation home](../README.md)
 
-## Supported platform
+## Tested and supported platforms
+
+Veleis 1.8.4 installation is validated on the following host platforms:
+
+| Distribution | Version | Status |
+| ------------ | ------- | ------ |
+| Ubuntu | 24.04 LTS | Supported / validated |
+| Ubuntu | 25.04 | Supported / validated |
+| Ubuntu | 26.04 LTS | Supported / validated |
+| Debian | 12 (Bookworm) | Supported / validated |
+| Debian | 13 (Trixie) | Supported / validated |
+
+Architecture: `amd64 / x86_64`
+
+Other Linux distributions or releases may work, but are not currently part of
+the validated Veleis installation matrix. Derivative distributions and arm64
+are not implied or supported by this matrix.
+
+## Host requirements
 
 | Requirement | Supported |
 | ----------- | --------- |
-| Operating systems | Ubuntu 24.04.4 LTS; Debian 13.6 |
-| CPU architecture | linux/amd64 |
+| Operating systems | One of the exact validated releases listed above |
+| CPU architecture | linux/amd64 (`amd64 / x86_64`) |
 | Container runtime | Docker Engine with Docker Compose v2; installer can install distribution packages |
 | Quick Start tool | `curl` must be present to retrieve the piped installer |
 | External application port | TCP 443 (HTTPS) |
 | Database port | Not host-published; internal Compose network only |
-
-Other Debian/Ubuntu releases, derivatives, and arm64 have not completed public
-clean-install acceptance and are not claimed as supported for 1.8.4.
 
 ## Host sizing
 

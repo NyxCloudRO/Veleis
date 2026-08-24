@@ -7,7 +7,7 @@
 [![Current release](https://img.shields.io/badge/release-v1.8.4-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.4)
 [![Docker pulls](https://img.shields.io/docker/pulls/nyxmael/veleis)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
-[![Hosts](https://img.shields.io/badge/tested-Ubuntu_24.04.4_%7C_Debian_13.6-334155)](docs/SYSTEM-REQUIREMENTS.md)
+[![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![License](https://img.shields.io/badge/license-proprietary-7c3aed)](LICENSE)
 
 **A modern, self-hosted unified monitoring and observability platform.**
@@ -45,6 +45,23 @@ then create the first Owner account. There are no default credentials.
 [Installation guide](docs/INSTALLATION.md) ·
 [System requirements](docs/SYSTEM-REQUIREMENTS.md) ·
 [Troubleshooting](docs/TROUBLESHOOTING.md)
+
+## Supported platforms
+
+Veleis 1.8.4 is currently validated on the following amd64 platforms:
+
+| Distribution | Version | Status |
+| ------------ | ------- | ------ |
+| Ubuntu | 24.04 LTS | Supported |
+| Ubuntu | 25.04 | Supported |
+| Ubuntu | 26.04 LTS | Supported |
+| Debian | 12 (Bookworm) | Supported |
+| Debian | 13 (Trixie) | Supported |
+
+Architecture: `amd64 / x86_64`
+
+Other Linux distributions or releases may work, but are not currently part of
+the validated Veleis installation matrix.
 
 ## Why Veleis?
 
@@ -132,8 +149,8 @@ documentation.
 
 | | Minimum | Recommended starting point |
 | --- | --- | --- |
-| Host | Ubuntu 24.04.4 LTS or Debian 13.6 | Dedicated current installation of either tested release |
-| Architecture | amd64 | amd64 |
+| Host | A validated Ubuntu or Debian release from the matrix above | Dedicated current installation of a supported release |
+| Architecture | amd64 / x86_64 | amd64 / x86_64 |
 | CPU | 2 vCPU | 4 vCPU |
 | Memory | 4 GiB | 8 GiB |
 | Free storage | 20 GiB | 50+ GiB SSD, sized for retention |
@@ -206,7 +223,8 @@ governed by the [Veleis Proprietary Distribution License](LICENSE).
 
 ## Current limitations
 
-- linux/amd64 only; tested on Ubuntu 24.04.4 LTS and Debian 13.6.
+- linux/amd64 only; other distributions and releases remain outside the
+  validated installation matrix above.
 - Default HTTPS uses a unique self-signed certificate.
 - Restore currently requires the same Veleis version, linux/amd64, PostgreSQL
   18, TimescaleDB 2.28.3, and the accepted Compose topology.

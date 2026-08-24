@@ -6,8 +6,15 @@
 
 Veleis 1.8.4 supports clean installation on:
 
-- Ubuntu 24.04.4 LTS, amd64
-- Debian 13.6, amd64
+- Ubuntu 24.04 LTS, amd64 / x86_64
+- Ubuntu 25.04, amd64 / x86_64
+- Ubuntu 26.04 LTS, amd64 / x86_64
+- Debian 12 (Bookworm), amd64 / x86_64
+- Debian 13 (Trixie), amd64 / x86_64
+
+Other distributions or releases may work, but are not currently part of the
+validated Veleis installation matrix. The installer rejects them rather than
+assuming generic Ubuntu, Debian, derivative, or ARM compatibility.
 
 The installer works when run as root or as a normal user with functional
 `sudo`. It does not request, read, or store a sudo password itself; the normal
@@ -34,9 +41,10 @@ chmod +x install-veleis.sh
 ./install-veleis.sh
 ```
 
-Release `v1.8.4` also provides `install.sh` and `SHA256SUMS` as release assets.
-Both the main-branch and release installers target the exact immutable image
-`docker.io/nyxmael/veleis:1.8.4`.
+The maintained main-branch installer targets the exact immutable image
+`docker.io/nyxmael/veleis:1.8.4`. Release `v1.8.4` retains its original
+publication-time `install.sh` and `SHA256SUMS` assets; use the maintained
+main-branch installer above for the current validated host policy.
 
 ## What the installer does
 
