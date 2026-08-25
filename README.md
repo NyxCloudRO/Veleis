@@ -5,7 +5,7 @@
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
 [![Current release](https://img.shields.io/badge/release-v1.8.5-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.5)
-[![Docker pulls](https://img.shields.io/docker/pulls/nyxmael/veleis)](https://hub.docker.com/r/nyxmael/veleis)
+[![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![License](https://img.shields.io/badge/license-proprietary-7c3aed)](LICENSE)
