@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.5
+# Features in Veleis 1.8.6
 
 [← Documentation home](../README.md)
 
@@ -13,7 +13,9 @@ This inventory describes implemented release functionality, not planned ideas.
 - SMTP and IMAP protocol checks with explicit TLS and optional encrypted
   credentials.
 - Dedicated TLS certificate trust, identity, validity, chain metadata, and
-  warning/critical expiry thresholds.
+  warning/critical expiry thresholds, plus bounded Certificate Intelligence
+  current/history/change views with fingerprints, SANs, cryptography,
+  verification state, first/last seen, and observation counts.
 - Read-only SNMPv2c and SNMPv3 scalar numeric-OID `GET` monitoring with exact
   typed values, conditions, encrypted credentials, and shared lifecycle. See
   [SNMP monitoring](SNMP.md).

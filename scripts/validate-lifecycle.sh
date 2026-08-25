@@ -7,28 +7,28 @@ trap 'find "$temporary_directory" -depth -delete 2>/dev/null || true' EXIT
 install_root="$temporary_directory/installation"
 mkdir -p "$install_root/data/tls"
 cat >"$install_root/.env" <<'ENVIRONMENT'
-VELEIS_VERSION=1.8.5
-VELEIS_IMAGE=docker.io/nyxmael/veleis:1.8.5
+VELEIS_VERSION=1.8.6
+VELEIS_IMAGE=docker.io/nyxmael/veleis:1.8.6
 VELEIS_HTTPS_PORT=443
 VELEIS_PUBLIC_BASE_URL=https://127.0.0.1
 POSTGRES_PASSWORD=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 VELEIS_MASTER_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 ENVIRONMENT
-printf '%s\n' 'Veleis 1.8.5' >"$install_root/.veleis-installation"
+printf '%s\n' 'Veleis 1.8.6' >"$install_root/.veleis-installation"
 printf '%s\n' 'name: veleis' >"$install_root/compose.yaml"
 
-VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.8.5 >"$temporary_directory/no-op.out"
+VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.8.6 >"$temporary_directory/no-op.out"
 grep -Fq 'No backup, pull, migration, or restart was performed.' "$temporary_directory/no-op.out"
 
 if VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.7.0 >"$temporary_directory/downgrade.out" 2>&1; then
   echo 'downgrade was accepted' >&2
   exit 1
 fi
-grep -Fq 'downgrade from 1.8.5 to 1.7.0 is not supported' "$temporary_directory/downgrade.out"
+grep -Fq 'downgrade from 1.8.6 to 1.7.0 is not supported' "$temporary_directory/downgrade.out"
 
 exec 8>"$install_root/.maintenance.lock"
 flock -n 8
-if VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.8.5 >"$temporary_directory/lock.out" 2>&1; then
+if VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.8.6 >"$temporary_directory/lock.out" 2>&1; then
   echo 'concurrent lifecycle operation was accepted' >&2
   exit 1
 fi
@@ -36,7 +36,7 @@ grep -Fq 'another Veleis backup, restore, or upgrade operation is active' "$temp
 flock -u 8
 
 printf '%s\n' 'UNEXPECTED=value' >>"$install_root/.env"
-if VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.8.5 >"$temporary_directory/environment.out" 2>&1; then
+if VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" upgrade 1.8.6 >"$temporary_directory/environment.out" 2>&1; then
   echo 'unsupported environment entry was accepted' >&2
   exit 1
 fi

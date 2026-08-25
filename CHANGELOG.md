@@ -5,6 +5,46 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.6] - 2026-08-25
+
+### Added
+
+- Added Certificate Intelligence to TLS Certificate probes: current and
+  previous identities, SHA-256 fingerprint, subject/issuer/serial, validity,
+  DNS/IP SANs, signature and public-key metadata, chain/verification/hostname
+  state, first/last seen timestamps, and observation counts.
+- Added bounded certificate identity history and edge-triggered change events.
+  An A→B rotation creates one event; repeated observation of B updates its
+  counters without duplicating the event.
+
+### Improved
+
+- Added responsive Certificate Intelligence presentation to probe details with
+  bounded current, history, and change views across desktop and mobile widths.
+- Preserved the accepted compact Status Pages, Asset Details action hierarchy,
+  dialog behavior, and application-wide responsive density corrections made
+  after 1.8.5.
+
+### Security and safety
+
+- Certificate Intelligence is observational only. It performs the same bounded
+  TLS handshake as the existing probe and cannot issue, renew, replace, install,
+  or reconfigure certificates or monitored infrastructure.
+- Certificate history APIs require normal Veleis authentication and probe-read
+  permission. They return a typed 404 for non-TLS probes, cap identities and
+  changes at 50 each, and never expose private keys or configured secrets.
+- The release image runs as `nonroot:nonroot`; final-image vulnerability and
+  secret scanning found no policy-violating HIGH/CRITICAL findings.
+
+### Compatibility
+
+- Supported upgrade sources: Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4,
+  and 1.8.5. Schema advances from 35 to 36; backup format remains 1.
+- Recommended Ravyr remains the unchanged signed 1.8.2 release; minimum
+  supported Ravyr remains 1.7.0 and lifecycle protocol remains 1.
+- Docker image: `docker.io/nyxmael/veleis:1.8.6`
+- Manifest digest: `sha256:1c51cd1f41644e72fc734aaa0132a2b6c69d9723c2ea6af9c0c4bf690e4df813`
+
 ## [1.8.5] - 2026-08-25
 
 ### Added

@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v1.8.5-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.5)
+[![Current release](https://img.shields.io/badge/release-v1.8.6-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.6)
 [![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 1.8.5** · Schema 35 · linux/amd64
+Current stable release: **Veleis 1.8.6** · Schema 36 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:1.8.5` image, provisions TimescaleDB, applies schema migrations,
+`nyxmael/veleis:1.8.6` image, provisions TimescaleDB, applies schema migrations,
 and waits for HTTPS readiness.
 
 When installation finishes, open the printed `https://<detected-ip>/` address.
@@ -48,7 +48,7 @@ then create the first Owner account. There are no default credentials.
 
 ## Supported platforms
 
-Veleis 1.8.5 is currently validated on the following amd64 platforms:
+Veleis 1.8.6 is currently validated on the following amd64 platforms:
 
 | Distribution | Version | Status |
 | ------------ | ------- | ------ |
@@ -80,9 +80,9 @@ preserving their source truth:
 
 ## What Veleis monitors
 
-| Area | Included in 1.8.5 |
+| Area | Included in 1.8.6 |
 | ---- | ----------------- |
-| Service availability | HTTP/HTTPS, ICMP/Ping, TCP, DNS, SMTP, IMAP, dedicated TLS certificate, and read-only SNMP scalar-OID probes |
+| Service availability | HTTP/HTTPS, ICMP/Ping, TCP, DNS, SMTP, IMAP, TLS Certificate probes with Certificate Intelligence history/change detection, and read-only SNMP scalar-OID probes |
 | Linux hosts | Optional Ravyr agents: CPU, memory, storage, network, runtime, service, process, and inventory observations |
 | Docker | Engines, containers, runtime state, metrics, events, images, volumes, networks, and availability incidents |
 | Proxmox | Read-only nodes, VMs, LXCs, storage, networks, inventory metadata, and relationships |
@@ -182,9 +182,9 @@ sudo veleis logs --tail=200 veleis
 sudo veleis backup
 ```
 
-Existing 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, and 1.8.4 installations can upgrade with
+Existing 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4, and 1.8.5 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 1.8.5`. Installations created before the lifecycle command
+`sudo veleis upgrade 1.8.6`. Installations created before the lifecycle command
 was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).
 Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See
@@ -195,6 +195,7 @@ Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See
 - [Installation](docs/INSTALLATION.md)
 - [System requirements](docs/SYSTEM-REQUIREMENTS.md)
 - [Features](docs/FEATURES.md)
+- [Certificate Intelligence](docs/CERTIFICATE-INTELLIGENCE.md)
 - [SNMP monitoring](docs/SNMP.md)
 - [Ravyr fleet lifecycle](docs/RAVYR.md)
 - [Status Pages](docs/STATUS-PAGES.md)
@@ -229,6 +230,9 @@ governed by the [Veleis Proprietary Distribution License](LICENSE).
 - linux/amd64 only; other distributions and releases remain outside the
   validated installation matrix above.
 - Default HTTPS uses a unique self-signed certificate.
+- Certificate Intelligence begins collecting identity and change history only
+  after schema 36 is installed and a TLS Certificate probe runs; it cannot
+  reconstruct observations from before the upgrade.
 - Restore currently requires the same Veleis version, linux/amd64, PostgreSQL
   18, TimescaleDB 2.28.3, and the accepted Compose topology.
 - Proxmox dashboard widgets show normalized inventory/state; historical Proxmox
