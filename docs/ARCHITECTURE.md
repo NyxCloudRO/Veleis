@@ -14,6 +14,7 @@ Browser / API client
         │ authenticated observations
         ├── Ravyr Linux agents ── optional Docker observations
         ├── GET-only Proxmox APIs
+        ├── bounded scalar-GET SNMP targets
         └── configured service probes and notification endpoints
 ```
 
@@ -41,6 +42,7 @@ Persistence is not a backup. See [Backup and restore](BACKUP-RESTORE.md).
 
 Veleis separates monitoring from infrastructure control. Ravyr initiates
 outbound authenticated communication. Docker collection performs observational
-queries. Proxmox uses fixed GET-only endpoints. Discovery providers submit
+queries. Proxmox uses fixed GET-only endpoints. SNMP performs bounded scalar
+`GET` requests and exposes no write operation. Discovery providers submit
 observations and relationships; Veleis does not remediate the systems it
 describes.

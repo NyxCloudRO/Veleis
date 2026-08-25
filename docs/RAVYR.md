@@ -90,7 +90,7 @@ per-host SSH action.
 Ravyr downloads the strict same-origin release manifest and candidate into
 private staging. Before activation it validates server/protocol compatibility,
 Linux/amd64, exact path, bounded size, SHA-256, Ed25519 signature, and trusted
-key ID. Veleis 1.8.4 trusts the signed Ravyr 1.8.2 key
+key ID. Veleis 1.8.5 trusts the signed Ravyr 1.8.2 key
 `226fc31b6ee01ca3`; unsigned metadata cannot
 replace the trusted key.
 

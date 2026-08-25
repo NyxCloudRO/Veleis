@@ -5,7 +5,7 @@ readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly TOOL_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
 readonly TOOL_SHA256="efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
 readonly RELEASE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_SHA256="a9835a0caea71d6436f2408bd53d3ec30608cebd51823604f912a7b62e4118ec"
+readonly RELEASE_SHA256="600169c6e7d541bd47fdca1bd09f8f6dfd35b557690fbf7370c964cb171e5df2"
 
 SUDO=()
 TEMPORARY_DIRECTORY=""
@@ -49,7 +49,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$TOOL_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "1.8.4" and .schema == 34 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.5" and .schema == 35 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 
 as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis" /usr/local/bin/veleis
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/release.json" "$INSTALL_ROOT/release.json"

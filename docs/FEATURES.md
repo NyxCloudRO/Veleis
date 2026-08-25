@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.4
+# Features in Veleis 1.8.5
 
 [← Documentation home](../README.md)
 
@@ -14,6 +14,9 @@ This inventory describes implemented release functionality, not planned ideas.
   credentials.
 - Dedicated TLS certificate trust, identity, validity, chain metadata, and
   warning/critical expiry thresholds.
+- Read-only SNMPv2c and SNMPv3 scalar numeric-OID `GET` monitoring with exact
+  typed values, conditions, encrypted credentials, and shared lifecycle. See
+  [SNMP monitoring](SNMP.md).
 - Scheduled and manual execution, current health, result history, analytics,
   incidents, and alert integration.
 

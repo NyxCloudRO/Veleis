@@ -2,6 +2,11 @@
 
 [← Documentation home](../README.md)
 
+SNMP communities and v3 authentication/privacy secrets follow the same
+installation master-key encryption boundary as other integration credentials.
+They are write-only and are not returned in configuration reads. See
+[SNMP monitoring](SNMP.md) for protocol-specific options and limitations.
+
 ## Installer-managed configuration
 
 The clean installer writes:

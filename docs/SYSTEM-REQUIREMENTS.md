@@ -4,7 +4,7 @@
 
 ## Tested and supported platforms
 
-Veleis 1.8.4 installation is validated on the following host platforms:
+Veleis 1.8.5 installation is validated on the following host platforms:
 
 | Distribution | Version | Status |
 | ------------ | ------- | ------ |
@@ -51,7 +51,8 @@ During installation, the host needs DNS and outbound HTTP/HTTPS access to its
 Debian/Ubuntu package repositories, Docker Hub, and GitHub's raw-content host.
 Normal operation may require outbound access to:
 
-- configured HTTP, TCP, DNS, SMTP, IMAP, and TLS targets;
+- configured HTTP, TCP, DNS, SMTP, IMAP, TLS, and SNMP targets (UDP 161 by
+  default, or the explicitly configured SNMP port);
 - webhook/Discord notification endpoints and SMTP notification servers;
 - enrolled Ravyr agents' outbound connection path to Veleis;
 - configured Proxmox API endpoints.

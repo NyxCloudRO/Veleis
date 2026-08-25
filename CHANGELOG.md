@@ -5,12 +5,44 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.5] - 2026-08-25
+
+### Added
+
+- Added read-only SNMP scalar-OID monitoring with SNMPv2c and SNMPv3
+  `noAuthNoPriv`, `authNoPriv`, and `authPriv`, secure write-only credentials,
+  typed condition evaluation, scheduled/manual execution, history, incidents,
+  and alert integration.
+
+### Improved
+
+- Corrected Asset Details action hierarchy around Add Probe, Edit asset, and
+  Delete asset, with an accessible Veleis-native exact-once delete dialog.
+- Unified application density and responsive layout behavior across primary
+  workspaces while preserving the compact Agents reference.
+
+### Security and safety
+
+- SNMP performs one bounded scalar `GET` per attempt. It never issues `SET` and
+  does not implement WALK, GETBULK, traps, discovery, or MIB-name resolution.
+- SNMP communities and v3 authentication/privacy secrets are encrypted at rest,
+  write-only through the API, redacted from responses, and discarded from logs.
+  SNMPv3 `authPriv` is recommended where security matters. MD5 and DES are
+  rejected; the supported SHA authentication and AES privacy families are
+  documented in the [SNMP guide](docs/SNMP.md).
+
 ### Compatibility
 
-- Expanded and synchronized the Veleis 1.8.4 validated amd64 installation
+- Preserved and synchronized the Veleis 1.8.5 validated amd64 installation
   matrix: Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12
   (Bookworm), and Debian 13 (Trixie). The maintained installer now enforces
   these exact releases and continues rejecting unknown or unvalidated hosts.
+- Supported upgrade sources: Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, and
+  1.8.4. Schema advances from 34 to 35; backup format remains 1.
+- Recommended Ravyr remains the unchanged signed 1.8.2 release; minimum
+  supported Ravyr remains 1.7.0 and lifecycle protocol remains 1.
+- Docker image: `docker.io/nyxmael/veleis:1.8.5`
+- Manifest digest: `sha256:cab41f4a7f63a2ac39295cac1940ff8c524ddf220f6083d2934d977210feb621`
 
 ## [1.8.4] - 2026-08-23
 

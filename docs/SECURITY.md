@@ -5,9 +5,10 @@
 ## Infrastructure observation
 
 Veleis intentionally has no infrastructure remediation or control surface.
-Proxmox integration is GET-only. Docker and Linux agent collection is
-observational. Ravyr has no inbound remote shell. Use least-privilege accounts
-and network access even with this application-level boundary.
+Proxmox integration is GET-only. SNMP issues only bounded scalar `GET`
+requests—never `SET`, WALK, GETBULK, or traps. Docker and Linux agent collection
+is observational. Ravyr has no inbound remote shell. Use least-privilege
+accounts and network access even with this application-level boundary.
 
 ## Authentication and authorization
 
@@ -25,7 +26,8 @@ and network access even with this application-level boundary.
 ## Secrets
 
 The installer generates unique high-entropy database and master secrets. Veleis
-uses the master key to encrypt stored integration credentials. Protect
+uses the master key to encrypt stored integration credentials, including SNMP
+communities and v3 authentication/privacy secrets. Protect
 `/opt/veleis/.env`; losing it can make encrypted configuration unrecoverable.
 Do not share environment files, cookies, API tokens, enrollment tokens, private
 keys, or provider credentials in Issues.

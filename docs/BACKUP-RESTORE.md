@@ -44,7 +44,7 @@ deletes old backups automatically. Before copying, check capacity with `df -h`.
 After copying, verify the sidecar in its destination directory:
 
 ```bash
-sha256sum --check veleis-backup-1.8.4-YYYYMMDDTHHMMSSZ.tar.gz.sha256
+sha256sum --check veleis-backup-1.8.5-YYYYMMDDTHHMMSSZ.tar.gz.sha256
 ```
 
 ## Restore
@@ -53,7 +53,7 @@ Restore is deliberately explicit and currently requires a working Veleis
 installation at the same application version as the backup:
 
 ```bash
-sudo veleis restore /secure/path/veleis-backup-1.8.4-YYYYMMDDTHHMMSSZ.tar.gz --force
+sudo veleis restore /secure/path/veleis-backup-1.8.5-YYYYMMDDTHHMMSSZ.tar.gz --force
 ```
 
 Before changing state, the command rejects unreadable, corrupt, malformed,
@@ -61,7 +61,7 @@ unsafe, wrong-architecture, incompatible PostgreSQL/TimescaleDB, wrong-version,
 and mismatched-topology archives. It then creates a complete safety backup of
 the target installation. Only after that succeeds does it stop Veleis, recreate
 the application database, invoke TimescaleDB's pre/post-restore procedures,
-restore secrets and files, recreate services, validate schema 34, and wait for
+restore secrets and files, recreate services, validate schema 35, and wait for
 HTTPS readiness.
 
 The source installation's TLS identity and configured public URL are preserved.
@@ -92,8 +92,8 @@ readiness and sign-in checks before declaring recovery complete.
 ## Tested recovery boundary
 
 The public workflow was accepted with PostgreSQL 18, TimescaleDB 2.28.3,
-Veleis 1.8.4/schema 34, and complete same-version restore coverage on
-linux/amd64. Supported 1.7.1/1.8.0/1.8.1/1.8.2/1.8.3 to 1.8.4 upgrades preserve populated state,
+Veleis 1.8.5/schema 35, and complete same-version restore coverage on
+linux/amd64. Supported 1.7.1/1.8.0/1.8.1/1.8.2/1.8.3/1.8.4 to 1.8.5 upgrades preserve populated state,
 backups, and TLS identity. TimescaleDB's documented
 full-database `pg_dump`/`pg_restore` flow
 and `timescaledb_pre_restore()`/`timescaledb_post_restore()` are used. See the
