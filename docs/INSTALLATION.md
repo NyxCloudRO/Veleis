@@ -4,7 +4,7 @@
 
 ## Supported installation
 
-Veleis 1.8.6 supports clean installation on:
+Veleis 1.8.7 supports clean installation on:
 
 - Ubuntu 24.04 LTS, amd64 / x86_64
 - Ubuntu 25.04, amd64 / x86_64
@@ -42,7 +42,7 @@ chmod +x install-veleis.sh
 ```
 
 The maintained main-branch installer targets the exact immutable image
-`docker.io/nyxmael/veleis:1.8.6`. Release `v1.8.5` retains its original
+`docker.io/nyxmael/veleis:1.8.7`. Release `v1.8.6` retains its original
 publication-time `install.sh` and `SHA256SUMS` assets; use the maintained
 main-branch installer above for the current validated host policy.
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="1.8.6"
+readonly VELEIS_VERSION="1.8.7"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
 readonly LIFECYCLE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
 readonly LIFECYCLE_SHA256="efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
 readonly RELEASE_METADATA_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_METADATA_SHA256="79352c54220f96e303540831cf750e80426556299c22c188a62d5845a12e4f16"
+readonly RELEASE_METADATA_SHA256="0d737bfead691210008cc30a2c354e6685aacc17cf3462f26528b53d10f3e262"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
 readonly CONTAINER_UID=65532
@@ -169,14 +169,14 @@ source "$os_release"
 readonly SUPPORTED_PLATFORMS="Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie), on amd64/x86_64"
 case "${ID:-}:${VERSION_ID:-}" in
   ubuntu:24.04 | ubuntu:25.04 | ubuntu:26.04 | debian:12 | debian:13) ;;
-  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.6 supports $SUPPORTED_PLATFORMS" ;;
+  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.7 supports $SUPPORTED_PLATFORMS" ;;
 esac
 os_name="${PRETTY_NAME:-${ID} ${VERSION_ID:-unknown}}"
 
 architecture="${VELEIS_ARCHITECTURE:-$(uname -m)}"
 case "$architecture" in
   x86_64 | amd64) architecture=amd64 ;;
-  *) fail "unsupported architecture '$architecture'; Veleis 1.8.6 supports linux/amd64" ;;
+  *) fail "unsupported architecture '$architecture'; Veleis 1.8.7 supports linux/amd64" ;;
 esac
 
 if ((EUID == 0)); then
@@ -263,7 +263,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "1.8.6" and .schema == 36 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.7" and .schema == 37 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 

@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.6
+# Features in Veleis 1.8.7
 
 [← Documentation home](../README.md)
 

@@ -17,16 +17,16 @@ jobs:
       - name: Validate release identity
         run: |
           set -Eeuo pipefail
-          jq -e '.version == "1.8.6" and .git_tag == "v1.8.6" and .installer_image_tag == "1.8.6" and .platform == "linux/amd64"' release.json >/dev/null
+          jq -e '.version == "1.8.7" and .git_tag == "v1.8.7" and .release_url == "https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.7" and .installer_image_tag == "1.8.7" and .platform == "linux/amd64"' release.json >/dev/null
           version=$(jq -r '.version' release.json)
           grep -Fq "## [$version]" CHANGELOG.md
           if find . -type f -name 'RELEASE-NOTES-*.md' -print -quit | grep -q .; then
             echo 'per-version release-note files are forbidden; update CHANGELOG.md instead' >&2
             exit 1
           fi
-          grep -Fq 'readonly VELEIS_VERSION="1.8.6"' install.sh
+          grep -Fq 'readonly VELEIS_VERSION="1.8.7"' install.sh
           grep -Fq "docker.io/nyxmael/veleis:\${VELEIS_VERSION}" install.sh
-          jq -e '.schema == 36 and .backup_format_version == 1 and .supported_upgrade_sources == ["1.7.1", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5"]' release.json >/dev/null
+          jq -e '.schema == 37 and .backup_format_version == 1 and .supported_upgrade_sources == ["1.7.1", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6"]' release.json >/dev/null
           jq -e '.ravyr.recommended_version == "1.8.2" and .ravyr.minimum_supported_version == "1.7.0" and .ravyr.protocol_minimum == 1 and .ravyr.protocol_maximum == 1 and .ravyr.manifest_sha256 == "72e18de44026e129af049d87d35e3dc4e35fc61db4836c21d8f8aebfa5025739" and .ravyr.signature_algorithm == "Ed25519" and .ravyr.key_id == "226fc31b6ee01ca3" and .ravyr.public_key == "https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.2/release-public-key.pem"' release.json >/dev/null
           jq -e '.ravyr.legacy_repair.url == "https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/repair-ravyr.sh" and .ravyr.legacy_repair.sha256 == "3dc0ee6cf771ba6693175553dcf322db50cc2dd038626ea9a82e29ab5a03db89"' release.json >/dev/null
           test "$(sha256sum repair-ravyr.sh | cut -d' ' -f1)" = "$(jq -r .ravyr.legacy_repair.sha256 release.json)"
@@ -89,5 +89,5 @@ jobs:
           set -Eeuo pipefail
           expected=$(jq -r '.docker_manifest_digest' release.json)
           token=$(curl -fsSL 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:nyxmael/veleis:pull' | jq -r .token)
-          actual=$(curl -fsSI -H "Authorization: Bearer $token" -H 'Accept: application/vnd.oci.image.manifest.v1+json' 'https://registry-1.docker.io/v2/nyxmael/veleis/manifests/1.8.6' | tr -d '\r' | awk -F': ' 'tolower($1)=="docker-content-digest"{print $2}')
+          actual=$(curl -fsSI -H "Authorization: Bearer $token" -H 'Accept: application/vnd.oci.image.manifest.v1+json' 'https://registry-1.docker.io/v2/nyxmael/veleis/manifests/1.8.7' | tr -d '\r' | awk -F': ' 'tolower($1)=="docker-content-digest"{print $2}')
           test "$actual" = "$expected"

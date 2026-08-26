@@ -5,6 +5,36 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.7] - 2026-08-26
+
+### Improved
+
+- Added scalable server-side pagination and filtering to Notifications History,
+  with channel context, deterministic ordering, bounded error presentation, and
+  distinct loading, empty, and failure states.
+- Unified notification health across Overview and Notifications: retrying work
+  is the canonical active issue, terminal outcomes remain history, and channel
+  health follows its latest delivery result.
+- Refined Overview Operational Attention and responsive accessibility across
+  desktop and mobile layouts.
+- Replaced native destructive prompts with consistent accessible Veleis dialogs
+  that guard duplicate submission, preserve focus, and keep secrets out of copy.
+
+### Fixed
+
+- Deleting a probe or its asset now retires associated alert instances,
+  incidents, dependency interpretations, and undelivered notification work in
+  one transaction while preserving delivered and audit history.
+
+### Compatibility
+
+- Supported upgrade sources: Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4,
+  1.8.5, and 1.8.6. Schema advances from 36 to 37; backup format remains 1.
+- Recommended Ravyr remains the unchanged signed 1.8.2 release; minimum
+  supported Ravyr remains 1.7.0 and lifecycle protocol remains 1.
+- Docker image: `docker.io/nyxmael/veleis:1.8.7`
+- Manifest digest: `sha256:894b469f8c1a210f59b2981ea15c473055c56ae77a4c865bbdccecd2d87a8568`
+
 ## [1.8.6] - 2026-08-25
 
 ### Added

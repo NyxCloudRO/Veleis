@@ -34,7 +34,7 @@ Docker socket access is still host-sensitive and should be restricted.
 
 ## Can Veleis change an SNMP device?
 
-No. Veleis 1.8.6 performs one bounded scalar numeric-OID `GET` per probe
+No. Veleis 1.8.7 performs one bounded scalar numeric-OID `GET` per probe
 attempt. It has no SNMP `SET`, WALK, GETBULK, trap, discovery, or MIB-name
 resolution capability. See [SNMP monitoring](SNMP.md).
 
@@ -53,11 +53,11 @@ survive routine restart but are not, by themselves, a backup.
 
 ## Can I install on ARM?
 
-Not in 1.8.6. The accepted public image is linux/amd64 only.
+Not in 1.8.7. The accepted public image is linux/amd64 only.
 
 ## Which Linux releases are supported?
 
-Veleis 1.8.6 installation is supported and validated on Ubuntu 24.04 LTS,
+Veleis 1.8.7 installation is supported and validated on Ubuntu 24.04 LTS,
 Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie),
 on amd64/x86_64. Other releases, derivatives, and architectures are not part
 of the supported installation matrix.
@@ -71,8 +71,8 @@ only the external targets/providers/notification services you configure.
 ## How do I update?
 
 Use `sudo veleis upgrade`. Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4,
-and 1.8.5 upgrade to the current 1.8.6 stable release after a mandatory backup and
-immutable-digest verification. On 1.8.6, the same command is a no-op. Targets must explicitly
+1.8.5, and 1.8.6 upgrade to the current 1.8.7 stable release after a mandatory backup and
+immutable-digest verification. On 1.8.7, the same command is a no-op. Targets must explicitly
 accept the installed source version and pass metadata, schema, digest, backup,
 migration, and readiness checks. See [Upgrading](UPGRADING.md).
 
@@ -94,7 +94,7 @@ cover the new host address.
 
 The application can consume custom TLS material internally, but public-safe
 replacement/reverse-proxy operations have not completed release acceptance.
-The supported 1.8.6 installer uses its generated certificate.
+The supported 1.8.7 installer uses its generated certificate.
 
 ## What happens to monitoring history?
 

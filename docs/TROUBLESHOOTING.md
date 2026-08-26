@@ -8,7 +8,7 @@ preserved at `/opt/veleis` for diagnosis.
 
 ## Unsupported operating system
 
-Error contains `unsupported operating system`. Veleis 1.8.6 is accepted only on
+Error contains `unsupported operating system`. Veleis 1.8.7 is accepted only on
 Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and
 Debian 13 (Trixie), on amd64/x86_64. Do not bypass OS detection on a production
 host; unknown Ubuntu/Debian releases and other distributions fail closed.
@@ -56,7 +56,7 @@ Check DNS, outbound HTTPS, Docker Hub reachability, proxy policy, and available
 disk space:
 
 ```bash
-sudo docker pull nyxmael/veleis:1.8.6
+sudo docker pull nyxmael/veleis:1.8.7
 sudo docker system df
 ```
 
@@ -116,7 +116,7 @@ clean installer. Install the verified public bootstrap as documented under
 ## Backup is rejected
 
 Run `sudo veleis status` first. Backup requires both services and HTTPS
-readiness, sufficient free space, schema 36 in a clean migration state, and no
+readiness, sufficient free space, schema 37 in a clean migration state, and no
 symbolic links or special files under persistent data. The destination must be
 an absolute, non-symlink directory. Resolve the reported condition; do not copy
 the live database volume as a substitute.
