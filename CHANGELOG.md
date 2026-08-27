@@ -5,6 +5,85 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.8] - 2026-08-27
+
+### Highlights
+
+- Added Advanced DNS Monitoring with A, AAAA, CNAME, MX, NS, TXT, SRV, CAA,
+  and PTR records; typed expectations; resolver and optional authoritative
+  comparison; resolver-dependent DNSSEC state; semantic change history; and
+  shared incident/alert integration.
+- Added revisioned Notification Escalation Policies with ordered absolute-delay
+  steps, multiple channels, immutable incident snapshots, stop-on-acknowledge,
+  exactly-once scheduling, cancellation, delivery provenance, active progress,
+  and a responsive timeline editor.
+- Added in-place notification-channel editing and safe optional credential
+  rotation while preserving channel identity, history, type, encryption, and
+  write-only secret behavior. Channel management is now a compact responsive
+  list.
+- Unified Profile, Security, Preferences, Data Retention, and Access below
+  canonical `/settings/*` routes with responsive top navigation. The sidebar
+  account footer now provides a direct neutral Sign Out action and Settings is
+  the sole general configuration entry.
+
+### Database and performance
+
+- Schema advances from 37 to 40. Agent metrics use one-day chunks, drop a
+  redundant large index, and enter Timescale columnstore after one day while
+  preserving the existing 14-day agent-metric lifecycle.
+- Fresh installations size PostgreSQL and TimescaleDB from the minimum of host,
+  current cgroup-v2/cgroup-v1 ancestors, and a validated optional override.
+  Profiles bound buffers, per-operation memory, connections, and workers. A
+  32 GiB host constrained to 2 GiB now receives the 2 GiB profile rather than
+  host-sized settings.
+
+### Upgrade notes
+
+- Run `sudo veleis backup` before upgrading, then `sudo veleis upgrade 1.8.8`.
+  The lifecycle creates and verifies another mandatory pre-upgrade backup,
+  validates the immutable image digest, applies migrations 38–40, and waits for
+  schema 40 and HTTPS readiness.
+- Fresh 1.8.8 installations use cgroup-aware managed PostgreSQL tuning.
+  Historical and administrator-customized settings are never silently
+  overwritten during upgrade.
+- Existing installations should first refresh the current lifecycle tooling as
+  documented in [Upgrading](docs/UPGRADING.md), then run:
+
+  ```bash
+  sudo veleis postgres-memory status
+  ```
+
+  `HEALTHY`, `WARNING`, or `UNSAFE` is reported with effective memory,
+  ownership, and live PostgreSQL settings. An unsafe historical installation
+  can explicitly adopt the Veleis-managed profile with:
+
+  ```bash
+  sudo veleis postgres-memory adopt-managed
+  ```
+
+  Adoption backs up both `.env` and `compose.yaml`, atomically installs the
+  managed profile/topology, recreates and health-checks the stack, and restores
+  both files if validation fails. It restarts PostgreSQL and the application;
+  schedule a maintenance window. No database data is deleted. Operators who
+  intentionally maintain custom PostgreSQL configuration remain in control and
+  may leave it unchanged after reviewing the warning.
+- Never use `swapoff` or hand-edit PostgreSQL files as the Veleis remediation
+  procedure.
+
+### Compatibility and known limitations
+
+- Supported upgrade sources: Veleis 1.7.1 and 1.8.0 through 1.8.7. Backup
+  format remains 1. Recommended Ravyr remains signed 1.8.2; minimum Ravyr is
+  1.7.0 and lifecycle protocol remains 1.
+- The supported image remains linux/amd64. Default HTTPS remains self-signed.
+  Image signing, a published SBOM, and provenance attestation are not currently
+  part of the Veleis release pipeline.
+- PostgreSQL memory profiles bound the primary allocation risks but do not
+  guarantee that every third-party workload fits the minimum 1 GiB profile;
+  2 GiB is the practical small-install recommendation.
+- Docker image: `docker.io/nyxmael/veleis:1.8.8`
+- Manifest digest: `sha256:4f082699b5bec6261f119ea6f620decbf9bcfc72c06523b1e8ae1c8e00a98f8a`
+
 ## [1.8.7] - 2026-08-26
 
 ### Improved

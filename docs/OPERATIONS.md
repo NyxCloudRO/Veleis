@@ -9,6 +9,7 @@ sudo veleis status
 sudo veleis version
 sudo veleis logs --tail=200 veleis
 sudo veleis backup
+sudo veleis postgres-memory status
 ```
 
 ## Status and readiness
@@ -36,6 +37,16 @@ secrets.
 Backup, restore, and upgrade operations share an exclusive maintenance lock.
 A second lifecycle operation is rejected rather than run concurrently. See
 [Backup and restore](BACKUP-RESTORE.md) and [Upgrading](UPGRADING.md).
+
+## Database memory lifecycle
+
+`sudo veleis postgres-memory status` is read-only and reports managed or custom
+ownership plus a healthy, warning, or unsafe safety result. For an accepted
+legacy installation, `sudo veleis postgres-memory adopt-managed` creates backups of
+the environment and Compose files, installs the current profile, validates the
+rendered topology, and restarts the stack. `apply-managed` recalculates an
+already managed profile after an intentional host or cgroup memory change; it
+does not overwrite custom configuration.
 
 ## Start, stop, and restart
 

@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.7
+# Features in Veleis 1.8.8
 
 [← Documentation home](../README.md)
 
@@ -9,7 +9,10 @@ This inventory describes implemented release functionality, not planned ideas.
 - HTTP/HTTPS status, redirects, bounded response checks, timing, and history.
 - ICMP/Ping reachability and latency.
 - TCP connection checks.
-- DNS response and expected-answer checks.
+- Advanced DNS checks for A, AAAA, CNAME, MX, NS, TXT, SRV, CAA, and PTR,
+  including typed expectations, resolver/authoritative comparison,
+  resolver-dependent DNSSEC state, and bounded semantic history. See
+  [Advanced DNS monitoring](DNS.md).
 - SMTP and IMAP protocol checks with explicit TLS and optional encrypted
   credentials.
 - Dedicated TLS certificate trust, identity, validity, chain metadata, and
@@ -83,6 +86,15 @@ widgets with explicit provider scope and collection freshness. See
   suppression; raw alerts and incidents remain visible.
 - Durable schema-v1 generic webhooks, semantic Discord embeds, and readable
   SMTP email delivery with deduplication and bounded retry/rate-limit handling.
+- In-place channel editing with stable identity, optional write-only credential
+  rotation, and a compact responsive management surface.
+- Revisioned escalation policies with 1–10 absolute-delay steps, multiple
+  channels, immutable execution snapshots, Alert Rule assignment,
+  acknowledgement/recovery cancellation, progress, and delivery provenance.
+  See [Notifications and escalation policies](NOTIFICATIONS.md).
+- Unified responsive Settings routes for Profile, Security, Preferences, Data
+  Retention, and Access, plus a direct sidebar Sign Out action. See
+  [Settings and account navigation](SETTINGS.md).
 - Private-by-default Status Pages with compact paginated component administration,
   search/filter/sort, safe bulk actions, scalable ordering, and bounded,
   privacy-safe public incident communication.

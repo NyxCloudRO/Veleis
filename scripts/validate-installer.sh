@@ -9,6 +9,16 @@ trap 'find "$temporary_directory" -type f -delete 2>/dev/null || true; rmdir "$t
 "$installer" --print-compose >"$temporary_directory/compose.yaml"
 diff -u "$repository_root/deploy/compose.yaml" "$temporary_directory/compose.yaml"
 
+bash "$repository_root/veleis-postgres-memory.sh" env 2048 >"$temporary_directory/environment"
+printf '%s\n' \
+  'POSTGRES_PASSWORD=installer-static-acceptance' \
+  'VELEIS_IMAGE=veleis-static-acceptance:local' \
+  'VELEIS_MASTER_KEY=installer-static-acceptance' \
+  'VELEIS_PUBLIC_BASE_URL=https://127.0.0.1' \
+  'VELEIS_HTTPS_PORT=443' >>"$temporary_directory/environment"
+docker compose --env-file "$temporary_directory/environment" \
+  --file "$temporary_directory/compose.yaml" config --quiet
+
 assert_os_accepted() {
   local distribution=$1 version=$2 label=$3
   printf 'ID=%q\nVERSION_ID=%q\nPRETTY_NAME=%q\n' "$distribution" "$version" "$label" >"$temporary_directory/os-release"

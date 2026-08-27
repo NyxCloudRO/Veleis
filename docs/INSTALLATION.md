@@ -4,7 +4,7 @@
 
 ## Supported installation
 
-Veleis 1.8.7 supports clean installation on:
+Veleis 1.8.8 supports clean installation on:
 
 - Ubuntu 24.04 LTS, amd64 / x86_64
 - Ubuntu 25.04, amd64 / x86_64
@@ -42,7 +42,7 @@ chmod +x install-veleis.sh
 ```
 
 The maintained main-branch installer targets the exact immutable image
-`docker.io/nyxmael/veleis:1.8.7`. Release `v1.8.6` retains its original
+`docker.io/nyxmael/veleis:1.8.8`. Release `v1.8.7` retains its original
 publication-time `install.sh` and `SHA256SUMS` assets; use the maintained
 main-branch installer above for the current validated host policy.
 
@@ -54,15 +54,18 @@ main-branch installer above for the current validated host policy.
 4. Installs missing system tools, Docker Engine/CLI, and Compose v2 from the OS
    package repositories.
 5. Verifies the Docker daemon and checks that TCP 443 is free.
-6. Creates the persistent installation at `/opt/veleis`.
-7. Generates independent database and application secrets.
-8. Generates an installation-specific self-signed TLS certificate.
-9. Pulls the immutable Veleis image and pinned TimescaleDB image.
-10. Starts the database, applies migrations, and starts Veleis.
-11. Waits for database, schema, application, and HTTPS readiness.
-12. Installs the verified `/usr/local/bin/veleis` lifecycle command and release
+6. Detects the effective cgroup/host memory limit, requires at least 1 GiB, and
+   selects a managed PostgreSQL profile (2 GiB or more is recommended).
+7. Creates the persistent installation at `/opt/veleis`.
+8. Generates independent database and application secrets.
+9. Generates an installation-specific self-signed TLS certificate.
+10. Pulls the immutable Veleis image and pinned TimescaleDB image.
+11. Starts the database, applies migrations, and starts Veleis.
+12. Waits for database, schema, application, and HTTPS readiness.
+13. Installs the verified `/usr/local/bin/veleis` lifecycle and PostgreSQL
+    memory commands plus release
     metadata.
-13. Prints the detected HTTPS address and routine operator commands.
+14. Prints the detected HTTPS address and routine operator commands.
 
 The installer never prints generated secrets, changes firewall rules, exposes
 PostgreSQL on the host, or creates default application credentials.

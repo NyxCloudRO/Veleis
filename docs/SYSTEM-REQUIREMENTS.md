@@ -4,7 +4,7 @@
 
 ## Tested and supported platforms
 
-Veleis 1.8.7 installation is validated on the following host platforms:
+Veleis 1.8.8 installation is validated on the following host platforms:
 
 | Distribution | Version | Status |
 | ------------ | ------- | ------ |
@@ -36,14 +36,15 @@ are not implied or supported by this matrix.
 | Resource | Minimum starting point | Recommended starting point |
 | -------- | ---------------------- | -------------------------- |
 | CPU | 2 vCPU | 4 vCPU |
-| Memory | 4 GiB | 8 GiB |
+| Memory | 1 GiB for a minimal low-load installation | 2 GiB practical small-install starting point |
 | Free storage | 20 GiB | 50 GiB or more on SSD |
 | Network | Stable installation access | Stable access to every monitored/notification endpoint |
 
-These are deployment starting points, not unlimited-capacity guarantees.
-Increase resources for short probe intervals, many agents/containers, large
-Discovery inventories, or long retention. Monitor the capacity view and the
-Docker host's storage.
+These are deployment starting points, not unlimited-capacity guarantees. The
+installer detects the minimum finite host/current-cgroup memory boundary and
+generates a bounded PostgreSQL/TimescaleDB profile. Increase resources for
+short probe intervals, many agents/containers, large Discovery inventories, or
+long retention. Monitor the capacity view and the Docker host's storage.
 
 ## Network access
 

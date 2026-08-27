@@ -2,13 +2,30 @@
 
 [← Documentation home](../README.md)
 
+## PostgreSQL memory status is custom, warning, or unsafe
+
+Inspect without changing the installation:
+
+```bash
+sudo veleis postgres-memory status
+```
+
+An accepted pre-1.8.8 topology appears as `custom` and can be migrated
+explicitly with `sudo veleis postgres-memory adopt-managed`. Custom ownership
+is deliberately not changed by `apply-managed`; compare the topology with
+`/opt/veleis/bin/veleis-compose.yaml` before choosing explicit adoption.
+`unsafe` indicates values outside the safety envelope. Do not disable swap,
+delete environment lines, or
+force a restart; restore the most recent `.env` and `compose.yaml` backups or
+collect the command output for diagnosis.
+
 The installer exits non-zero and does not print the success banner unless
 Veleis is actually ready over HTTPS. If state was already created, it is
 preserved at `/opt/veleis` for diagnosis.
 
 ## Unsupported operating system
 
-Error contains `unsupported operating system`. Veleis 1.8.7 is accepted only on
+Error contains `unsupported operating system`. Veleis 1.8.8 is accepted only on
 Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and
 Debian 13 (Trixie), on amd64/x86_64. Do not bypass OS detection on a production
 host; unknown Ubuntu/Debian releases and other distributions fail closed.
@@ -56,7 +73,7 @@ Check DNS, outbound HTTPS, Docker Hub reachability, proxy policy, and available
 disk space:
 
 ```bash
-sudo docker pull nyxmael/veleis:1.8.7
+sudo docker pull nyxmael/veleis:1.8.8
 sudo docker system df
 ```
 
@@ -116,7 +133,7 @@ clean installer. Install the verified public bootstrap as documented under
 ## Backup is rejected
 
 Run `sudo veleis status` first. Backup requires both services and HTTPS
-readiness, sufficient free space, schema 37 in a clean migration state, and no
+readiness, sufficient free space, schema 40 in a clean migration state, and no
 symbolic links or special files under persistent data. The destination must be
 an absolute, non-symlink directory. Resolve the reported condition; do not copy
 the live database volume as a substitute.

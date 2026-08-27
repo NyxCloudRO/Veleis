@@ -20,6 +20,8 @@ The clean installer writes:
 - `/opt/veleis/release.json` — accepted release, schema, compatibility, and
   immutable Docker identity metadata.
 - `/usr/local/bin/veleis` — focused public lifecycle command.
+- `/opt/veleis/bin/veleis-postgres-memory` — validated memory-profile helper.
+- `/opt/veleis/bin/veleis-compose.yaml` — accepted managed Compose template.
 
 The environment file and marker are root-owned mode 600. The private key is
 mode 600 and readable by the non-root application UID. Generated secrets are
@@ -36,10 +38,22 @@ unique per installation and are not printed.
   depends on the database, migrations, secrets, TLS, networks, health checks,
   and persistence defined there.
 
-Do not hand-edit installer-managed files. The release has no supported
-general-purpose reconfiguration workflow. Product settings—assets, probes, users,
+Do not hand-edit installer-managed files. Use `sudo veleis postgres-memory
+status` to inspect database sizing and `sudo veleis postgres-memory
+adopt-managed` to migrate a legacy topology. The adoption workflow backs up and
+atomically restores `.env` and `compose.yaml` on failure. The release has no
+supported general-purpose host reconfiguration workflow. Product settings—assets, probes, users,
 tokens, providers, notifications, dashboards, status pages, and retention—are
 managed through authenticated Veleis screens/APIs.
+
+## PostgreSQL memory profile
+
+Managed installations store eleven `VELEIS_POSTGRES_*` values in `.env`. They
+record the detected effective memory, profile, sizing values, and a template
+fingerprint. The effective limit is the lower usable value reported by cgroup
+v2, cgroup v1, or the host; unlimited cgroup sentinels are ignored. Partial or
+unrecognized profiles are rejected. One GiB is required and two GiB or more is
+recommended.
 
 ## HTTPS identity
 

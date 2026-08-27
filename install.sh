@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="1.8.7"
+readonly VELEIS_VERSION="1.8.8"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
 readonly LIFECYCLE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
-readonly LIFECYCLE_SHA256="efc4a7a8e991a3ef179cd87d9413bc94c1bf36e31a80d63dca899b6f9c5e2e18"
+readonly LIFECYCLE_SHA256="a107e1acd6f9e8940cf38646fbae52a78554234c6886310c4cee836fcb2bcf43"
 readonly RELEASE_METADATA_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_METADATA_SHA256="0d737bfead691210008cc30a2c354e6685aacc17cf3462f26528b53d10f3e262"
+readonly RELEASE_METADATA_SHA256="0a0d0936ee483512602bed94e4cce70a7fa2098546ef514e37a490a4760a8345"
+readonly POSTGRES_MEMORY_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis-postgres-memory.sh"
+readonly POSTGRES_MEMORY_SHA256="fc7a079a81c217a76457aae48407f9d68f59f7244dd2096c728fdb27d18f676c"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
 readonly CONTAINER_UID=65532
@@ -66,6 +68,25 @@ services:
       POSTGRES_USER: veleis
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       POSTGRES_DB: veleis
+      # Constrain the image's first-initialization timescaledb-tune invocation.
+      TS_TUNE_MEMORY: ${VELEIS_POSTGRES_EFFECTIVE_MEMORY_MB:?PostgreSQL memory profile must be set}MB
+      TS_TUNE_MAX_CONNS: ${VELEIS_POSTGRES_MAX_CONNECTIONS:?PostgreSQL memory profile must be set}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=${VELEIS_POSTGRES_SHARED_BUFFERS_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - effective_cache_size=${VELEIS_POSTGRES_EFFECTIVE_CACHE_SIZE_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - work_mem=${VELEIS_POSTGRES_WORK_MEM_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - maintenance_work_mem=${VELEIS_POSTGRES_MAINTENANCE_WORK_MEM_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - max_connections=${VELEIS_POSTGRES_MAX_CONNECTIONS:?PostgreSQL memory profile must be set}
+      - -c
+      - timescaledb.max_background_workers=${VELEIS_POSTGRES_MAX_BG_WORKERS:?PostgreSQL memory profile must be set}
+      - -c
+      - max_worker_processes=${VELEIS_POSTGRES_MAX_WORKER_PROCESSES:?PostgreSQL memory profile must be set}
     volumes:
       - database:/var/lib/postgresql
     networks:
@@ -169,14 +190,14 @@ source "$os_release"
 readonly SUPPORTED_PLATFORMS="Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie), on amd64/x86_64"
 case "${ID:-}:${VERSION_ID:-}" in
   ubuntu:24.04 | ubuntu:25.04 | ubuntu:26.04 | debian:12 | debian:13) ;;
-  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.7 supports $SUPPORTED_PLATFORMS" ;;
+  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.8 supports $SUPPORTED_PLATFORMS" ;;
 esac
 os_name="${PRETTY_NAME:-${ID} ${VERSION_ID:-unknown}}"
 
 architecture="${VELEIS_ARCHITECTURE:-$(uname -m)}"
 case "$architecture" in
   x86_64 | amd64) architecture=amd64 ;;
-  *) fail "unsupported architecture '$architecture'; Veleis 1.8.7 supports linux/amd64" ;;
+  *) fail "unsupported architecture '$architecture'; Veleis 1.8.8 supports linux/amd64" ;;
 esac
 
 if ((EUID == 0)); then
@@ -258,12 +279,19 @@ fi
 
 TEMPORARY_DIRECTORY=$(mktemp -d)
 umask 077
+curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$POSTGRES_MEMORY_URL" -o "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
+printf '%s  %s\n' "$POSTGRES_MEMORY_SHA256" "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh" | sha256sum --check --status || fail "PostgreSQL memory helper checksum mismatch"
+bash -n "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
+# shellcheck source=veleis-postgres-memory.sh
+source "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
+veleis_detect_effective_memory || exit 1
+veleis_generate_postgres_profile "$VELEIS_DETECTED_MEMORY_MB" || exit 1
 curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$LIFECYCLE_URL" -o "$TEMPORARY_DIRECTORY/veleis"
 curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEASE_METADATA_URL" -o "$TEMPORARY_DIRECTORY/release.json"
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "1.8.7" and .schema == 37 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.8" and .schema == 40 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 
@@ -298,16 +326,20 @@ VELEIS_PUBLIC_BASE_URL=https://${primary_ip}${HTTPS_PORT:+:${HTTPS_PORT}}
 POSTGRES_PASSWORD=${database_password}
 VELEIS_MASTER_KEY=${master_key}
 ENVIRONMENT
+veleis_print_postgres_env >>"$TEMPORARY_DIRECTORY/environment"
 if [[ "$HTTPS_PORT" == 443 ]]; then
   sed -i "s#VELEIS_PUBLIC_BASE_URL=https://${primary_ip}:443#VELEIS_PUBLIC_BASE_URL=https://${primary_ip}#" "$TEMPORARY_DIRECTORY/environment"
 fi
 
 INSTALL_STARTED=true
 as_root install -d -m 0755 "$INSTALL_ROOT"
+as_root install -d -m 0755 "$INSTALL_ROOT/bin"
 as_root install -d -m 0750 "$INSTALL_ROOT/data" "$INSTALL_ROOT/data/tls" "$INSTALL_ROOT/data/avatars"
 as_root chown "$CONTAINER_UID:$CONTAINER_GID" "$INSTALL_ROOT/data" "$INSTALL_ROOT/data/tls" "$INSTALL_ROOT/data/avatars"
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/compose.yaml" "$INSTALL_ROOT/compose.yaml"
+as_root install -m 0644 "$TEMPORARY_DIRECTORY/compose.yaml" "$INSTALL_ROOT/bin/veleis-compose.yaml"
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/release.json" "$INSTALL_ROOT/release.json"
+as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh" "$INSTALL_ROOT/bin/veleis-postgres-memory"
 as_root install -m 0600 "$TEMPORARY_DIRECTORY/environment" "$INSTALL_ROOT/.env"
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/veleis.crt" "$INSTALL_ROOT/data/tls/veleis.crt"
 as_root install -m 0600 "$TEMPORARY_DIRECTORY/veleis.key" "$INSTALL_ROOT/data/tls/veleis.key"
@@ -355,6 +387,15 @@ Veleis:
 Platform:
   ${os_name}
   Architecture: ${architecture}
+
+Database memory:
+  Effective memory: ${VELEIS_POSTGRES_MEMORY_MB} MiB
+  PostgreSQL profile: ${VELEIS_POSTGRES_PROFILE}
+  shared_buffers: ${VELEIS_POSTGRES_SHARED_BUFFERS_MB} MiB
+  effective_cache_size: ${VELEIS_POSTGRES_EFFECTIVE_CACHE_SIZE_MB} MiB
+  work_mem: ${VELEIS_POSTGRES_WORK_MEM_MB} MiB
+  maintenance_work_mem: ${VELEIS_POSTGRES_MAINTENANCE_WORK_MEM_MB} MiB
+  max_connections: ${VELEIS_POSTGRES_MAX_CONNECTIONS}
 
 Host:
   ${hostname_value}

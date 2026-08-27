@@ -34,6 +34,23 @@ environment_value() {
   printf '%s' "$value"
 }
 
+optional_environment_value() {
+  local key=$1 file=${2:-$INSTALL_ROOT/.env}
+  sed -n "s/^${key}=//p" "$file" | tail -n 1
+}
+
+postgres_memory_tool() {
+  local installed="$INSTALL_ROOT/bin/veleis-postgres-memory" sibling
+  sibling=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/veleis-postgres-memory.sh
+  if [[ -x "$installed" && ! -L "$installed" ]]; then
+    printf '%s\n' "$installed"
+  elif [[ -x "$sibling" && ! -L "$sibling" ]]; then
+    printf '%s\n' "$sibling"
+  else
+    fail "PostgreSQL memory lifecycle helper is missing; reinstall the current lifecycle tooling"
+  fi
+}
+
 cleanup() {
   local status=$?
   trap - EXIT
@@ -80,9 +97,13 @@ require_installation() {
 
 validate_environment() {
   local file=$1 unknown version image port database_password master_key public_url
-  unknown=$(grep -Ev '^(VELEIS_VERSION|VELEIS_IMAGE|VELEIS_HTTPS_PORT|VELEIS_PUBLIC_BASE_URL|POSTGRES_PASSWORD|VELEIS_MASTER_KEY)=[^[:cntrl:]]*$' "$file" || true)
+  unknown=$(grep -Ev '^(VELEIS_VERSION|VELEIS_IMAGE|VELEIS_HTTPS_PORT|VELEIS_PUBLIC_BASE_URL|POSTGRES_PASSWORD|VELEIS_MASTER_KEY|VELEIS_POSTGRES_TUNING_MODE|VELEIS_POSTGRES_TUNING_FINGERPRINT|VELEIS_POSTGRES_EFFECTIVE_MEMORY_MB|VELEIS_POSTGRES_PROFILE|VELEIS_POSTGRES_SHARED_BUFFERS_MB|VELEIS_POSTGRES_EFFECTIVE_CACHE_SIZE_MB|VELEIS_POSTGRES_WORK_MEM_MB|VELEIS_POSTGRES_MAINTENANCE_WORK_MEM_MB|VELEIS_POSTGRES_MAX_CONNECTIONS|VELEIS_POSTGRES_MAX_BG_WORKERS|VELEIS_POSTGRES_MAX_WORKER_PROCESSES)=[^[:cntrl:]]*$' "$file" || true)
   [[ -z "$unknown" ]] || fail "$file contains an unsupported or malformed setting"
-  [[ "$(wc -l <"$file")" -eq 6 ]] || fail "$file must contain exactly the six supported settings"
+  local line_count postgres_count postgres_key postgres_value
+  line_count=$(wc -l <"$file")
+  postgres_count=$(grep -c '^VELEIS_POSTGRES_' "$file" || true)
+  [[ "$line_count" -eq 6 || "$line_count" -eq 17 ]] || fail "$file must contain the six base settings and either zero or all eleven PostgreSQL profile settings"
+  [[ "$postgres_count" -eq 0 || "$postgres_count" -eq 11 ]] || fail "$file contains a partial PostgreSQL memory profile"
   version=$(environment_value VELEIS_VERSION "$file")
   image=$(environment_value VELEIS_IMAGE "$file")
   port=$(environment_value VELEIS_HTTPS_PORT "$file")
@@ -97,6 +118,15 @@ validate_environment() {
   [[ "$public_url" == https://* && "$public_url" != *[[:space:]]* ]] || fail "$file contains an invalid public HTTPS URL"
   [[ "$database_password" =~ ^[a-f0-9]{64}$ ]] || fail "$file contains an invalid database credential"
   [[ "$master_key" =~ ^[A-Za-z0-9+/]{43}=$ ]] || fail "$file contains an invalid application master key"
+  if [[ "$postgres_count" -eq 11 ]]; then
+    [[ "$(optional_environment_value VELEIS_POSTGRES_TUNING_MODE "$file")" == managed ]] || fail "$file contains an invalid PostgreSQL tuning mode"
+    [[ "$(optional_environment_value VELEIS_POSTGRES_TUNING_FINGERPRINT "$file")" =~ ^[a-f0-9]{64}$ ]] || fail "$file contains an invalid PostgreSQL tuning fingerprint"
+    [[ "$(optional_environment_value VELEIS_POSTGRES_PROFILE "$file")" =~ ^(tiny|small|medium|large|xlarge|xxlarge|huge)$ ]] || fail "$file contains an invalid PostgreSQL profile"
+    for postgres_key in VELEIS_POSTGRES_EFFECTIVE_MEMORY_MB VELEIS_POSTGRES_SHARED_BUFFERS_MB VELEIS_POSTGRES_EFFECTIVE_CACHE_SIZE_MB VELEIS_POSTGRES_WORK_MEM_MB VELEIS_POSTGRES_MAINTENANCE_WORK_MEM_MB VELEIS_POSTGRES_MAX_CONNECTIONS VELEIS_POSTGRES_MAX_BG_WORKERS VELEIS_POSTGRES_MAX_WORKER_PROCESSES; do
+      postgres_value=$(optional_environment_value "$postgres_key" "$file")
+      [[ "$postgres_value" =~ ^[1-9][0-9]*$ ]] || fail "$file contains an invalid $postgres_key value"
+    done
+  fi
 }
 
 acquire_lock() {
@@ -490,6 +520,19 @@ show_status() {
   printf 'Veleis %s\nSchema: %s\n\n' "$(current_version)" "$(current_schema)"
   compose ps
   if wait_ready 1; then printf '\nHTTPS readiness: ready\n'; else printf '\nHTTPS readiness: not ready\n'; return 1; fi
+  printf '\n'
+  "$(postgres_memory_tool)" status "$INSTALL_ROOT"
+}
+
+postgres_memory_command() {
+  local operation=${1:-} helper
+  helper=$(postgres_memory_tool)
+  case "$operation" in
+    status) (($# == 1)) || fail "postgres-memory status accepts no additional arguments"; "$helper" status "$INSTALL_ROOT" ;;
+    apply-managed) (($# == 1)) || fail "postgres-memory apply-managed accepts no additional arguments"; acquire_lock; "$helper" apply-managed "$INSTALL_ROOT" ;;
+    adopt-managed) (($# == 1)) || fail "postgres-memory adopt-managed accepts no additional arguments"; acquire_lock; "$helper" adopt-managed "$INSTALL_ROOT" ;;
+    *) fail "postgres-memory requires status, apply-managed, or adopt-managed" ;;
+  esac
 }
 
 usage() {
@@ -501,6 +544,9 @@ Usage:
   veleis backup [absolute-destination-directory]
   veleis restore <backup.tar.gz> --force
   veleis upgrade [exact-version]
+  veleis postgres-memory status
+  veleis postgres-memory apply-managed
+  veleis postgres-memory adopt-managed
 USAGE
 }
 
@@ -514,6 +560,7 @@ case "$command_name" in
   backup) (($# <= 2)) || fail "backup accepts at most one destination"; acquire_lock; create_backup "${2:-$INSTALL_ROOT/backups}" ;;
   restore) (($# == 3)) || fail "restore requires an archive and --force"; acquire_lock; restore_backup "$2" "$3" ;;
   upgrade) (($# <= 2)) || fail "upgrade accepts at most one exact version"; acquire_lock; upgrade_installation "${2:-}" ;;
+  postgres-memory) (($# == 2)) || fail "postgres-memory requires exactly one operation"; postgres_memory_command "$2" ;;
   help | --help | -h) usage ;;
   *) usage >&2; exit 2 ;;
 esac

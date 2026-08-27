@@ -7,6 +7,25 @@ services:
       POSTGRES_USER: veleis
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       POSTGRES_DB: veleis
+      # Constrain the image's first-initialization timescaledb-tune invocation.
+      TS_TUNE_MEMORY: ${VELEIS_POSTGRES_EFFECTIVE_MEMORY_MB:?PostgreSQL memory profile must be set}MB
+      TS_TUNE_MAX_CONNS: ${VELEIS_POSTGRES_MAX_CONNECTIONS:?PostgreSQL memory profile must be set}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=${VELEIS_POSTGRES_SHARED_BUFFERS_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - effective_cache_size=${VELEIS_POSTGRES_EFFECTIVE_CACHE_SIZE_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - work_mem=${VELEIS_POSTGRES_WORK_MEM_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - maintenance_work_mem=${VELEIS_POSTGRES_MAINTENANCE_WORK_MEM_MB:?PostgreSQL memory profile must be set}MB
+      - -c
+      - max_connections=${VELEIS_POSTGRES_MAX_CONNECTIONS:?PostgreSQL memory profile must be set}
+      - -c
+      - timescaledb.max_background_workers=${VELEIS_POSTGRES_MAX_BG_WORKERS:?PostgreSQL memory profile must be set}
+      - -c
+      - max_worker_processes=${VELEIS_POSTGRES_MAX_WORKER_PROCESSES:?PostgreSQL memory profile must be set}
     volumes:
       - database:/var/lib/postgresql
     networks:

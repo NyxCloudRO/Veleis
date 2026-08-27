@@ -4,34 +4,36 @@
 
 ## Current stable release
 
-Veleis **1.8.7** is the current stable release.
+Veleis **1.8.8** is the current stable release.
 
 | Component | Release identity |
 | --------- | ---------------- |
-| Application | `1.8.7` |
-| Git tag and GitHub Release | `v1.8.7` |
-| Installer target | `docker.io/nyxmael/veleis:1.8.7` |
-| Docker manifest | `sha256:894b469f8c1a210f59b2981ea15c473055c56ae77a4c865bbdccecd2d87a8568` |
-| Schema | 37 |
+| Application | `1.8.8` |
+| Git tag and GitHub Release | `v1.8.8` |
+| Installer target | `docker.io/nyxmael/veleis:1.8.8` |
+| Docker manifest | `sha256:4f082699b5bec6261f119ea6f620decbf9bcfc72c06523b1e8ae1c8e00a98f8a` |
+| Schema | 40 |
 | Backup format | 1 |
 
 All prior releases remain immutable at their original Docker digests and
 GitHub releases. Upgrades from 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4,
-1.8.5, or 1.8.6 to 1.8.7 use a mandatory pre-upgrade backup; schema 32–36 advances to 37.
+1.8.5, 1.8.6, or 1.8.7 to 1.8.8 use a mandatory pre-upgrade backup; schema
+32–39 advances to 40.
 
 ## Supported versions
 
 | Version | Status |
 | ------- | ------ |
 | 1.8.x | Current public stable line; eligible for security and correctness fixes |
-| 1.8.6 | Supported upgrade source for 1.8.7 |
-| 1.8.5 | Supported upgrade source for 1.8.7 |
-| 1.8.4 | Supported upgrade source for 1.8.7 |
-| 1.8.3 | Supported upgrade source for 1.8.7 |
-| 1.8.2 | Supported upgrade source for 1.8.7 |
-| 1.8.1 | Supported upgrade source for 1.8.7 |
-| 1.8.0 | Supported upgrade source for 1.8.7 |
-| 1.7.1 | Supported upgrade source for 1.8.7 |
+| 1.8.7 | Supported upgrade source for 1.8.8 |
+| 1.8.6 | Supported upgrade source for 1.8.8 |
+| 1.8.5 | Supported upgrade source for 1.8.8 |
+| 1.8.4 | Supported upgrade source for 1.8.8 |
+| 1.8.3 | Supported upgrade source for 1.8.8 |
+| 1.8.2 | Supported upgrade source for 1.8.8 |
+| 1.8.1 | Supported upgrade source for 1.8.8 |
+| 1.8.0 | Supported upgrade source for 1.8.8 |
+| 1.7.1 | Supported upgrade source for 1.8.8 |
 | 1.7.0 | Prior immutable release; upgrade to 1.7.1 first |
 | <1.7 | Pre-public development; no public support |
 
@@ -41,11 +43,11 @@ supported.
 
 ## Version and channel policy
 
-- Exact version tags such as `1.8.6` and `1.8.7` are immutable.
+- Exact version tags such as `1.8.7` and `1.8.8` are immutable.
 - Minor tags such as `1.8` move only to the newest accepted stable patch in that
   minor line.
 - `latest` moves only to the newest accepted stable public release.
-- Git tags use `v` (`v1.8.7`); application and Docker versions do not.
+- Git tags use `v` (`v1.8.8`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
 

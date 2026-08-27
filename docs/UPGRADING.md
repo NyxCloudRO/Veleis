@@ -11,7 +11,7 @@ sudo veleis upgrade
 An exact target may be requested when it is the published stable release:
 
 ```bash
-sudo veleis upgrade 1.8.7
+sudo veleis upgrade 1.8.8
 ```
 
 Veleis retrieves public structured release metadata over HTTPS and validates
@@ -24,19 +24,46 @@ only after the target schema and HTTPS readiness pass.
 
 ## Current release state
 
-Veleis 1.8.7 is the current stable release. Veleis 1.7.1, 1.8.0, 1.8.1, 1.8.2,
-1.8.3, 1.8.4, 1.8.5, and 1.8.6 are explicit upgrade sources. `sudo veleis upgrade`
-discovers 1.8.7; the exact target form is `sudo veleis upgrade 1.8.7`. Schema 37
-is current; schema 32–36 sources advance to 37.
+Veleis 1.8.8 is the current stable release. Veleis 1.7.1 and 1.8.0 through
+1.8.7 are explicit upgrade sources. Refresh the lifecycle tooling before the
+upgrade so the schema-40 compatibility contract and PostgreSQL memory helper
+are installed:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install-lifecycle.sh | bash
+sudo veleis status
+sudo veleis postgres-memory status
+sudo veleis upgrade 1.8.8
+```
+
+The exact target form is `sudo veleis upgrade 1.8.8`. Schema 40 is current;
+schema 32–39 sources advance to 40.
 Users and sessions, tokens, assets, probes/history, alerts/incidents,
 notifications and encrypted credentials, Status Pages, dashboards, Discovery,
 Ravyr enrollment/policy, retention, and TLS identity are preserved. Existing
 TLS probes begin Certificate Intelligence history on their next completed
 handshake; pre-upgrade observations cannot be reconstructed.
 
-On 1.8.7, `sudo veleis upgrade` and `sudo veleis upgrade 1.8.7` are safe
+On 1.8.8, `sudo veleis upgrade` and `sudo veleis upgrade 1.8.8` are safe
 no-ops: they create no backup, pull no image, run no migration, and restart no
-service. A 1.8.7 downgrade remains rejected.
+service. A 1.8.8 downgrade remains rejected.
+
+## PostgreSQL memory profile
+
+New 1.8.8 installations select a managed database profile from the effective
+cgroup or host memory limit. One GiB is the hard minimum and two GiB or more is
+recommended. Existing installations retain their current database topology
+until an operator explicitly adopts the managed profile:
+
+```bash
+sudo veleis postgres-memory status
+sudo veleis postgres-memory adopt-managed
+```
+
+Adoption backs up `.env` and `compose.yaml`, installs the accepted template,
+validates it, and restarts the stack. If validation or readiness fails, both
+files are restored. Do not run `swapoff`, hand-edit PostgreSQL memory settings,
+or copy only part of the managed profile.
 
 Downgrades, non-exact versions, unpublished versions, unsupported source
 versions, floating tags, a digest mismatch, an older target schema, and

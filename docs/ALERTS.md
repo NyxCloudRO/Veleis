@@ -48,6 +48,14 @@ transition type, so repeated evaluation of the same transition cannot enqueue
 duplicate Discord/webhook/email noise. Cooldown, retry, recovery, silence,
 maintenance-window, and dependency suppression behavior remains authoritative.
 
+An Alert Rule may instead assign one enabled escalation policy. The policy is
+snapshotted when the incident opens, so later policy edits cannot rewrite an
+active execution. Steps use strictly increasing absolute time from escalation
+start—not time relative to the previous step—and may target multiple channels.
+Configured acknowledgement, recovery, manual resolution, and retirement stop
+future work while preserving delivered history and provenance. See
+[Notifications and escalation policies](NOTIFICATIONS.md).
+
 Suppression hides delivery according to its reason; it does not erase the
 active condition. Dependency-based notification suppression leaves raw alerts
 and incidents visible. Webhook and SMTP credentials remain encrypted/write-only
