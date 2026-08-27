@@ -7,48 +7,32 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [1.8.9] - 2026-08-27
 
-### Fixed
+### Improved
 
-- Fixed severe Agents-page degradation on installations with deep
-  `agent_metrics` history. Latest CPU and memory values now use bounded
-  per-agent/per-metric indexed probes instead of scanning and sorting the
-  complete historical metric set.
-- Added a ten-second Agents request deadline with PostgreSQL cancellation and
-  a controlled `agents_timeout` HTTP 504 response. Browser requests now
-  propagate cancellation, debounce search by 300 ms, and retry only bounded
-  recoverable failures.
-- Scoped and coalesced live-event refreshes so metric bursts cannot create
-  overlapping Agents request storms. Existing rows remain visible during
-  background refreshes and recoverable timeout/error states expose Retry.
-
-### Database and performance
-
-- No schema migration is required for Veleis 1.8.9. Schema remains 40 and no
-  index was added; the bounded query uses the existing
-  `(agent_id, metric_key, observed_at)` primary-key indexes.
-- In the accepted 5,840,640-row/14-chunk gate, the representative legacy SQL
-  took 16,562.828 ms and the bounded SQL took 1.253 ms (13,218.5x faster).
-  Cold/warm API requests took 54.173/20.329 ms, the compressed-history API
-  took 64.676 ms, and a 1,001-agent 100-row page took 73.925 ms. These are
-  measured release-gate results, not an unlimited-fleet scalability promise.
-- Concurrent acceptance completed 650/650 metric writes and 20/20 Agents
-  reads with zero errors, zero blocked/leftover queries, stable connections,
-  and 88.557 ms p95 read latency.
+- Improved Agents page performance on installations with larger or
+  longer-running metric histories.
+- Optimized retrieval of recent CPU and memory telemetry.
+- Improved request cancellation and timeout handling for Agents operations.
+- Reduced redundant background refresh activity during frequent telemetry
+  updates.
+- Improved Agents search responsiveness and live-update behavior.
+- Existing Agent rows remain visible while refreshed data is being retrieved.
+- Improved recovery and Retry behavior when an Agents request is temporarily
+  unavailable or times out.
 
 ### Upgrade and compatibility
 
-- Run `sudo veleis backup`, then `sudo veleis upgrade 1.8.9`. The lifecycle
-  creates and verifies another mandatory pre-upgrade backup, validates the
-  immutable image digest, confirms schema 40 without applying a migration, and
-  waits for HTTPS readiness.
+- No database migration is required for Veleis 1.8.9. Database schema remains
+  version 40.
+- Run `sudo veleis backup`, then `sudo veleis upgrade 1.8.9` to use the
+  standard upgrade lifecycle and immutable image verification.
 - Supported upgrade sources are Veleis 1.7.1 and 1.8.0 through 1.8.8. Backup
   format remains 1. Recommended Ravyr remains signed 1.8.2; minimum Ravyr is
   1.7.0 and lifecycle protocol remains 1.
-- The supported image remains linux/amd64. Default HTTPS remains self-signed.
-  Image signing, a published SBOM, and provenance attestation are not currently
-  part of the Veleis release pipeline.
+- The supported platform remains linux/amd64.
 - Docker image: `docker.io/nyxmael/veleis:1.8.9`
 - Manifest digest: `sha256:6c6e0227c941082d3fa6ef51e67133472e1ce2e16e478fc2e2a2c5120f2ded45`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.9>
 
 ## [1.8.8] - 2026-08-27
 
