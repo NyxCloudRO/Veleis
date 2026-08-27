@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v1.8.8-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.8)
+[![Current release](https://img.shields.io/badge/release-v1.8.9-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.9)
 [![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 1.8.8** · Schema 40 · linux/amd64
+Current stable release: **Veleis 1.8.9** · Schema 40 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:1.8.8` image, detects effective cgroup memory, provisions a
+`nyxmael/veleis:1.8.9` image, detects effective cgroup memory, provisions a
 bounded PostgreSQL/TimescaleDB profile, applies schema migrations,
 and waits for HTTPS readiness.
 
@@ -49,7 +49,7 @@ then create the first Owner account. There are no default credentials.
 
 ## Supported platforms
 
-Veleis 1.8.8 is currently validated on the following amd64 platforms:
+Veleis 1.8.9 is currently validated on the following amd64 platforms:
 
 | Distribution | Version | Status |
 | ------------ | ------- | ------ |
@@ -81,7 +81,7 @@ preserving their source truth:
 
 ## What Veleis monitors
 
-| Area | Included in 1.8.8 |
+| Area | Included in 1.8.9 |
 | ---- | ----------------- |
 | Service availability | HTTP/HTTPS, ICMP/Ping, TCP, Advanced DNS, SMTP, IMAP, TLS Certificate probes with Certificate Intelligence history/change detection, and read-only SNMP scalar-OID probes |
 | Linux hosts | Optional Ravyr agents: CPU, memory, storage, network, runtime, service, process, and inventory observations |
@@ -109,6 +109,9 @@ preserving their source truth:
 
 - Outbound-only Ravyr Linux agents with bounded local retry spool and a signed,
   progressive, rollback-safe zero-touch lifecycle for Ravyr-owned software.
+- Bounded indexed latest CPU/memory retrieval for Agents, with propagated
+  request cancellation, debounced search, coalesced live refresh, retained
+  rows, and recoverable timeout/error states.
 - Read-only Docker and GET-only Proxmox observations.
 - Provider-owned inventory and relationships, historical changes, stable
   fingerprints, bounded topology, and explicitly audited cross-provider trust.
@@ -192,9 +195,9 @@ sudo veleis logs --tail=200 veleis
 sudo veleis backup
 ```
 
-Existing 1.7.1 and 1.8.0 through 1.8.7 installations can upgrade with
+Existing 1.7.1 and 1.8.0 through 1.8.8 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 1.8.8`. Installations created before the lifecycle command
+`sudo veleis upgrade 1.8.9`. Installations created before the lifecycle command
 was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).
 Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See

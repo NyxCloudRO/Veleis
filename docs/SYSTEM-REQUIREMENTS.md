@@ -4,7 +4,7 @@
 
 ## Tested and supported platforms
 
-Veleis 1.8.8 installation is validated on the following host platforms:
+Veleis 1.8.9 installation is validated on the following host platforms:
 
 | Distribution | Version | Status |
 | ------------ | ------- | ------ |

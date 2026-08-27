@@ -25,7 +25,7 @@ preserved at `/opt/veleis` for diagnosis.
 
 ## Unsupported operating system
 
-Error contains `unsupported operating system`. Veleis 1.8.8 is accepted only on
+Error contains `unsupported operating system`. Veleis 1.8.9 is accepted only on
 Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and
 Debian 13 (Trixie), on amd64/x86_64. Do not bypass OS detection on a production
 host; unknown Ubuntu/Debian releases and other distributions fail closed.
@@ -73,11 +73,25 @@ Check DNS, outbound HTTPS, Docker Hub reachability, proxy policy, and available
 disk space:
 
 ```bash
-sudo docker pull nyxmael/veleis:1.8.8
+sudo docker pull nyxmael/veleis:1.8.9
 sudo docker system df
 ```
 
 Do not disable TLS verification or substitute an unofficial image.
+
+## Agents page loads indefinitely or times out
+
+First confirm the installed version with `sudo veleis version`. Veleis 1.8.9
+fixes a query path that could scan and sort the complete historical
+`agent_metrics` dataset while retrieving current CPU and memory. Installations
+with deep metric history should upgrade through the supported lifecycle path;
+no schema migration or manual index is required.
+
+After upgrading, a genuinely slow Agents request ends with a recoverable
+timeout instead of running without a deadline. If the problem persists, collect
+sanitized application and database logs plus `sudo veleis status`. Do not clear
+metric history, add speculative indexes, change PostgreSQL memory settings, or
+disable the request deadline as a first response.
 
 ## SNMP probe does not respond
 

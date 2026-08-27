@@ -5,7 +5,7 @@ readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly TOOL_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
 readonly TOOL_SHA256="a107e1acd6f9e8940cf38646fbae52a78554234c6886310c4cee836fcb2bcf43"
 readonly RELEASE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_SHA256="0a0d0936ee483512602bed94e4cce70a7fa2098546ef514e37a490a4760a8345"
+readonly RELEASE_SHA256="56c7f0af50c454ae23401ea20b7b9e011f0d2559f71c32fff7dd2f2c9131bba0"
 readonly POSTGRES_MEMORY_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis-postgres-memory.sh"
 readonly POSTGRES_MEMORY_SHA256="fc7a079a81c217a76457aae48407f9d68f59f7244dd2096c728fdb27d18f676c"
 readonly COMPOSE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/deploy/compose.yaml"
@@ -58,7 +58,7 @@ printf '%s  %s\n' "$POSTGRES_MEMORY_SHA256" "$TEMPORARY_DIRECTORY/veleis-postgre
 printf '%s  %s\n' "$COMPOSE_SHA256" "$TEMPORARY_DIRECTORY/compose.yaml" | sha256sum --check --status || fail "Compose template checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
 bash -n "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
-jq -e '.product == "Veleis" and .version == "1.8.8" and .schema == 40 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.9" and .schema == 40 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 
 as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis" /usr/local/bin/veleis
 as_root install -d -m 0755 "$INSTALL_ROOT/bin"

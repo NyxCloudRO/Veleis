@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.8
+# Features in Veleis 1.8.9
 
 [← Documentation home](../README.md)
 
@@ -38,6 +38,11 @@ Agents screen. A separate signed updater and jittered timer perform only the
 Ravyr-owned binary lifecycle. Stable policy supports deterministic progressive
 cohorts, concurrency and maintenance bounds, offline catch-up, atomic activation,
 telemetry-gated success, automatic rollback, and failed-release fleet pause.
+
+The Agents list retrieves latest CPU and memory through bounded indexed probes
+per agent and metric key. Requests have propagated server, PostgreSQL, and
+browser cancellation; search is debounced; live refreshes are coalesced; and
+existing rows remain visible during recoverable background failures.
 
 ## Docker monitoring
 

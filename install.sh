@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="1.8.8"
+readonly VELEIS_VERSION="1.8.9"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
 readonly LIFECYCLE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis"
 readonly LIFECYCLE_SHA256="a107e1acd6f9e8940cf38646fbae52a78554234c6886310c4cee836fcb2bcf43"
 readonly RELEASE_METADATA_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json"
-readonly RELEASE_METADATA_SHA256="0a0d0936ee483512602bed94e4cce70a7fa2098546ef514e37a490a4760a8345"
+readonly RELEASE_METADATA_SHA256="56c7f0af50c454ae23401ea20b7b9e011f0d2559f71c32fff7dd2f2c9131bba0"
 readonly POSTGRES_MEMORY_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/veleis-postgres-memory.sh"
 readonly POSTGRES_MEMORY_SHA256="fc7a079a81c217a76457aae48407f9d68f59f7244dd2096c728fdb27d18f676c"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
@@ -190,14 +190,14 @@ source "$os_release"
 readonly SUPPORTED_PLATFORMS="Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie), on amd64/x86_64"
 case "${ID:-}:${VERSION_ID:-}" in
   ubuntu:24.04 | ubuntu:25.04 | ubuntu:26.04 | debian:12 | debian:13) ;;
-  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.8 supports $SUPPORTED_PLATFORMS" ;;
+  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.9 supports $SUPPORTED_PLATFORMS" ;;
 esac
 os_name="${PRETTY_NAME:-${ID} ${VERSION_ID:-unknown}}"
 
 architecture="${VELEIS_ARCHITECTURE:-$(uname -m)}"
 case "$architecture" in
   x86_64 | amd64) architecture=amd64 ;;
-  *) fail "unsupported architecture '$architecture'; Veleis 1.8.8 supports linux/amd64" ;;
+  *) fail "unsupported architecture '$architecture'; Veleis 1.8.9 supports linux/amd64" ;;
 esac
 
 if ((EUID == 0)); then
@@ -291,7 +291,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "1.8.8" and .schema == 40 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.9" and .schema == 40 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 
