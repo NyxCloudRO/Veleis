@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v1.8.9-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.9)
+[![Current release](https://img.shields.io/badge/release-v1.8.10-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.10)
 [![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 1.8.9** · Schema 40 · linux/amd64
+Current stable release: **Veleis 1.8.10** · Schema 43 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:1.8.9` image, detects effective cgroup memory, provisions a
+`nyxmael/veleis:1.8.10` image, detects effective cgroup memory, provisions a
 bounded PostgreSQL/TimescaleDB profile, applies schema migrations,
 and waits for HTTPS readiness.
 
@@ -49,15 +49,15 @@ then create the first Owner account. There are no default credentials.
 
 ## Supported platforms
 
-Veleis 1.8.9 is currently validated on the following amd64 platforms:
+Veleis 1.8.10 is currently validated on the following amd64 platforms:
 
-| Distribution | Version | Status |
-| ------------ | ------- | ------ |
-| Ubuntu | 24.04 LTS | Supported |
-| Ubuntu | 25.04 | Supported |
-| Ubuntu | 26.04 LTS | Supported |
-| Debian | 12 (Bookworm) | Supported |
-| Debian | 13 (Trixie) | Supported |
+| Distribution | Version       | Status    |
+| ------------ | ------------- | --------- |
+| Ubuntu       | 24.04 LTS     | Supported |
+| Ubuntu       | 25.04         | Supported |
+| Ubuntu       | 26.04 LTS     | Supported |
+| Debian       | 12 (Bookworm) | Supported |
+| Debian       | 13 (Trixie)   | Supported |
 
 Architecture: `amd64 / x86_64`
 
@@ -81,13 +81,13 @@ preserving their source truth:
 
 ## What Veleis monitors
 
-| Area | Included in 1.8.9 |
-| ---- | ----------------- |
+| Area                 | Included in 1.8.10                                                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Service availability | HTTP/HTTPS, ICMP/Ping, TCP, Advanced DNS, SMTP, IMAP, TLS Certificate probes with Certificate Intelligence history/change detection, and read-only SNMP scalar-OID probes |
-| Linux hosts | Optional Ravyr agents: CPU, memory, storage, network, runtime, service, process, and inventory observations |
-| Docker | Engines, containers, runtime state, metrics, events, images, volumes, networks, and availability incidents |
-| Proxmox | Read-only nodes, VMs, LXCs, storage, networks, inventory metadata, and relationships |
-| Infrastructure | Normalized Discovery inventory, history, changes, search, hierarchy, topology, and explicit cross-provider identity trust |
+| Linux hosts          | Optional Ravyr agents: CPU, memory, storage, network, runtime, service, process, and inventory observations                                                               |
+| Docker               | Engines, containers, runtime state, metrics, events, images, volumes, networks, and availability incidents                                                                |
+| Proxmox              | Read-only nodes, VMs, LXCs, storage, networks, inventory metadata, and relationships                                                                                      |
+| Infrastructure       | Normalized Discovery inventory, history, changes, search, hierarchy, topology, and explicit cross-provider identity trust                                                 |
 
 ## Product capabilities
 
@@ -104,6 +104,9 @@ preserving their source truth:
   channels, acknowledgement-aware cancellation, and immutable incident history.
 - Dependency-aware incident explanations and optional notification-only
   suppression without hiding raw incidents.
+- Deterministic alert deduplication and explainable cross-signal correlation
+  from accepted dependency evidence, with preserved original incidents and no
+  generic correlation suppression.
 
 ### Infrastructure and Discovery
 
@@ -115,6 +118,8 @@ preserving their source truth:
 - Read-only Docker and GET-only Proxmox observations.
 - Provider-owned inventory and relationships, historical changes, stable
   fingerprints, bounded topology, and explicitly audited cross-provider trust.
+- Interactive Structural and Dependency graph views with deterministic layout,
+  focus/inspection, search, filtering, pan, zoom, and keyboard navigation.
 - No automatic same-name merging and no infrastructure mutation.
 
 ### Operations
@@ -152,24 +157,24 @@ See the [complete feature inventory](docs/FEATURES.md).
 Screenshots use isolated demonstration data created specifically for public
 documentation.
 
-| Overview | Discovery |
-| -------- | --------- |
+| Overview                                                                               | Discovery                                                                                 |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | [![Veleis Overview](assets/screenshots/overview.png)](assets/screenshots/overview.png) | [![Veleis Discovery](assets/screenshots/discovery.png)](assets/screenshots/discovery.png) |
 
-| Dashboards | Security |
-| ---------- | -------- |
+| Dashboards                                                                                   | Security                                                                               |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | [![Veleis Dashboards](assets/screenshots/dashboards.png)](assets/screenshots/dashboards.png) | [![Veleis Security](assets/screenshots/security.png)](assets/screenshots/security.png) |
 
 ## Requirements
 
-| | Minimum | Recommended starting point |
-| --- | --- | --- |
-| Host | A validated Ubuntu or Debian release from the matrix above | Dedicated current installation of a supported release |
-| Architecture | amd64 / x86_64 | amd64 / x86_64 |
-| CPU | 2 vCPU | 4 vCPU |
-| Memory | 1 GiB for a minimal low-load installation | 2 GiB practical small-install starting point; increase with workload |
-| Free storage | 20 GiB | 50+ GiB SSD, sized for retention |
-| Network | Internet access during installation; TCP 443 available | Stable outbound connectivity to monitored targets and notification endpoints |
+|              | Minimum                                                    | Recommended starting point                                                   |
+| ------------ | ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Host         | A validated Ubuntu or Debian release from the matrix above | Dedicated current installation of a supported release                        |
+| Architecture | amd64 / x86_64                                             | amd64 / x86_64                                                               |
+| CPU          | 2 vCPU                                                     | 4 vCPU                                                                       |
+| Memory       | 1 GiB for a minimal low-load installation                  | 2 GiB practical small-install starting point; increase with workload         |
+| Free storage | 20 GiB                                                     | 50+ GiB SSD, sized for retention                                             |
+| Network      | Internet access during installation; TCP 443 available     | Stable outbound connectivity to monitored targets and notification endpoints |
 
 Sizing depends on probe frequency, agents, container inventory, and retention.
 PostgreSQL is internal to Compose and is not exposed on the host. The installer
@@ -195,9 +200,9 @@ sudo veleis logs --tail=200 veleis
 sudo veleis backup
 ```
 
-Existing 1.7.1 and 1.8.0 through 1.8.8 installations can upgrade with
+Existing 1.7.1 and 1.8.0 through 1.8.9 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 1.8.9`. Installations created before the lifecycle command
+`sudo veleis upgrade 1.8.10`. Installations created before the lifecycle command
 was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).
 Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See

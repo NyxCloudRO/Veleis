@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.9
+# Features in Veleis 1.8.10
 
 [← Documentation home](../README.md)
 
@@ -73,6 +73,9 @@ widgets with explicit provider scope and collection freshness. See
 - Stable identities, fingerprints, current/historical records, and change
   history.
 - Search, filtering, hierarchy, relationships, and bounded topology views.
+- Interactive deterministic Structural and Dependency graph views with
+  focus/inspection, loaded-neighborhood search, filters, pan, zoom, fit, and
+  keyboard navigation.
 - Partial/failure-aware provider lifecycle that does not convert incomplete
   observations into false removals.
 - Explicit, audited cross-provider trust decisions; equal names or addresses do
@@ -89,8 +92,19 @@ widgets with explicit provider scope and collection freshness. See
 - Open/acknowledged/resolved incident lifecycle and recovery history.
 - Dependency-aware incident explanations with optional notification-only
   suppression; raw alerts and incidents remain visible.
+- Deterministic alert deduplication keeps repeated observations of one logical
+  rule/target failure in a single active lifecycle while retaining occurrence,
+  transition, recovery, escalation, and delivery history.
+- Cross-signal correlation groups distinct incidents only when accepted
+  dependency evidence supports the relationship. Incidents expose bounded
+  related-signal context, persisted explanations, likely upstream paths,
+  ambiguity/history semantics, and focused Topology navigation without hiding
+  or rewriting source incidents.
 - Durable schema-v1 generic webhooks, semantic Discord embeds, and readable
   SMTP email delivery with deduplication and bounded retry/rate-limit handling.
+- Opening notifications may include small, current correlation context when it
+  is safely available. Base delivery remains valid without it, recovery omits
+  stale context, and independent routes are never merged.
 - In-place channel editing with stable identity, optional write-only credential
   rotation, and a compact responsive management surface.
 - Revisioned escalation policies with 1–10 absolute-delay steps, multiple

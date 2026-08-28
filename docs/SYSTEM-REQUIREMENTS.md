@@ -4,15 +4,15 @@
 
 ## Tested and supported platforms
 
-Veleis 1.8.9 installation is validated on the following host platforms:
+Veleis 1.8.10 installation is validated on the following host platforms:
 
-| Distribution | Version | Status |
-| ------------ | ------- | ------ |
-| Ubuntu | 24.04 LTS | Supported / validated |
-| Ubuntu | 25.04 | Supported / validated |
-| Ubuntu | 26.04 LTS | Supported / validated |
-| Debian | 12 (Bookworm) | Supported / validated |
-| Debian | 13 (Trixie) | Supported / validated |
+| Distribution | Version       | Status                |
+| ------------ | ------------- | --------------------- |
+| Ubuntu       | 24.04 LTS     | Supported / validated |
+| Ubuntu       | 25.04         | Supported / validated |
+| Ubuntu       | 26.04 LTS     | Supported / validated |
+| Debian       | 12 (Bookworm) | Supported / validated |
+| Debian       | 13 (Trixie)   | Supported / validated |
 
 Architecture: `amd64 / x86_64`
 
@@ -22,23 +22,23 @@ are not implied or supported by this matrix.
 
 ## Host requirements
 
-| Requirement | Supported |
-| ----------- | --------- |
-| Operating systems | One of the exact validated releases listed above |
-| CPU architecture | linux/amd64 (`amd64 / x86_64`) |
-| Container runtime | Docker Engine with Docker Compose v2; installer can install distribution packages |
-| Quick Start tool | `curl` must be present to retrieve the piped installer |
-| External application port | TCP 443 (HTTPS) |
-| Database port | Not host-published; internal Compose network only |
+| Requirement               | Supported                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| Operating systems         | One of the exact validated releases listed above                                  |
+| CPU architecture          | linux/amd64 (`amd64 / x86_64`)                                                    |
+| Container runtime         | Docker Engine with Docker Compose v2; installer can install distribution packages |
+| Quick Start tool          | `curl` must be present to retrieve the piped installer                            |
+| External application port | TCP 443 (HTTPS)                                                                   |
+| Database port             | Not host-published; internal Compose network only                                 |
 
 ## Host sizing
 
-| Resource | Minimum starting point | Recommended starting point |
-| -------- | ---------------------- | -------------------------- |
-| CPU | 2 vCPU | 4 vCPU |
-| Memory | 1 GiB for a minimal low-load installation | 2 GiB practical small-install starting point |
-| Free storage | 20 GiB | 50 GiB or more on SSD |
-| Network | Stable installation access | Stable access to every monitored/notification endpoint |
+| Resource     | Minimum starting point                    | Recommended starting point                             |
+| ------------ | ----------------------------------------- | ------------------------------------------------------ |
+| CPU          | 2 vCPU                                    | 4 vCPU                                                 |
+| Memory       | 1 GiB for a minimal low-load installation | 2 GiB practical small-install starting point           |
+| Free storage | 20 GiB                                    | 50 GiB or more on SSD                                  |
+| Network      | Stable installation access                | Stable access to every monitored/notification endpoint |
 
 These are deployment starting points, not unlimited-capacity guarantees. The
 installer detects the minimum finite host/current-cgroup memory boundary and

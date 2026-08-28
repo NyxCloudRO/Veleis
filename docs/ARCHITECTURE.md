@@ -32,7 +32,10 @@ Browser / API client
 
 PostgreSQL is authoritative for accounts, configuration, current monitoring
 state, history, inventory, incidents, alerts, dashboards, notifications, and
-audit records. The database volume survives container and host-service restart.
+audit records. Schema 43 also persists bounded dependency interpretations,
+deterministic alert occurrence identity, and historical cross-signal
+correlation evidence without rewriting source incidents. The database volume
+survives container and host-service restart.
 `/opt/veleis/data` persists the TLS identity and uploaded avatars; `/opt/veleis/.env`
 persists generated deployment secrets.
 

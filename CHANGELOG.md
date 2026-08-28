@@ -5,6 +5,65 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.10] - 2026-08-28
+
+### Highlights
+
+- Added deterministic alert deduplication. Repeated observations of the same
+  rule and target now remain within one active incident lifecycle while
+  preserving occurrence history, severity transitions, recovery, escalation,
+  and independently configured notification routes.
+- Added cross-signal alert correlation backed only by accepted dependency
+  evidence. Distinct incidents can be grouped into bounded active and
+  historical operational events without replacing or hiding the original
+  incidents.
+- Added correlation context inside Incidents, including related-signal counts,
+  likely-upstream wording, persisted evidence explanations, member and root
+  navigation, ambiguity handling, and focused dependency Topology links.
+- Added safe optional correlation context to opening notifications. Recovery
+  notifications omit potentially stale upstream claims; correlation never
+  merges routes or suppresses notifications generically.
+
+### Monitoring, Discovery, and Topology
+
+- Added bounded multi-hop Service Dependency Awareness over accepted current
+  dependency relationships. Incident details can explain likely upstream and
+  downstream context, path evidence, timing, cycles, multiple possible roots,
+  and recovery history.
+- Added an interactive, deterministic Topology graph with structural and
+  dependency relationship views, focus and inspection controls, search,
+  filters, pan, zoom, and accessible keyboard navigation. Fresh Topology entry
+  remains Structural and Inspector by default.
+
+### Reliability and UX
+
+- Stabilized live Agents rendering so normal refreshes retain existing rows and
+  do not flicker through an empty state.
+- Added explicit authorization coverage for the read-only correlation API.
+- Correlation and dependency views are bounded, owner-scoped, responsive at
+  narrow widths, and preserve ordinary Incident usability if supplementary
+  context is unavailable.
+
+### Upgrade and compatibility
+
+- Run `sudo veleis backup`, then `sudo veleis upgrade 1.8.10`. The lifecycle
+  tool creates and verifies another mandatory pre-upgrade backup, verifies the
+  immutable image digest, applies migrations 41–43, and waits for schema 43 and
+  HTTPS readiness.
+- Veleis 1.8.9 is a supported upgrade source. Existing users, agents, assets,
+  probes, incidents, notifications, settings, and Discovery history are
+  preserved. No breaking configuration change or manual data conversion is
+  required.
+- Database schema advances from 40 to 43. Backup format remains 1. Recommended
+  Ravyr remains signed 1.8.2; minimum Ravyr remains 1.7.0 and lifecycle protocol
+  remains 1.
+- The supported platform remains linux/amd64. Veleis remains monitoring-only:
+  this release adds no command execution, remediation, Docker/Proxmox control,
+  or other monitored-infrastructure mutation.
+- Docker image: `docker.io/nyxmael/veleis:1.8.10`
+- Manifest digest: `sha256:8582265d40de9f531a886f645fd3fd6fbab3e06321c90d0c69344d47a284fcf3`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.10>
+
 ## [1.8.9] - 2026-08-27
 
 ### Improved
@@ -96,6 +155,7 @@ versioning; the corresponding Git tag uses a `v` prefix.
   schedule a maintenance window. No database data is deleted. Operators who
   intentionally maintain custom PostgreSQL configuration remain in control and
   may leave it unchanged after reviewing the warning.
+
 - Never use `swapoff` or hand-edit PostgreSQL files as the Veleis remediation
   procedure.
 

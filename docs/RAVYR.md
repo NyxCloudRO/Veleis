@@ -117,7 +117,7 @@ existing SSH/configuration-management process:
 
 ```bash
 curl --fail --silent --show-error --location \
-  https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/repair-ravyr.sh \
+  https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.10/repair-ravyr.sh \
   --output /tmp/repair-ravyr.sh
 printf '%s  %s\n' '3dc0ee6cf771ba6693175553dcf322db50cc2dd038626ea9a82e29ab5a03db89' \
   /tmp/repair-ravyr.sh | sha256sum --check -

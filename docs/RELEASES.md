@@ -4,39 +4,41 @@
 
 ## Current stable release
 
-Veleis **1.8.9** is the current stable release.
+Veleis **1.8.10** is the current stable release.
 
-| Component | Release identity |
-| --------- | ---------------- |
-| Application | `1.8.9` |
-| Git tag and GitHub Release | `v1.8.9` |
-| Installer target | `docker.io/nyxmael/veleis:1.8.9` |
-| Docker manifest | `sha256:6c6e0227c941082d3fa6ef51e67133472e1ce2e16e478fc2e2a2c5120f2ded45` |
-| Schema | 40 |
-| Backup format | 1 |
+| Component                  | Release identity                             |
+| -------------------------- | -------------------------------------------- |
+| Application                | `1.8.10`                                     |
+| Git tag and GitHub Release | `v1.8.10`                                    |
+| Installer target           | `docker.io/nyxmael/veleis:1.8.10`            |
+| Docker manifest            | `sha256:8582265d40de9f531a886f645fd3fd6fbab3e06321c90d0c69344d47a284fcf3` |
+| Schema                     | 43                                           |
+| Backup format              | 1                                            |
 
 All prior releases remain immutable at their original Docker digests and
 GitHub releases. Upgrades from 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4,
-1.8.5, 1.8.6, 1.8.7, or 1.8.8 to 1.8.9 use a mandatory pre-upgrade backup.
-Schema 40 remains current and 1.8.8 → 1.8.9 requires no migration.
+1.8.5, 1.8.6, 1.8.7, 1.8.8, or 1.8.9 to 1.8.10 use a mandatory pre-upgrade
+backup. Schema 43 is current; upgrades apply every required migration through
+schema 43.
 
 ## Supported versions
 
-| Version | Status |
-| ------- | ------ |
-| 1.8.x | Current public stable line; eligible for security and correctness fixes |
-| 1.8.8 | Supported upgrade source for 1.8.9 |
-| 1.8.7 | Supported upgrade source for 1.8.9 |
-| 1.8.6 | Supported upgrade source for 1.8.9 |
-| 1.8.5 | Supported upgrade source for 1.8.9 |
-| 1.8.4 | Supported upgrade source for 1.8.9 |
-| 1.8.3 | Supported upgrade source for 1.8.9 |
-| 1.8.2 | Supported upgrade source for 1.8.9 |
-| 1.8.1 | Supported upgrade source for 1.8.9 |
-| 1.8.0 | Supported upgrade source for 1.8.9 |
-| 1.7.1 | Supported upgrade source for 1.8.9 |
-| 1.7.0 | Prior immutable release; upgrade to 1.7.1 first |
-| <1.7 | Pre-public development; no public support |
+| Version | Status                                                                  |
+| ------- | ----------------------------------------------------------------------- |
+| 1.8.x   | Current public stable line; eligible for security and correctness fixes |
+| 1.8.9   | Supported upgrade source for 1.8.10                                     |
+| 1.8.8   | Supported upgrade source for 1.8.10                                     |
+| 1.8.7   | Supported upgrade source for 1.8.10                                     |
+| 1.8.6   | Supported upgrade source for 1.8.10                                     |
+| 1.8.5   | Supported upgrade source for 1.8.10                                     |
+| 1.8.4   | Supported upgrade source for 1.8.10                                     |
+| 1.8.3   | Supported upgrade source for 1.8.10                                     |
+| 1.8.2   | Supported upgrade source for 1.8.10                                     |
+| 1.8.1   | Supported upgrade source for 1.8.10                                     |
+| 1.8.0   | Supported upgrade source for 1.8.10                                     |
+| 1.7.1   | Supported upgrade source for 1.8.10                                     |
+| 1.7.0   | Prior immutable release; upgrade to 1.7.1 first                         |
+| <1.7    | Pre-public development; no public support                               |
 
 This policy is a conservative community release policy, not a contractual SLA.
 Only releases and platforms explicitly listed in current documentation are
@@ -44,11 +46,11 @@ supported.
 
 ## Version and channel policy
 
-- Exact version tags such as `1.8.8` and `1.8.9` are immutable.
+- Exact version tags such as `1.8.9` and `1.8.10` are immutable.
 - Minor tags such as `1.8` move only to the newest accepted stable patch in that
   minor line.
 - `latest` moves only to the newest accepted stable public release.
-- Git tags use `v` (`v1.8.9`); application and Docker versions do not.
+- Git tags use `v` (`v1.8.10`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
 

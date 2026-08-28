@@ -41,11 +41,16 @@ the warning prevents accidental ambiguity rather than silently rewriting them.
 
 ## Notifications and deduplication
 
-Each intentionally configured rule keeps its own lifecycle. A firing transition
-and configured recovery transition may notify independently for each rule.
-Delivery deduplication is keyed by notification channel, incident, and
-transition type, so repeated evaluation of the same transition cannot enqueue
-duplicate Discord/webhook/email noise. Cooldown, retry, recovery, silence,
+Each intentionally configured rule keeps its own lifecycle. Within that rule,
+the rule/target identity plus condition is deterministic: repeated firing
+observations update one active incident generation rather than opening
+duplicates. Severity changes remain transitions, recovery is authoritative,
+and a later failure starts a new generation. A firing transition and configured
+recovery transition may notify independently for each rule. Delivery
+deduplication remains keyed by notification channel, incident, and transition
+type, so repeated evaluation of the same transition cannot enqueue duplicate
+Discord/webhook/email noise. Independently configured routes remain independent
+even when they share a destination. Cooldown, retry, recovery, silence,
 maintenance-window, and dependency suppression behavior remains authoritative.
 
 An Alert Rule may instead assign one enabled escalation policy. The policy is
@@ -60,6 +65,28 @@ Suppression hides delivery according to its reason; it does not erase the
 active condition. Dependency-based notification suppression leaves raw alerts
 and incidents visible. Webhook and SMTP credentials remain encrypted/write-only
 and are never returned by alert search or details.
+
+## Dependency awareness and correlation
+
+Service Dependency Awareness can explain a bounded likely upstream or
+downstream path when active alert incidents map to accepted current dependency
+relationships. Timing, direction, cycles, multiple possible roots, and recovery
+are represented explicitly; proximity, matching names, a shared asset, or a
+shared notification destination are not sufficient evidence.
+
+Cross-signal correlation consumes that accepted evidence to group distinct
+incident UUIDs into a stable operational event. Original incidents and their
+history remain authoritative. Incidents show bounded related-signal context,
+likely-upstream wording, persisted evidence explanations, member/root
+navigation, active or previous context, and an explicit Dependency Topology
+deep-link. Multiple credible roots remain separate rather than being assigned a
+probabilistic score. Veleis does not use AI/ML correlation.
+
+Opening notifications may include a small current correlation count and likely
+upstream context. If enrichment is unavailable, the base notification still
+delivers. Recovery notifications omit correlation context so they cannot repeat
+a stale upstream claim. Correlation never suppresses notifications, merges
+routes, changes escalation, or alters retry/idempotency behavior.
 
 ### Human-readable channel rendering
 
