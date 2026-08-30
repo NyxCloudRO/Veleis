@@ -6,7 +6,7 @@ Official repository:
 [docker.io/nyxmael/veleis](https://hub.docker.com/r/nyxmael/veleis)
 
 ```bash
-docker pull nyxmael/veleis:1.8.10
+docker pull nyxmael/veleis:1.8.11
 ```
 
 ## Tags
@@ -26,12 +26,13 @@ docker pull nyxmael/veleis:1.8.10
 | `1.8.7`  | Immutable prior release. It will not move to another build.         | `sha256:894b469f8c1a210f59b2981ea15c473055c56ae77a4c865bbdccecd2d87a8568` |
 | `1.8.8`  | Immutable prior release. It will not move to another build.         | `sha256:4f082699b5bec6261f119ea6f620decbf9bcfc72c06523b1e8ae1c8e00a98f8a` |
 | `1.8.9`  | Immutable prior release. It will not move to another build.         | `sha256:6c6e0227c941082d3fa6ef51e67133472e1ce2e16e478fc2e2a2c5120f2ded45` |
-| `1.8.10` | Immutable exact current release. It will not move to another build. | `sha256:8582265d40de9f531a886f645fd3fd6fbab3e06321c90d0c69344d47a284fcf3` |
-| `1.8`    | Floating minor track: newest accepted stable `1.8.x`.               | Same as `1.8.10`                                                          |
-| `latest` | Floating newest accepted stable release.                            | Same as `1.8.10`                                                          |
+| `1.8.10` | Immutable prior release. It will not move to another build.         | `sha256:8582265d40de9f531a886f645fd3fd6fbab3e06321c90d0c69344d47a284fcf3` |
+| `1.8.11` | Immutable exact current release. It will not move to another build. | `sha256:435d1a3a5b404f8aec2f8fdd3139a8a3f81ba37829eaf44d23bc8f42516876fb` |
+| `1.8`    | Floating minor track: newest accepted stable `1.8.x`.               | Same as `1.8.11`                                                          |
+| `latest` | Floating newest accepted stable release.                            | Same as `1.8.11`                                                          |
 
 The `1.7` tag remains on the newest accepted 1.7 patch. `1.8` tracks accepted
-1.8 releases, and `latest` resolves to the accepted 1.8.10 image. Immutable
+1.8 releases, and `latest` resolves to the accepted 1.8.11 image. Immutable
 prior releases remain at their original digests.
 
 Each release installer deliberately uses its immutable exact tag, not a floating

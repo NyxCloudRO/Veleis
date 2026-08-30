@@ -5,6 +5,62 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.11] - 2026-08-30
+
+### Monitoring accuracy and storage
+
+- Improved filesystem capacity and utilization accuracy with coherent
+  used/available semantics and reserved-block interpretation.
+- Added canonical backing-storage identity and deduplication so multiple mount
+  views of the same filesystem do not inflate host capacity.
+- Refined storage attribution across assigned/local, shared/external,
+  system/pseudo, and unclassified filesystems. Primary Storage now reflects
+  unique storage assigned to the monitored host while selected real shared
+  storage remains explicitly monitorable.
+- Simplified Storage & Filesystems presentation around canonical real storage
+  rows, with secondary mount views available as supporting detail and
+  system/pseudo noise excluded from normal monitoring surfaces.
+
+### Alerting and agent inventory
+
+- Improved generic filesystem alerts to evaluate each unique assigned/local
+  backing filesystem independently. Explicit selectors continue to support
+  intentional monitoring of real shared/external storage.
+- Canonicalized alert identity by rule, agent, and backing storage so aliases
+  share one lifecycle while distinct disks and hosts alert independently.
+- Updated the recommended signed Ravyr release to 1.8.4. Its enriched
+  protocol-1 inventory adds backing identity, mount provenance, storage class,
+  and corrected filesystem-capacity semantics without requiring re-enrollment.
+
+### User experience
+
+- Refined Incident Details with a more compact operational summary and denser
+  lifecycle history, improving incident scanning and reducing unnecessary
+  vertical space while preserving lifecycle and action semantics.
+- Improved Topology rendering for long labels and stabilized selection after
+  pan and fit interactions.
+- Added an optional Developer Support message with a transparent external link.
+  Veleis remains fully usable without support; there is no paywall, donation
+  verification, donation tracking, or feature restriction.
+
+### Upgrade and compatibility
+
+- Run `sudo veleis backup`, refresh the lifecycle tool, then run
+  `sudo veleis upgrade 1.8.11`. The standard lifecycle creates and verifies a
+  mandatory pre-upgrade backup, verifies the immutable image digest, applies
+  migration 44, and waits for schema 44 and HTTPS readiness.
+- Veleis 1.8.10 is a supported upgrade source. Existing users, sessions,
+  agents, assets, probes, incidents, notifications, settings, Discovery state,
+  Ravyr enrollment, and TLS identity are preserved. No breaking configuration
+  change or manual data conversion is required.
+- Database schema advances from 43 to 44 for a nullable per-user support-message
+  acknowledgement. Backup format remains 1, minimum Ravyr remains 1.7.0,
+  lifecycle protocol remains 1, and the supported platform remains
+  linux/amd64.
+- Docker image: `docker.io/nyxmael/veleis:1.8.11`
+- Manifest digest: `sha256:435d1a3a5b404f8aec2f8fdd3139a8a3f81ba37829eaf44d23bc8f42516876fb`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.11>
+
 ## [1.8.10] - 2026-08-28
 
 ### Highlights
@@ -553,6 +609,7 @@ First public Veleis distribution.
 - Automated uninstall and custom-certificate operations are not yet published.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
+[1.8.11]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.11
 [1.8.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.0
 [1.8.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.1
 [1.8.2]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.2

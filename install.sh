@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="1.8.10"
+readonly VELEIS_VERSION="1.8.11"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
-readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.10/veleis"
+readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/veleis"
 readonly LIFECYCLE_SHA256="a107e1acd6f9e8940cf38646fbae52a78554234c6886310c4cee836fcb2bcf43"
-readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.10/release.json"
-readonly RELEASE_METADATA_SHA256="9207b91c0298b821503cc6fcb5525c121dea1b43700867d969f3860195256181"
-readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.10/veleis-postgres-memory.sh"
+readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/release.json"
+readonly RELEASE_METADATA_SHA256="83dbca3b5a5f874093021aeb063accdefca830b581df1412210e1a004b5a4a10"
+readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/veleis-postgres-memory.sh"
 readonly POSTGRES_MEMORY_SHA256="fc7a079a81c217a76457aae48407f9d68f59f7244dd2096c728fdb27d18f676c"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
@@ -190,14 +190,14 @@ source "$os_release"
 readonly SUPPORTED_PLATFORMS="Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and Debian 13 (Trixie), on amd64/x86_64"
 case "${ID:-}:${VERSION_ID:-}" in
   ubuntu:24.04 | ubuntu:25.04 | ubuntu:26.04 | debian:12 | debian:13) ;;
-  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.10 supports $SUPPORTED_PLATFORMS" ;;
+  *) fail "unsupported operating system '${ID:-unknown} ${VERSION_ID:-unknown}'; Veleis 1.8.11 supports $SUPPORTED_PLATFORMS" ;;
 esac
 os_name="${PRETTY_NAME:-${ID} ${VERSION_ID:-unknown}}"
 
 architecture="${VELEIS_ARCHITECTURE:-$(uname -m)}"
 case "$architecture" in
   x86_64 | amd64) architecture=amd64 ;;
-  *) fail "unsupported architecture '$architecture'; Veleis 1.8.10 supports linux/amd64" ;;
+  *) fail "unsupported architecture '$architecture'; Veleis 1.8.11 supports linux/amd64" ;;
 esac
 
 if ((EUID == 0)); then
@@ -291,7 +291,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "1.8.10" and .schema == 43 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.11" and .schema == 44 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 

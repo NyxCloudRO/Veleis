@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.10
+# Features in Veleis 1.8.11
 
 [← Documentation home](../README.md)
 
@@ -43,6 +43,12 @@ The Agents list retrieves latest CPU and memory through bounded indexed probes
 per agent and metric key. Requests have propagated server, PostgreSQL, and
 browser cancellation; search is debounced; live refreshes are coalesced; and
 existing rows remain visible during recoverable background failures.
+
+Ravyr 1.8.4 reports coherent filesystem total, used, and unprivileged-available
+capacity together with stable backing identity, mount provenance, and storage
+classification. Veleis counts each assigned/local backing filesystem once,
+keeps real shared/external storage available for explicit monitoring, and
+excludes system/pseudo filesystems from ordinary storage and alert projections.
 
 ## Docker monitoring
 
@@ -89,7 +95,8 @@ widgets with explicit provider scope and collection freshness. See
   Proxmox widgets.
 - Alert rules, silences, maintenance windows, no-data handling, overlap guidance,
   acknowledgement, and an active-by-default operational view.
-- Open/acknowledged/resolved incident lifecycle and recovery history.
+- Open/acknowledged/resolved incident lifecycle and recovery history, with a
+  compact operational summary and dense accessible timeline presentation.
 - Dependency-aware incident explanations with optional notification-only
   suppression; raw alerts and incidents remain visible.
 - Deterministic alert deduplication keeps repeated observations of one logical
