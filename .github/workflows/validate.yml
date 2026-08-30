@@ -17,6 +17,7 @@ jobs:
       - name: Validate release identity
         run: |
           set -Eeuo pipefail
+          ./scripts/finalize-release-integrity.py --check
           jq -e '.version == "1.8.12" and .git_tag == "v1.8.12" and .release_url == "https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.12" and .installer_image_tag == "1.8.12" and .platform == "linux/amd64"' release.json >/dev/null
           version=$(jq -r '.version' release.json)
           grep -Fq "## [$version]" CHANGELOG.md
