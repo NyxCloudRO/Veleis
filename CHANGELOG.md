@@ -5,6 +5,48 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [1.8.12] - 2026-08-30
+
+### Status Page hostnames
+
+- Added an optional Public Hostname to Status Pages. A configured, published
+  page can render at the hostname root while the existing `/status/<slug>`
+  address remains available.
+- Public Hostnames are normalized to lower case, validated as hostname-only
+  values, and unique case-insensitively. Schemes, ports, paths, trailing dots,
+  and IP literals are rejected.
+- Unknown, unconfigured, and unpublished hostnames do not expose a page. A
+  normal no-mapping result falls through to the unchanged Veleis application
+  root without disrupting authenticated-shell startup or producing a browser
+  console error.
+
+### Status Pages workspace
+
+- Compacted the page selector, selected-page header, Overview summary, and
+  Settings layout to reduce vertical space while retaining publication state,
+  copyable public path, revision context, tabs, actions, and responsive
+  behavior.
+- Added Public Hostname editing to the existing authenticated Settings flow;
+  Owner/Admin authorization, CSRF, revision checks, privacy boundaries, and
+  audit behavior remain unchanged.
+
+### Upgrade and compatibility
+
+- Run `sudo veleis backup`, refresh the lifecycle tool, then run
+  `sudo veleis upgrade 1.8.12`. The standard lifecycle verifies the immutable
+  image digest, applies migration 45, and waits for schema 45 and HTTPS
+  readiness.
+- Veleis 1.8.11 is a supported upgrade source. Existing Status Pages without a
+  Public Hostname, `/status/<slug>` links, users, sessions, agents, monitoring
+  data, incidents, settings, Ravyr enrollment, and TLS identity are preserved.
+- Database schema advances from 44 to 45 for one nullable Status Page hostname,
+  its validation constraint, and a partial case-insensitive unique index.
+  Backup format remains 1, recommended Ravyr remains signed 1.8.4, lifecycle
+  protocol remains 1, and the supported platform remains linux/amd64.
+- Docker image: `docker.io/nyxmael/veleis:1.8.12`
+- Manifest digest: `sha256:9ccee823388e437012143eaf622bf8e7d91ffaf6edb0d06cc861cff10fa27e90`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.12>
+
 ## [1.8.11] - 2026-08-30
 
 ### Monitoring accuracy and storage
@@ -609,6 +651,7 @@ First public Veleis distribution.
 - Automated uninstall and custom-certificate operations are not yet published.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
+[1.8.12]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.12
 [1.8.11]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.11
 [1.8.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.0
 [1.8.1]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.1

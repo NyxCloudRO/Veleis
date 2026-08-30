@@ -90,7 +90,7 @@ per-host SSH action.
 Ravyr downloads the strict same-origin release manifest and candidate into
 private staging. Before activation it validates server/protocol compatibility,
 Linux/amd64, exact path, bounded size, SHA-256, Ed25519 signature, and trusted
-key ID. Veleis 1.8.11 recommends signed Ravyr 1.8.4 and retains trusted key
+key ID. Veleis 1.8.12 recommends signed Ravyr 1.8.4 and retains trusted key
 `226fc31b6ee01ca3`; unsigned metadata cannot replace the trusted key.
 
 Activation preflights disk and permissions, retains one previous binary, stages
@@ -117,7 +117,7 @@ existing SSH/configuration-management process:
 
 ```bash
 curl --fail --silent --show-error --location \
-  https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/repair-ravyr.sh \
+  https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.12/repair-ravyr.sh \
   --output /tmp/repair-ravyr.sh
 printf '%s  %s\n' '3dc0ee6cf771ba6693175553dcf322db50cc2dd038626ea9a82e29ab5a03db89' \
   /tmp/repair-ravyr.sh | sha256sum --check -

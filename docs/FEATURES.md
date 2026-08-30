@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.11
+# Features in Veleis 1.8.12
 
 [← Documentation home](../README.md)
 
@@ -122,8 +122,9 @@ widgets with explicit provider scope and collection freshness. See
   Retention, and Access, plus a direct sidebar Sign Out action. See
   [Settings and account navigation](SETTINGS.md).
 - Private-by-default Status Pages with compact paginated component administration,
-  search/filter/sort, safe bulk actions, scalable ordering, and bounded,
-  privacy-safe public incident communication.
+  search/filter/sort, safe bulk actions, scalable ordering, bounded privacy-safe
+  public incident communication, and an optional unique Public Hostname for a
+  published page at `/` while preserving `/status/<slug>`.
 - Configurable raw probe-result retention (7–365 days, 90-day clean-install
   default) and capacity visibility. Incident and audit truth is separate from
   raw probe-result retention.

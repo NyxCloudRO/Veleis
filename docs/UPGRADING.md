@@ -11,7 +11,7 @@ sudo veleis upgrade
 An exact target may be requested when it is the published stable release:
 
 ```bash
-sudo veleis upgrade 1.8.11
+sudo veleis upgrade 1.8.12
 ```
 
 Veleis retrieves public structured release metadata over HTTPS and validates
@@ -24,35 +24,35 @@ only after the target schema and HTTPS readiness pass.
 
 ## Current release state
 
-Veleis 1.8.11 is the current stable release. Veleis 1.7.1 and 1.8.0 through
-1.8.10 are explicit upgrade sources. Refresh the lifecycle tooling before the
-upgrade so the schema-44 compatibility contract and PostgreSQL memory helper
+Veleis 1.8.12 is the current stable release. Veleis 1.7.1 and 1.8.0 through
+1.8.11 are explicit upgrade sources. Refresh the lifecycle tooling before the
+upgrade so the schema-45 compatibility contract and PostgreSQL memory helper
 are installed:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install-lifecycle.sh | bash
 sudo veleis status
 sudo veleis postgres-memory status
-sudo veleis upgrade 1.8.11
+sudo veleis upgrade 1.8.12
 ```
 
-The exact target form is `sudo veleis upgrade 1.8.11`. Schema 44 is current.
-The 1.8.10 → 1.8.11 path applies migration 44 for the nullable per-user
-Developer Support acknowledgement. Older supported sources advance through all
-required migrations in order.
+The exact target form is `sudo veleis upgrade 1.8.12`. Schema 45 is current.
+The 1.8.11 → 1.8.12 path applies migration 45 for the nullable, validated,
+case-insensitively unique Status Page Public Hostname. Older supported sources
+advance through all required migrations in order.
 Users and sessions, tokens, assets, probes/history, alerts/incidents,
 notifications and encrypted credentials, Status Pages, dashboards, Discovery,
 Ravyr enrollment/policy, retention, and TLS identity are preserved. Existing
 TLS probes begin Certificate Intelligence history on their next completed
 handshake; pre-upgrade observations cannot be reconstructed.
 
-On 1.8.11, `sudo veleis upgrade` and `sudo veleis upgrade 1.8.11` are safe
+On 1.8.12, `sudo veleis upgrade` and `sudo veleis upgrade 1.8.12` are safe
 no-ops: they create no backup, pull no image, run no migration, and restart no
-service. A 1.8.11 downgrade remains rejected.
+service. A 1.8.12 downgrade remains rejected.
 
 ## PostgreSQL memory profile
 
-New 1.8.11 installations select a managed database profile from the effective
+New 1.8.12 installations select a managed database profile from the effective
 cgroup or host memory limit. One GiB is the hard minimum and two GiB or more is
 recommended. Existing installations retain their current database topology
 until an operator explicitly adopts the managed profile:

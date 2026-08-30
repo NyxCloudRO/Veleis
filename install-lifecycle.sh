@@ -2,13 +2,13 @@
 set -Eeuo pipefail
 
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
-readonly TOOL_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/veleis"
+readonly TOOL_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.12/veleis"
 readonly TOOL_SHA256="a107e1acd6f9e8940cf38646fbae52a78554234c6886310c4cee836fcb2bcf43"
-readonly RELEASE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/release.json"
+readonly RELEASE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.12/release.json"
 readonly RELEASE_SHA256="83dbca3b5a5f874093021aeb063accdefca830b581df1412210e1a004b5a4a10"
-readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.11/veleis-postgres-memory.sh"
+readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v1.8.12/veleis-postgres-memory.sh"
 readonly POSTGRES_MEMORY_SHA256="fc7a079a81c217a76457aae48407f9d68f59f7244dd2096c728fdb27d18f676c"
-readonly COMPOSE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/v1.8.11/deploy/compose.yaml"
+readonly COMPOSE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/v1.8.12/deploy/compose.yaml"
 readonly COMPOSE_SHA256="5c44f566a5bde88ee92e3692323625ce5d5d56701e7bde8075bba9aa250de4b9"
 
 SUDO=()
@@ -58,7 +58,7 @@ printf '%s  %s\n' "$POSTGRES_MEMORY_SHA256" "$TEMPORARY_DIRECTORY/veleis-postgre
 printf '%s  %s\n' "$COMPOSE_SHA256" "$TEMPORARY_DIRECTORY/compose.yaml" | sha256sum --check --status || fail "Compose template checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
 bash -n "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
-jq -e '.product == "Veleis" and .version == "1.8.11" and .schema == 44 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "1.8.12" and .schema == 45 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 
 as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis" /usr/local/bin/veleis
 as_root install -d -m 0755 "$INSTALL_ROOT/bin"

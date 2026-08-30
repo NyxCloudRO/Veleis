@@ -32,10 +32,12 @@ Browser / API client
 
 PostgreSQL is authoritative for accounts, configuration, current monitoring
 state, history, inventory, incidents, alerts, dashboards, notifications, and
-audit records. Schema 44 retains bounded dependency interpretations,
+audit records. Schema 45 retains bounded dependency interpretations,
 deterministic alert occurrence identity, and historical cross-signal
 correlation evidence without rewriting source incidents, and adds a nullable
-per-user Developer Support acknowledgement. The database volume survives
+per-user Developer Support acknowledgement plus a nullable, validated,
+case-insensitively unique Status Page Public Hostname. Unconfigured hostnames
+fall through to the unchanged application root. The database volume survives
 container and host-service restart.
 `/opt/veleis/data` persists the TLS identity and uploaded avatars; `/opt/veleis/.env`
 persists generated deployment secrets.

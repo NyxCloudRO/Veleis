@@ -9,11 +9,12 @@ published; an unpublished public slug returns 404.
 ## Create and publish
 
 Create or select a page in the authenticated Status Pages workspace. The compact
-header shows its name, explicit **Published** or **Unpublished** state, copyable
-public path, and direct **Publish** or **Unpublish** action. **View public page**
-appears only while published. The configuration revision remains available as
-secondary concurrency context instead of competing with the page identity.
-Internal names and source details remain authenticated-only.
+selector and header show its name, explicit **Published** or **Unpublished**
+state, copyable public path, and direct **Publish** or **Unpublish** action.
+**View public page** appears only while published. The configuration revision
+remains available as secondary concurrency context instead of competing with
+the page identity. Internal names and source details remain
+authenticated-only.
 
 ## Workspace
 
@@ -25,7 +26,8 @@ Internal names and source details remain authenticated-only.
   25/50/100-page pagination.
 - **Incidents** separates the linked-incident publish flow, active public
   incidents, and bounded history from component administration.
-- **Settings** contains page-level identity and publication configuration.
+- **Settings** contains page-level identity, optional Public Hostname, and
+  publication configuration.
 
 Overview, Components, Incidents, and Settings remain on the active tab after a
 save or server refresh. Selecting a different page is deliberate and does not
@@ -62,6 +64,20 @@ Aggregate health is computed over every enabled component, not merely the
 visible page. Component and incident responses are paginated so a 1,000-item
 page does not create an unbounded response or DOM. The public UI uses compact,
 responsive rows and contains no administration controls.
+
+Every published page remains available at `/status/<slug>`. A page may also
+have one optional Public Hostname, such as `status.example.com`. Enter only the
+hostname: do not include `https://`, a port, a path, a query, or a trailing dot.
+After DNS and a reverse proxy direct that hostname to Veleis, the same published
+page renders at the hostname root (`/`). Hostnames are normalized to lower case
+and must be unique across pages.
+
+An ordinary hostname with no published mapping is a normal no-match result: it
+continues to the existing Veleis application root without a browser error.
+Unknown and unpublished mappings never expose a Status Page. The hostname
+resolver is public only for this bounded mapping decision; page creation and
+configuration retain the same Owner/Admin authentication, CSRF, revision, and
+audit protections as before.
 
 Public HTML, JSON, hydration, and network responses omit probe targets, probe
 and asset IDs, provider IDs, internal names/labels/metadata, credentials,
