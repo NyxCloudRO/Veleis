@@ -5,6 +5,52 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-06
+
+### Anomaly Detection and Capacity Intelligence
+
+- Added adaptive, explainable Anomaly Detection for CPU, memory, and network
+  signals, with confidence, supporting evidence, sensitivity, minimum-duration
+  settings, and bounded Learning states.
+- Added Capacity Intelligence for supported Ravyr host filesystems with
+  threshold timing, forecast confidence, data quality, and explicit unsupported
+  or insufficient-history states.
+- Detection and forecasting remain observational. Veleis performs no automatic
+  remediation, infrastructure control, capacity cleanup, or storage mutation.
+
+### Infrastructure visibility
+
+- Added automatic Docker discovery while preserving the read-only Docker
+  monitoring boundary.
+- Added Storage/NAS provider inventory and snapshots alongside Linux-host
+  storage, Discovery, and Topology context.
+- Integrated service, certificate, host, container, storage, incident, alert,
+  and notification context into the refined Overview experience.
+
+### User experience
+
+- Refined platform-health summaries, navigation, responsive sidebar geometry,
+  Agent Detail, and the Dark and Light appearance systems.
+- Added Diagnostics & Support as an inert future-release preview only. It has no
+  route, backend, requests, polling, support-bundle, or licensing behavior.
+
+### Upgrade and compatibility
+
+- Run `sudo veleis backup`, refresh the lifecycle tool, then run
+  `sudo veleis upgrade 2.0.0`. The lifecycle verifies the immutable image
+  digest, applies migrations 46 through 50, and waits for schema 50 and HTTPS
+  readiness.
+- Veleis 1.7.1 and 1.8.0 through 1.8.12 are supported upgrade sources. Existing
+  users, sessions, agents, providers, configuration, monitoring history,
+  telemetry, Status Pages, dashboards, and TLS identity are preserved.
+- Database schema advances from 45 to 50 for automatic Docker discovery,
+  Storage/NAS discovery, latest-agent-metric ingestion state, obsolete-index
+  cleanup, and Anomaly Detection settings. Backup format remains 1,
+  recommended Ravyr remains signed 1.8.4, lifecycle protocol remains 1, and the
+  supported platform remains linux/amd64.
+- Docker image: `docker.io/nyxmael/veleis:2.0.0`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.0>
+
 ## [1.8.12] - 2026-08-30
 
 ### Status Page hostnames
@@ -651,6 +697,7 @@ First public Veleis distribution.
 - Automated uninstall and custom-certificate operations are not yet published.
 - Image signing, a public SBOM, and provenance attestations are pending.
 
+[2.0.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.0
 [1.8.12]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.12
 [1.8.11]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.11
 [1.8.0]: https://github.com/NyxCloudRO/Veleis/releases/tag/v1.8.0

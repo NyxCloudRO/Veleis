@@ -63,8 +63,8 @@ from the default route (or a filtered global-address fallback), and `127.0.0.1`.
 It persists across container restart.
 
 Public custom-certificate/reverse-proxy replacement operations are not yet
-documented as a supported v1 workflow. Do not disable HTTPS merely to suppress
-a browser warning.
+documented as a supported workflow. Do not disable HTTPS merely to suppress a
+browser warning.
 
 ## Data and retention
 

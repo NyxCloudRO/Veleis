@@ -6,7 +6,7 @@ Official repository:
 [docker.io/nyxmael/veleis](https://hub.docker.com/r/nyxmael/veleis)
 
 ```bash
-docker pull nyxmael/veleis:1.8.12
+docker pull nyxmael/veleis:2.0.0
 ```
 
 ## Tags
@@ -28,13 +28,14 @@ docker pull nyxmael/veleis:1.8.12
 | `1.8.9`  | Immutable prior release. It will not move to another build.         | `sha256:6c6e0227c941082d3fa6ef51e67133472e1ce2e16e478fc2e2a2c5120f2ded45` |
 | `1.8.10` | Immutable prior release. It will not move to another build.         | `sha256:8582265d40de9f531a886f645fd3fd6fbab3e06321c90d0c69344d47a284fcf3` |
 | `1.8.11` | Immutable prior release. It will not move to another build.         | `sha256:435d1a3a5b404f8aec2f8fdd3139a8a3f81ba37829eaf44d23bc8f42516876fb` |
-| `1.8.12` | Immutable exact current release. It will not move to another build. | `sha256:9ccee823388e437012143eaf622bf8e7d91ffaf6edb0d06cc861cff10fa27e90` |
+| `1.8.12` | Immutable prior release. It will not move to another build.         | `sha256:9ccee823388e437012143eaf622bf8e7d91ffaf6edb0d06cc861cff10fa27e90` |
 | `1.8`    | Floating minor track: newest accepted stable `1.8.x`.               | Same as `1.8.12`                                                          |
-| `latest` | Floating newest accepted stable release.                            | Same as `1.8.12`                                                          |
+| `2.0.0`  | Immutable exact current release. It will not move to another build. | See `release.json`                                                        |
+| `latest` | Floating newest accepted stable release.                            | Same as `2.0.0`                                                           |
 
-The `1.7` tag remains on the newest accepted 1.7 patch. `1.8` tracks accepted
-1.8 releases, and `latest` resolves to the accepted 1.8.12 image. Immutable
-prior releases remain at their original digests.
+The `1.7` tag remains on the newest accepted 1.7 patch, and `1.8` remains on the
+newest accepted 1.8 patch. `latest` resolves to the accepted 2.0.0 image.
+Immutable prior releases remain at their original digests.
 
 Each release installer deliberately uses its immutable exact tag, not a floating
 channel. Old release installers therefore cannot silently install a future

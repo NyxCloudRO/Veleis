@@ -1,4 +1,4 @@
-# Features in Veleis 1.8.12
+# Features in Veleis 2.0.0
 
 [← Documentation home](../README.md)
 
@@ -50,11 +50,29 @@ classification. Veleis counts each assigned/local backing filesystem once,
 keeps real shared/external storage available for explicit monitoring, and
 excludes system/pseudo filesystems from ordinary storage and alert projections.
 
+## Anomaly Detection
+
+Veleis builds adaptive baselines from recent host behavior using robust
+statistics. It evaluates CPU, memory, and network signals and explains expected
+versus observed behavior, confidence, and supporting evidence. Sensitivity and
+minimum-duration settings keep detection bounded. A Learning state is shown
+when evidence is insufficient or the statistical range is too broad. Detection
+does not remediate or control infrastructure.
+
+## Capacity Intelligence
+
+Capacity forecasts cover capacity-bearing Ravyr host filesystems with sufficient
+retained history. Results include confidence, data quality, threshold timing,
+and explicit unsupported or insufficient-history states. Storage/NAS provider
+snapshots without persisted time series are not presented as forecastable, and
+Veleis performs no capacity action or cleanup.
+
 ## Docker monitoring
 
-Veleis observes Docker engines, containers, images, volumes, networks, runtime
-state, metrics, and events through Ravyr. It records engine availability and
-container health without exposing Docker control actions.
+Veleis automatically discovers eligible Docker engines through Ravyr and
+observes containers, images, volumes, networks, runtime state, metrics, and
+events. It records engine availability and container health without exposing
+Docker control actions.
 
 Docker socket access is security-sensitive because the socket itself is broadly
 powerful. Grant it only on hosts you intend to monitor, restrict access to the
@@ -76,6 +94,7 @@ widgets with explicit provider scope and collection freshness. See
 ## Discovery and topology
 
 - Normalized inventory from typed providers while preserving provider source.
+- Storage/NAS provider inventory and snapshots alongside Linux-host storage.
 - Stable identities, fingerprints, current/historical records, and change
   history.
 - Search, filtering, hierarchy, relationships, and bounded topology views.
