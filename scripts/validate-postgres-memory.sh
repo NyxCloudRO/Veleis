@@ -133,6 +133,42 @@ printf '%s\n' 'name: legacy' >"$temporary_directory/legacy/compose.yaml"
 printf '%s\n' 'name: managed' >"$temporary_directory/managed-compose.yaml"
 write_host_memory 2
 reset_cgroup
+assert_equal "$("$helper" classify-installation "$temporary_directory/legacy")" custom 'unrecognized legacy Compose is ambiguous'
+if PATH="$temporary_directory/fake-bin:$PATH" \
+  VELEIS_MEMINFO_FILE="$temporary_directory/meminfo" \
+  VELEIS_PROC_CGROUP_FILE="$temporary_directory/proc-cgroup" \
+  VELEIS_CGROUP_ROOT="$temporary_directory/cgroup" \
+  VELEIS_POSTGRES_COMPOSE_TEMPLATE="$temporary_directory/managed-compose.yaml" \
+  "$helper" converge-managed "$temporary_directory/legacy" >/dev/null 2>&1; then
+  fail 'automatic convergence rewrote an ambiguous custom installation'
+fi
+assert_equal "$(cat "$temporary_directory/legacy/compose.yaml")" 'name: legacy' 'ambiguous Compose preservation'
+
+# An exact historical Veleis-owned Compose identity is safe to converge without
+# requiring the operator to discover the explicit adoption command.
+mkdir -p "$temporary_directory/automatic/bin"
+cp "$temporary_directory/legacy/.env" "$temporary_directory/automatic/.env"
+cp "$temporary_directory/legacy/compose.yaml" "$temporary_directory/automatic/compose.yaml"
+legacy_hash=$(sha256sum "$temporary_directory/automatic/compose.yaml" | awk '{print $1}')
+assert_equal "$(VELEIS_POSTGRES_LEGACY_COMPOSE_SHA256S="$legacy_hash" "$helper" classify-installation "$temporary_directory/automatic")" legacy-default 'canonical legacy ownership'
+PATH="$temporary_directory/fake-bin:$PATH" \
+  VELEIS_MEMINFO_FILE="$temporary_directory/meminfo" \
+  VELEIS_PROC_CGROUP_FILE="$temporary_directory/proc-cgroup" \
+  VELEIS_CGROUP_ROOT="$temporary_directory/cgroup" \
+  VELEIS_POSTGRES_LEGACY_COMPOSE_SHA256S="$legacy_hash" \
+  VELEIS_POSTGRES_COMPOSE_TEMPLATE="$temporary_directory/managed-compose.yaml" \
+  "$helper" converge-managed "$temporary_directory/automatic" >/dev/null
+assert_equal "$("$helper" classify-installation "$temporary_directory/automatic")" managed 'automatic managed convergence'
+assert_equal "$(sed -n 's/^VELEIS_POSTGRES_EFFECTIVE_MEMORY_MB=//p' "$temporary_directory/automatic/.env")" 2048 'automatic effective memory'
+automatic_backups=$(find "$temporary_directory/automatic" -maxdepth 1 -name '*.postgres-memory-*.backup' | wc -l)
+PATH="$temporary_directory/fake-bin:$PATH" \
+  VELEIS_MEMINFO_FILE="$temporary_directory/meminfo" \
+  VELEIS_PROC_CGROUP_FILE="$temporary_directory/proc-cgroup" \
+  VELEIS_CGROUP_ROOT="$temporary_directory/cgroup" \
+  VELEIS_POSTGRES_COMPOSE_TEMPLATE="$temporary_directory/managed-compose.yaml" \
+  "$helper" converge-managed "$temporary_directory/automatic" >/dev/null
+assert_equal "$(find "$temporary_directory/automatic" -maxdepth 1 -name '*.postgres-memory-*.backup' | wc -l)" "$automatic_backups" 'idempotent convergence backup count'
+
 if PATH="$temporary_directory/fake-bin:$PATH" \
   VELEIS_MEMINFO_FILE="$temporary_directory/meminfo" \
   VELEIS_PROC_CGROUP_FILE="$temporary_directory/proc-cgroup" \

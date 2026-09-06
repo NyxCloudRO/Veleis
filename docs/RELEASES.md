@@ -4,30 +4,30 @@
 
 ## Current stable release
 
-Veleis **2.0.0** is the current stable release.
+Veleis **2.0.1** is the current stable release.
 
 | Component                  | Release identity                 |
 | -------------------------- | -------------------------------- |
-| Application                | `2.0.0`                          |
-| Git tag and GitHub Release | `v2.0.0`                         |
-| Installer target           | `docker.io/nyxmael/veleis:2.0.0` |
+| Application                | `2.0.1`                          |
+| Git tag and GitHub Release | `v2.0.1`                         |
+| Installer target           | `docker.io/nyxmael/veleis:2.0.1` |
 | Docker manifest            | Recorded in `release.json`       |
 | Schema                     | 50                               |
 | Backup format              | 1                                |
 
 All prior releases remain immutable at their original Docker digests and
-GitHub releases. Upgrades from 1.7.1, 1.8.0, 1.8.1, 1.8.2, 1.8.3, 1.8.4,
-1.8.5, 1.8.6, 1.8.7, 1.8.8, 1.8.9, 1.8.10, 1.8.11, or 1.8.12 to 2.0.0 use a
-mandatory pre-upgrade backup. Schema 50 is current; upgrades apply every
+GitHub releases. Upgrades from 1.7.1, 1.8.0 through 1.8.12, or 2.0.0 to 2.0.1
+use a mandatory pre-upgrade backup. Schema 50 is current; upgrades apply every
 required migration through schema 50.
 
 ## Supported versions
 
 | Version | Status                                          |
 | ------- | ----------------------------------------------- |
-| 2.0.0   | Current public stable release                   |
-| 1.8.x   | Supported upgrade source line for 2.0.0         |
-| 1.7.1   | Supported upgrade source for 2.0.0              |
+| 2.0.1   | Current public stable release                   |
+| 2.0.0   | Supported upgrade source for 2.0.1              |
+| 1.8.x   | Supported upgrade source line for 2.0.1         |
+| 1.7.1   | Supported upgrade source for 2.0.1              |
 | 1.7.0   | Prior immutable release; upgrade to 1.7.1 first |
 | <1.7    | Pre-public development; no public support       |
 
@@ -37,11 +37,11 @@ supported.
 
 ## Version and channel policy
 
-- Exact version tags such as `1.8.12` and `2.0.0` are immutable.
+- Exact version tags such as `2.0.0` and `2.0.1` are immutable.
 - Minor tags such as `1.8` move only to the newest accepted stable patch in that
   minor line.
 - `latest` moves only to the newest accepted stable public release.
-- Git tags use `v` (`v2.0.0`); application and Docker versions do not.
+- Git tags use `v` (`v2.0.1`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
 

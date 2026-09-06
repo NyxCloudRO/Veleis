@@ -25,7 +25,7 @@ preserved at `/opt/veleis` for diagnosis.
 
 ## Unsupported operating system
 
-Error contains `unsupported operating system`. Veleis 2.0.0 is accepted only on
+Error contains `unsupported operating system`. Veleis 2.0.1 is accepted only on
 Ubuntu 24.04 LTS, Ubuntu 25.04, Ubuntu 26.04 LTS, Debian 12 (Bookworm), and
 Debian 13 (Trixie), on amd64/x86_64. Do not bypass OS detection on a production
 host; unknown Ubuntu/Debian releases and other distributions fail closed.
@@ -73,7 +73,7 @@ Check DNS, outbound HTTPS, Docker Hub reachability, proxy policy, and available
 disk space:
 
 ```bash
-sudo docker pull nyxmael/veleis:2.0.0
+sudo docker pull nyxmael/veleis:2.0.1
 sudo docker system df
 ```
 

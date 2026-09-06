@@ -5,6 +5,45 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-09-06
+
+Veleis 2.0.1 is a focused stability and performance update for Veleis 2.x.
+It improves PostgreSQL memory-profile convergence across constrained and
+containerized environments, significantly reduces Capacity analytics workload
+on larger deployments, prevents analytics views from remaining indefinitely in
+loading states, and improves Docker permission diagnostics. It also includes a
+small density refinement to the public Status Page incident sections.
+
+No new monitoring features are introduced in this patch.
+
+### Fixed
+
+- Fixed PostgreSQL/TimescaleDB memory profile convergence for supported
+  Veleis-managed and legacy installations, ensuring deployment sizing follows
+  effective system memory across VM, LXC, Docker, and nested cgroup
+  environments.
+- Fixed Capacity forecasting scalability on larger installations by replacing
+  expensive per-target history scans with bounded set-oriented computation.
+- Added bounded server-side Capacity execution with deterministic timeout and
+  error handling.
+- Added Capacity snapshot reuse and concurrent computation coalescing to
+  prevent duplicate expensive analytics work between Overview and Capacity.
+- Fixed prolonged Capacity and Anomalies loading states by enforcing finite
+  client retry and error behavior.
+- Improved Docker monitoring diagnostics so socket permission failures are
+  distinguished from actual Docker Engine availability failures.
+
+### Improved
+
+- Improved stability and responsiveness on constrained deployments, including
+  2 GiB systems.
+- Improved upgrade handling for historical Veleis-managed PostgreSQL
+  configurations while preserving explicit operator-customized
+  configurations.
+- Compacted the public Status Page **Current incidents** and **Incident
+  history** sections for denser presentation and reduced unnecessary vertical
+  whitespace.
+
 ## [2.0.0] - 2026-09-06
 
 ### Anomaly Detection and Capacity Intelligence

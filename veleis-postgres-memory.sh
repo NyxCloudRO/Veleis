@@ -207,6 +207,35 @@ veleis_classify_postgres_env() {
   fi
 }
 
+# These are the exact canonical Compose definitions shipped by Veleis 1.7.1
+# through 2.0.0 before managed PostgreSQL command-line settings were introduced.
+# Hash matching lets upgrades distinguish a Veleis-owned legacy topology from
+# an administrator-customized Compose file without guessing from its contents.
+readonly VELEIS_POSTGRES_CANONICAL_LEGACY_COMPOSE_SHA256S="${VELEIS_POSTGRES_LEGACY_COMPOSE_SHA256S:-6bca2d31ceeaa5136fcdf5808efdd7bfcee0472d03a12043700d655ea4cd34a7 5c44f566a5bde88ee92e3692323625ce5d5d56701e7bde8075bba9aa250de4b9}"
+
+veleis_classify_postgres_installation() {
+  local install_root=${1:-/opt/veleis} environment_file compose_file classification compose_hash expected
+  environment_file="$install_root/.env"
+  compose_file="$install_root/compose.yaml"
+  classification=$(veleis_classify_postgres_env "$environment_file") || return
+  if [[ "$classification" == managed ]]; then
+    printf 'managed\n'
+    return
+  fi
+  if grep -q '^VELEIS_POSTGRES_' "$environment_file" || [[ ! -f "$compose_file" || -L "$compose_file" ]]; then
+    printf 'custom\n'
+    return
+  fi
+  compose_hash=$(sha256sum "$compose_file" | awk '{print $1}')
+  for expected in $VELEIS_POSTGRES_CANONICAL_LEGACY_COMPOSE_SHA256S; do
+    if [[ "$compose_hash" == "$expected" ]]; then
+      printf 'legacy-default\n'
+      return
+    fi
+  done
+  printf 'custom\n'
+}
+
 veleis_assess_postgres_profile() {
   local memory=$1 shared=$2 cache=$3 work=$4 maintenance=$5 connections=$6
   local status=HEALTHY
@@ -321,6 +350,11 @@ veleis_install_postgres_profile() {
     printf 'PostgreSQL managed memory profile is already current; no configuration was changed.\n'
     return 0
   fi
+  if [[ "$operation" == adopt && "$classification" == managed && "$old_fingerprint" == "$new_fingerprint" ]] &&
+     cmp -s "$template_file" "$compose_file"; then
+    printf 'PostgreSQL managed memory profile and Compose definition are already current; no configuration was changed.\n'
+    return 0
+  fi
 
   timestamp=$(date -u +%Y%m%dT%H%M%SZ)
   backup_file="$environment_file.postgres-memory-$timestamp.backup"
@@ -367,6 +401,20 @@ veleis_adopt_managed_postgres_profile() {
   veleis_install_postgres_profile adopt "${1:-/opt/veleis}"
 }
 
+veleis_converge_managed_postgres_profile() {
+  local install_root=${1:-/opt/veleis} classification
+  classification=$(veleis_classify_postgres_installation "$install_root") || return
+  case "$classification" in
+    managed | legacy-default)
+      veleis_install_postgres_profile adopt "$install_root"
+      ;;
+    custom)
+      printf 'WARNING: PostgreSQL tuning ownership is custom or ambiguous; automatic upgrade convergence did not overwrite it. Use postgres-memory status and explicitly adopt-managed after review.\n' >&2
+      return 3
+      ;;
+  esac
+}
+
 veleis_print_postgres_summary() {
   cat <<EOF
 Detected effective memory: ${VELEIS_POSTGRES_MEMORY_MB} MiB
@@ -397,6 +445,9 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     classify-env)
       veleis_classify_postgres_env "${2:-}" || exit 1
       ;;
+    classify-installation)
+      veleis_classify_postgres_installation "${2:-/opt/veleis}" || exit 1
+      ;;
     assess)
       [[ $# == 7 ]] || { printf 'assess requires MEMORY SHARED CACHE WORK MAINTENANCE CONNECTIONS (MiB)\n' >&2; exit 2; }
       veleis_assess_postgres_profile "$2" "$3" "$4" "$5" "$6" "$7"
@@ -414,8 +465,11 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     adopt-managed)
       veleis_adopt_managed_postgres_profile "${2:-/opt/veleis}"
       ;;
+    converge-managed)
+      veleis_converge_managed_postgres_profile "${2:-/opt/veleis}"
+      ;;
     *)
-      printf 'usage: %s {detect|profile MEMORY_MB|env MEMORY_MB|classify-env FILE|assess MEMORY SHARED CACHE WORK MAINTENANCE CONNECTIONS|recalculate-env INPUT MEMORY_MB OUTPUT|status [INSTALL_ROOT]|apply-managed [INSTALL_ROOT]|adopt-managed [INSTALL_ROOT]}\n' "$0" >&2
+      printf 'usage: %s {detect|profile MEMORY_MB|env MEMORY_MB|classify-env FILE|classify-installation [INSTALL_ROOT]|assess MEMORY SHARED CACHE WORK MAINTENANCE CONNECTIONS|recalculate-env INPUT MEMORY_MB OUTPUT|status [INSTALL_ROOT]|apply-managed [INSTALL_ROOT]|adopt-managed [INSTALL_ROOT]|converge-managed [INSTALL_ROOT]}\n' "$0" >&2
       exit 2
       ;;
   esac

@@ -78,7 +78,7 @@ fi
 
 require_commands() {
   local command_name
-  for command_name in curl df docker find flock grep jq mktemp sed sha256sum sort stat tar; do
+  for command_name in cmp curl df docker find flock grep jq mktemp sed sha256sum sort stat tar; do
     command -v "$command_name" >/dev/null 2>&1 || fail "required command is unavailable: $command_name"
   done
   docker compose version >/dev/null 2>&1 || fail "Docker Compose v2 is required"
@@ -451,7 +451,7 @@ registry_digest() {
 
 upgrade_installation() {
   local requested=${1:-} installed target comparison metadata expected_digest actual_digest image
-  local target_schema database_bytes required_bytes minimum_supported preupgrade_backup
+  local target_schema database_bytes required_bytes minimum_supported preupgrade_backup memory_helper memory_ownership
   installed=$(current_version)
   [[ "$installed" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "installed version is invalid"
   if [[ -n "$requested" ]]; then
@@ -492,10 +492,19 @@ upgrade_installation() {
   required_bytes=$((database_bytes * 2 + 2147483648))
   check_space "$INSTALL_ROOT" "$required_bytes"
 
+  memory_helper=$(postgres_memory_tool)
+  memory_ownership=$("$memory_helper" classify-installation "$INSTALL_ROOT") ||
+    fail "PostgreSQL tuning ownership could not be established safely"
+  [[ "$memory_ownership" != custom ]] ||
+    fail "PostgreSQL tuning ownership is custom or ambiguous; review 'veleis postgres-memory status' and explicitly run 'veleis postgres-memory adopt-managed' if Veleis should own it"
+
   log "Creating the mandatory pre-upgrade backup."
   create_backup "$INSTALL_ROOT/backups"
   RECOVERY_BACKUP=$LAST_BACKUP
   preupgrade_backup=$RECOVERY_BACKUP
+  log "Converging the Veleis-owned PostgreSQL profile for effective deployment memory."
+  "$memory_helper" converge-managed "$INSTALL_ROOT" ||
+    fail "PostgreSQL managed-profile convergence failed and the prior configuration was restored"
   log "Pulling and verifying the immutable target image."
   docker pull "$image" >/dev/null || fail "target Docker image could not be pulled"
   docker image inspect "$image" >/dev/null 2>&1 || fail "pulled target image identity could not be verified"
