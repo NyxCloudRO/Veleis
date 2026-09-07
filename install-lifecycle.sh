@@ -13,6 +13,8 @@ readonly COMPOSE_SHA256="5c44f566a5bde88ee92e3692323625ce5d5d56701e7bde8075bba9a
 
 SUDO=()
 TEMPORARY_DIRECTORY=""
+INSTALLED_VERSION=""
+TARGET_VERSION=""
 
 fail() { printf 'Veleis lifecycle installation failed: %s\n' "$*" >&2; exit 1; }
 as_root() { if ((${#SUDO[@]})); then "${SUDO[@]}" "$@"; else "$@"; fi; }
@@ -33,6 +35,8 @@ fi
 as_root test -d "$INSTALL_ROOT" || fail "Veleis is not installed at $INSTALL_ROOT"
 as_root test -f "$INSTALL_ROOT/.env" || fail "Veleis environment is missing"
 as_root test -f "$INSTALL_ROOT/.veleis-installation" || fail "Veleis installation marker is missing"
+INSTALLED_VERSION=$(as_root sed -n 's/^VELEIS_VERSION=//p' "$INSTALL_ROOT/.env")
+[[ "$INSTALLED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "installed Veleis version is missing or invalid"
 if as_root test -L /usr/local/bin/veleis; then
   fail "/usr/local/bin/veleis is a symbolic link and was not replaced"
 fi
@@ -59,11 +63,14 @@ printf '%s  %s\n' "$COMPOSE_SHA256" "$TEMPORARY_DIRECTORY/compose.yaml" | sha256
 bash -n "$TEMPORARY_DIRECTORY/veleis"
 bash -n "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
 jq -e '.product == "Veleis" and .version == "2.0.1" and .schema == 50 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+TARGET_VERSION=$(jq -r .version "$TEMPORARY_DIRECTORY/release.json")
 
 as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis" /usr/local/bin/veleis
 as_root install -d -m 0755 "$INSTALL_ROOT/bin"
 as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh" "$INSTALL_ROOT/bin/veleis-postgres-memory"
 as_root install -m 0644 "$TEMPORARY_DIRECTORY/compose.yaml" "$INSTALL_ROOT/bin/veleis-compose.yaml"
-as_root install -m 0644 "$TEMPORARY_DIRECTORY/release.json" "$INSTALL_ROOT/release.json"
+if [[ "$INSTALLED_VERSION" == "$TARGET_VERSION" ]]; then
+  as_root install -m 0644 "$TEMPORARY_DIRECTORY/release.json" "$INSTALL_ROOT/release.json"
+fi
 
 printf '%s\n' 'Veleis lifecycle tooling installed.' 'Run: sudo veleis status' 'Back up now with: sudo veleis backup'

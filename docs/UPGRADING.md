@@ -22,6 +22,10 @@ immutable image by tag and digest, and applies the release's migration workflow
 with a temporary target environment. Persisted version/image metadata changes
 only after the target schema and HTTPS readiness pass.
 
+Refreshing lifecycle tooling for a newer target preserves the installed
+release metadata until that upgrade completes, so the mandatory source backup
+remains internally version-consistent and directly restorable.
+
 ## Current release state
 
 Veleis 2.0.1 is the current stable release. Veleis 1.7.1, 1.8.0 through

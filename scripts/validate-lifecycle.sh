@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2016 # Static literals below intentionally inspect lifecycle source.
 set -Eeuo pipefail
 
 repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 temporary_directory=$(mktemp -d)
-trap 'find "$temporary_directory" -depth -delete 2>/dev/null || true' EXIT
+cleanup() {
+  local status=$?
+  trap - EXIT
+  find "$temporary_directory" -depth -delete 2>/dev/null || true
+  exit "$status"
+}
+trap cleanup EXIT
 install_root="$temporary_directory/installation"
 fake_bin="$temporary_directory/bin"
 mkdir -p "$install_root/data/tls" "$fake_bin"
@@ -129,6 +136,11 @@ sed -i '/^VELEIS_POSTGRES_WORK_MEM_MB=/d' "$install_root/.env"
 grep -Fq 'memory_ownership=$("$memory_helper" classify-installation "$INSTALL_ROOT")' "$repository_root/veleis"
 grep -Fq '"$memory_helper" converge-managed "$INSTALL_ROOT"' "$repository_root/veleis"
 grep -Fq '"$memory_helper" verify-effective "$INSTALL_ROOT"' "$repository_root/veleis"
+grep -Fq 'INSTALLED_VERSION=$(as_root sed -n '\''s/^VELEIS_VERSION=//p'\'' "$INSTALL_ROOT/.env")' "$repository_root/install-lifecycle.sh"
+grep -Fq 'if [[ "$INSTALLED_VERSION" == "$TARGET_VERSION" ]]; then' "$repository_root/install-lifecycle.sh"
+metadata_install_line=$(grep -n 'install -m 0644 "$TEMPORARY_DIRECTORY/release.json" "$INSTALL_ROOT/release.json"' "$repository_root/install-lifecycle.sh" | cut -d: -f1)
+metadata_guard_line=$(grep -n 'if \[\[ "$INSTALLED_VERSION" == "$TARGET_VERSION" \]\]; then' "$repository_root/install-lifecycle.sh" | cut -d: -f1)
+((metadata_guard_line < metadata_install_line)) || { echo 'lifecycle installer does not preserve cross-version source metadata' >&2; exit 1; }
 backup_line=$(grep -n 'create_backup "$INSTALL_ROOT/backups"' "$repository_root/veleis" | tail -n 1 | cut -d: -f1)
 converge_line=$(grep -n '"$memory_helper" converge-managed "$INSTALL_ROOT"' "$repository_root/veleis" | cut -d: -f1)
 ((backup_line < converge_line)) || { echo 'PostgreSQL convergence is not protected by the mandatory upgrade backup' >&2; exit 1; }
@@ -142,6 +154,9 @@ if VELEIS_INSTALL_ROOT="$install_root" "$repository_root/veleis" restore "$tempo
   echo 'unsafe archive link was accepted' >&2
   exit 1
 fi
-grep -Fq 'backup archive contains a link or unsupported special file' "$temporary_directory/archive.out"
+if ! grep -Fq 'backup archive contains a link or unsupported special file' "$temporary_directory/archive.out"; then
+  cat "$temporary_directory/archive.out" >&2
+  exit 1
+fi
 
 echo 'public lifecycle execution and safety validation: PASS'
