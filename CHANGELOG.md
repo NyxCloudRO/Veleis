@@ -5,31 +5,54 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
-## [2.0.1] - 2026-09-06
+## [2.0.2] - 2026-09-07
 
-Veleis 2.0.1 is a focused stability and performance update for Veleis 2.x.
-It improves PostgreSQL memory-profile convergence across constrained and
-containerized environments, significantly reduces Capacity analytics workload
-on larger deployments, prevents analytics views from remaining indefinitely in
-loading states, and improves Docker permission diagnostics. It also includes a
-small density refinement to the public Status Page incident sections.
+### Production Hardening & Upgrade Reliability
 
-No new monitoring features are introduced in this patch.
+Veleis 2.0.2 completes the production hardening begun in 2.0.1, with an
+emphasis on bounded analytics and a fail-closed, recoverable lifecycle.
 
 ### Fixed
 
-- Fixed PostgreSQL/TimescaleDB memory profile convergence for supported
-  Veleis-managed and legacy installations, ensuring deployment sizing follows
-  effective system memory across VM, LXC, Docker, and nested cgroup
-  environments.
-- Fixed Capacity forecasting scalability on larger installations by replacing
-  expensive per-target history scans with bounded set-oriented computation.
-- Added bounded server-side Capacity execution with deterministic timeout and
-  error handling.
-- Added Capacity snapshot reuse and concurrent computation coalescing to
-  prevent duplicate expensive analytics work between Overview and Capacity.
-- Fixed prolonged Capacity and Anomalies loading states by enforcing finite
-  client retry and error behavior.
+- Separated lifecycle-tool refresh from installed release metadata so a
+  cross-version upgrade retains a version-consistent mandatory source backup.
+- Made upgrade compatibility fail closed for older lifecycle clients and
+  prevented success from being reported before schema and HTTPS readiness are
+  confirmed.
+- Completed schema 51 analytics rollups and bounded Capacity and Anomalies
+  behavior at production-scale data volume.
+- Corrected Ravyr 1.8.5 Docker-state handling while preserving the signed,
+  same-origin agent update boundary.
+
+### Improved
+
+- Validated mandatory backup integrity and same-version restore with zero data
+  loss across the 2.0.0 to 2.0.2 upgrade lifecycle.
+- Verified the managed 2 GiB PostgreSQL profile converges across upgrade,
+  reboot, and restore without replacing the database volume or TLS identity.
+- Strengthened release integrity with immutable Docker identity, checksummed
+  lifecycle artifacts, and exact signed Ravyr 1.8.5 binaries.
+- Refined the inert **Diagnostics & Support** sidebar preview to use normal
+  navigation-row geometry and a restrained indigo/lavender accent.
+
+## [2.0.1] - 2026-09-06
+
+Veleis 2.0.1 established stability, performance, and lifecycle foundations for
+Veleis 2.x. It introduced the PostgreSQL memory-profile and bounded analytics
+mechanisms that were subsequently hardened and lifecycle-validated in 2.0.2,
+alongside improved Docker permission diagnostics and a small density refinement
+to public Status Page incident sections.
+
+No new monitoring features are introduced in this patch.
+
+### Foundations
+
+- Added effective-memory detection and managed PostgreSQL/TimescaleDB profile
+  convergence for supported managed and historical Compose layouts.
+- Introduced set-oriented Capacity computation, bounded server execution,
+  snapshot reuse, and concurrent request coalescing.
+- Added finite retry and recoverable error states to Capacity and Anomalies
+  clients.
 - Improved Docker monitoring diagnostics so socket permission failures are
   distinguished from actual Docker Engine availability failures.
 

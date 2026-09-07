@@ -4,7 +4,7 @@
 
 ## Tested and supported platforms
 
-Veleis 2.0.1 installation is validated on the following host platforms:
+Veleis 2.0.2 installation is validated on the following host platforms:
 
 | Distribution | Version       | Status                |
 | ------------ | ------------- | --------------------- |

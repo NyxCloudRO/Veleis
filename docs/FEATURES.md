@@ -1,4 +1,4 @@
-# Features in Veleis 2.0.1
+# Features in Veleis 2.0.2
 
 [← Documentation home](../README.md)
 
@@ -44,7 +44,7 @@ per agent and metric key. Requests have propagated server, PostgreSQL, and
 browser cancellation; search is debounced; live refreshes are coalesced; and
 existing rows remain visible during recoverable background failures.
 
-Ravyr 1.8.4 reports coherent filesystem total, used, and unprivileged-available
+Ravyr 1.8.5 reports coherent filesystem total, used, and unprivileged-available
 capacity together with stable backing identity, mount provenance, and storage
 classification. Veleis counts each assigned/local backing filesystem once,
 keeps real shared/external storage available for explicit monitoring, and

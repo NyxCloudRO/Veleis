@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="2.0.1"
+readonly VELEIS_VERSION="2.0.2"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
-readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.1/veleis"
-readonly LIFECYCLE_SHA256="5262b73493b468a3d5239d181f86c19fc649657207f4a99c8f25dd09d599779f"
-readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.1/release.json"
-readonly RELEASE_METADATA_SHA256="0c089f3ea512b42e10a7dfca284bea5840405e6605b9d63e90f5dbf20edb394d"
-readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.1/veleis-postgres-memory.sh"
-readonly POSTGRES_MEMORY_SHA256="ca29fde95f42743c55bf6ff754163e105d097ed5057b597f052517d9635f200e"
+readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis"
+readonly LIFECYCLE_SHA256="9a8dfc4d561963a4f8a21d065a14b1d5988a650597dc8679a8f0e093783876cd"
+readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/release.json"
+readonly RELEASE_METADATA_SHA256="b5787defa107bbbc34a93a69fce784b4f1ab3563b91109d7724712e735f42a2c"
+readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis-postgres-memory.sh"
+readonly POSTGRES_MEMORY_SHA256="3aeb5a0ece0f77b80d7b7be9718471e76086be7d1cd613ada71fe91e0dfdf961"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
 readonly CONTAINER_UID=65532
@@ -291,7 +291,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "2.0.1" and .schema == 50 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "2.0.2" and .schema == 51 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 

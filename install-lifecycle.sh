@@ -2,13 +2,13 @@
 set -Eeuo pipefail
 
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
-readonly TOOL_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.1/veleis"
-readonly TOOL_SHA256="5262b73493b468a3d5239d181f86c19fc649657207f4a99c8f25dd09d599779f"
-readonly RELEASE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.1/release.json"
-readonly RELEASE_SHA256="0c089f3ea512b42e10a7dfca284bea5840405e6605b9d63e90f5dbf20edb394d"
-readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.1/veleis-postgres-memory.sh"
-readonly POSTGRES_MEMORY_SHA256="ca29fde95f42743c55bf6ff754163e105d097ed5057b597f052517d9635f200e"
-readonly COMPOSE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/v2.0.1/deploy/compose.yaml"
+readonly TOOL_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis"
+readonly TOOL_SHA256="9a8dfc4d561963a4f8a21d065a14b1d5988a650597dc8679a8f0e093783876cd"
+readonly RELEASE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/release.json"
+readonly RELEASE_SHA256="b5787defa107bbbc34a93a69fce784b4f1ab3563b91109d7724712e735f42a2c"
+readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis-postgres-memory.sh"
+readonly POSTGRES_MEMORY_SHA256="3aeb5a0ece0f77b80d7b7be9718471e76086be7d1cd613ada71fe91e0dfdf961"
+readonly COMPOSE_URL="https://raw.githubusercontent.com/NyxCloudRO/Veleis/v2.0.2/deploy/compose.yaml"
 readonly COMPOSE_SHA256="5c44f566a5bde88ee92e3692323625ce5d5d56701e7bde8075bba9aa250de4b9"
 
 SUDO=()
@@ -62,7 +62,7 @@ printf '%s  %s\n' "$POSTGRES_MEMORY_SHA256" "$TEMPORARY_DIRECTORY/veleis-postgre
 printf '%s  %s\n' "$COMPOSE_SHA256" "$TEMPORARY_DIRECTORY/compose.yaml" | sha256sum --check --status || fail "Compose template checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
 bash -n "$TEMPORARY_DIRECTORY/veleis-postgres-memory.sh"
-jq -e '.product == "Veleis" and .version == "2.0.1" and .schema == 50 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "2.0.2" and .schema == 51 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 TARGET_VERSION=$(jq -r .version "$TEMPORARY_DIRECTORY/release.json")
 
 as_root install -m 0755 "$TEMPORARY_DIRECTORY/veleis" /usr/local/bin/veleis
