@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly BACKUP_FORMAT_VERSION=1
+readonly LIFECYCLE_CONTRACT_VERSION=2
 readonly RELEASE_METADATA_URL="${VELEIS_RELEASE_METADATA_URL:-https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/release.json}"
 readonly EXPECTED_DOCKER_REPOSITORY="docker.io/nyxmael/veleis"
 readonly EXPECTED_ARCHITECTURE="amd64"
@@ -449,6 +450,21 @@ registry_digest() {
     tr -d '\r' | awk -F': ' 'tolower($1)=="docker-content-digest" {print $2}'
 }
 
+verify_lifecycle_contract() {
+  local metadata=$1 memory_helper=$2 expected_cli expected_helper actual_cli actual_helper contract
+  contract=$(jq -r '.lifecycle_contract_version // 0' "$metadata")
+  [[ "$contract" == "$LIFECYCLE_CONTRACT_VERSION" ]] ||
+    fail "target release requires lifecycle contract $contract; install the exact lifecycle tooling declared by the release before upgrading"
+  expected_cli=$(jq -r .lifecycle_tool_sha256 "$metadata")
+  expected_helper=$(jq -r .postgres_memory.sha256 "$metadata")
+  actual_cli=$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')
+  actual_helper=$(sha256sum "$memory_helper" | awk '{print $1}')
+  [[ "$actual_cli" == "$expected_cli" ]] ||
+    fail "installed lifecycle CLI does not match the target release; run the release's mandatory verified lifecycle installer"
+  [[ "$actual_helper" == "$expected_helper" ]] ||
+    fail "installed PostgreSQL memory helper does not match the target release; run the release's mandatory verified lifecycle installer"
+}
+
 upgrade_installation() {
   local requested=${1:-} installed target comparison metadata expected_digest actual_digest image
   local target_schema database_bytes required_bytes minimum_supported preupgrade_backup memory_helper memory_ownership
@@ -468,7 +484,7 @@ upgrade_installation() {
   metadata="$WORK_DIRECTORY/release.json"
   log "Retrieving trusted structured release metadata."
   curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEASE_METADATA_URL" -o "$metadata" || fail "trusted release metadata could not be retrieved"
-  jq -e '.product == "Veleis" and (.version|type=="string") and .docker_repository == "docker.io/nyxmael/veleis" and (.docker_manifest_digest|test("^sha256:[a-f0-9]{64}$")) and .platform == "linux/amd64" and (.schema|type=="number") and (.supported_upgrade_sources|type=="array")' "$metadata" >/dev/null || fail "release metadata is invalid"
+  jq -e '.product == "Veleis" and (.version|type=="string") and .docker_repository == "docker.io/nyxmael/veleis" and (.docker_manifest_digest|test("^sha256:[a-f0-9]{64}$")) and .platform == "linux/amd64" and (.schema|type=="number") and (.supported_upgrade_sources|type=="array") and (.lifecycle_gated_upgrade_sources|type=="array") and (.lifecycle_contract_version|type=="number") and (.lifecycle_tool_sha256|test("^[a-f0-9]{64}$")) and (.postgres_memory.sha256|test("^[a-f0-9]{64}$"))' "$metadata" >/dev/null || fail "release metadata is invalid"
   target=$(jq -r .version "$metadata")
   [[ "$target" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "release metadata contains an invalid stable version"
   [[ -z "$requested" || "$requested" == "$target" ]] || fail "requested version $requested is not the published stable release $target"
@@ -478,7 +494,9 @@ upgrade_installation() {
     return
   fi
   [[ "$comparison" == 1 ]] || fail "published stable version $target is older than installed version $installed"
-  jq -e --arg source "$installed" '.supported_upgrade_sources | index($source) != null' "$metadata" >/dev/null || fail "upgrade from $installed to $target is not in the published supported-source list"
+  memory_helper=$(postgres_memory_tool)
+  verify_lifecycle_contract "$metadata" "$memory_helper"
+  jq -e --arg source "$installed" '(.supported_upgrade_sources | index($source) != null) or (.lifecycle_gated_upgrade_sources | index($source) != null)' "$metadata" >/dev/null || fail "upgrade from $installed to $target is not in the published supported-source list"
   minimum_supported=$(jq -r '.minimum_upgrade_version // ""' "$metadata")
   [[ -z "$minimum_supported" || "$(compare_versions "$installed" "$minimum_supported")" != -1 ]] || fail "installed version $installed is below the minimum supported upgrade source $minimum_supported"
   target_schema=$(jq -r .schema "$metadata")
@@ -492,7 +510,6 @@ upgrade_installation() {
   required_bytes=$((database_bytes * 2 + 2147483648))
   check_space "$INSTALL_ROOT" "$required_bytes"
 
-  memory_helper=$(postgres_memory_tool)
   memory_ownership=$("$memory_helper" classify-installation "$INSTALL_ROOT") ||
     fail "PostgreSQL tuning ownership could not be established safely"
   [[ "$memory_ownership" != custom ]] ||
@@ -519,6 +536,8 @@ upgrade_installation() {
   compose --env-file "$WORK_DIRECTORY/environment" up -d >/dev/null || fail "migration or service startup failed; use the preserved pre-upgrade backup for recovery"
   [[ "$(current_schema)" == "$target_schema" ]] || fail "post-upgrade schema does not match release metadata"
   wait_ready 90 || fail "Veleis $target did not become ready; use the preserved pre-upgrade backup for recovery"
+  "$memory_helper" verify-effective "$INSTALL_ROOT" ||
+    fail "Veleis $target started without the required effective PostgreSQL profile; use the preserved pre-upgrade backup for recovery"
   install -m 0600 "$WORK_DIRECTORY/environment" "$INSTALL_ROOT/.env"
   install -m 0644 "$metadata" "$INSTALL_ROOT/release.json"
   RECOVERY_BACKUP=""

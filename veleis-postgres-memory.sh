@@ -325,6 +325,33 @@ veleis_postgres_status() {
   esac
 }
 
+veleis_verify_effective_postgres_profile() {
+  local install_root=${1:-/opt/veleis} environment_file compose_file runtime_values
+  local expected actual
+  environment_file="$install_root/.env"
+  compose_file="$install_root/compose.yaml"
+  [[ -r "$environment_file" && -r "$compose_file" ]] ||
+    veleis_memory_fail "Veleis installation files are missing below $install_root" || return
+  [[ "$(veleis_classify_postgres_env "$environment_file")" == managed ]] ||
+    veleis_memory_fail "effective settings can only be verified for a managed PostgreSQL profile" || return
+  expected="$(veleis_env_value "$environment_file" VELEIS_POSTGRES_SHARED_BUFFERS_MB)|$(veleis_env_value "$environment_file" VELEIS_POSTGRES_EFFECTIVE_CACHE_SIZE_MB)|$(veleis_env_value "$environment_file" VELEIS_POSTGRES_WORK_MEM_MB)|$(veleis_env_value "$environment_file" VELEIS_POSTGRES_MAINTENANCE_WORK_MEM_MB)|$(veleis_env_value "$environment_file" VELEIS_POSTGRES_MAX_CONNECTIONS)|$(veleis_env_value "$environment_file" VELEIS_POSTGRES_MAX_BG_WORKERS)|$(veleis_env_value "$environment_file" VELEIS_POSTGRES_MAX_WORKER_PROCESSES)"
+  runtime_values=$(docker compose --project-directory "$install_root" --env-file "$environment_file" \
+    --file "$compose_file" exec --no-TTY database psql --username=veleis --dbname=veleis \
+    --tuples-only --no-align --field-separator='|' --command="
+      SELECT pg_size_bytes(current_setting('shared_buffers')) / 1048576,
+             pg_size_bytes(current_setting('effective_cache_size')) / 1048576,
+             pg_size_bytes(current_setting('work_mem')) / 1048576,
+             pg_size_bytes(current_setting('maintenance_work_mem')) / 1048576,
+             current_setting('max_connections'),
+             current_setting('timescaledb.max_background_workers'),
+             current_setting('max_worker_processes');" 2>/dev/null) ||
+    veleis_memory_fail "could not read effective PostgreSQL settings" || return
+  actual=$(printf '%s' "$runtime_values" | tr -d '[:space:]')
+  [[ "$actual" == "$expected" ]] ||
+    veleis_memory_fail "effective PostgreSQL settings do not match the managed profile (expected $expected, observed ${actual:-unavailable})" || return
+  printf 'Effective PostgreSQL settings match the managed profile: %s\n' "$actual"
+}
+
 veleis_install_postgres_profile() {
   local operation=$1 install_root=${2:-/opt/veleis} environment_file compose_file classification
   local timestamp backup_file compose_backup_file next_file old_fingerprint new_fingerprint template_file
@@ -468,8 +495,11 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     converge-managed)
       veleis_converge_managed_postgres_profile "${2:-/opt/veleis}"
       ;;
+    verify-effective)
+      veleis_verify_effective_postgres_profile "${2:-/opt/veleis}"
+      ;;
     *)
-      printf 'usage: %s {detect|profile MEMORY_MB|env MEMORY_MB|classify-env FILE|classify-installation [INSTALL_ROOT]|assess MEMORY SHARED CACHE WORK MAINTENANCE CONNECTIONS|recalculate-env INPUT MEMORY_MB OUTPUT|status [INSTALL_ROOT]|apply-managed [INSTALL_ROOT]|adopt-managed [INSTALL_ROOT]|converge-managed [INSTALL_ROOT]}\n' "$0" >&2
+      printf 'usage: %s {detect|profile MEMORY_MB|env MEMORY_MB|classify-env FILE|classify-installation [INSTALL_ROOT]|assess MEMORY SHARED CACHE WORK MAINTENANCE CONNECTIONS|recalculate-env INPUT MEMORY_MB OUTPUT|status [INSTALL_ROOT]|apply-managed [INSTALL_ROOT]|adopt-managed [INSTALL_ROOT]|converge-managed [INSTALL_ROOT]|verify-effective [INSTALL_ROOT]}\n' "$0" >&2
       exit 2
       ;;
   esac

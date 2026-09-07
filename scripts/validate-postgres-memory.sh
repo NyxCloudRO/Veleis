@@ -118,6 +118,9 @@ cat >"$temporary_directory/fake-bin/docker" <<'DOCKER'
 if [[ "${FAKE_DOCKER_FAIL_CONFIG:-false}" == true && " $* " == *" config "* ]]; then
   exit 1
 fi
+if [[ " $* " == *" exec --no-TTY database psql "* ]]; then
+  printf '%s\n' "${FAKE_POSTGRES_SETTINGS:-}"
+fi
 exit 0
 DOCKER
 chmod +x "$temporary_directory/fake-bin/docker"
@@ -160,6 +163,12 @@ PATH="$temporary_directory/fake-bin:$PATH" \
   "$helper" converge-managed "$temporary_directory/automatic" >/dev/null
 assert_equal "$("$helper" classify-installation "$temporary_directory/automatic")" managed 'automatic managed convergence'
 assert_equal "$(sed -n 's/^VELEIS_POSTGRES_EFFECTIVE_MEMORY_MB=//p' "$temporary_directory/automatic/.env")" 2048 'automatic effective memory'
+PATH="$temporary_directory/fake-bin:$PATH" FAKE_POSTGRES_SETTINGS='512|1216|4|96|25|4|12' \
+  "$helper" verify-effective "$temporary_directory/automatic" >/dev/null
+if PATH="$temporary_directory/fake-bin:$PATH" FAKE_POSTGRES_SETTINGS='8192|24576|61|2048|100|16|23' \
+  "$helper" verify-effective "$temporary_directory/automatic" >/dev/null 2>&1; then
+  fail 'effective-profile verification accepted unsafe runtime values'
+fi
 automatic_backups=$(find "$temporary_directory/automatic" -maxdepth 1 -name '*.postgres-memory-*.backup' | wc -l)
 PATH="$temporary_directory/fake-bin:$PATH" \
   VELEIS_MEMINFO_FILE="$temporary_directory/meminfo" \
