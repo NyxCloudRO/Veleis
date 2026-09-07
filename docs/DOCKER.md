@@ -30,7 +30,7 @@ docker pull nyxmael/veleis:2.0.2
 | `1.8.11` | Immutable prior release. It will not move to another build.         | `sha256:435d1a3a5b404f8aec2f8fdd3139a8a3f81ba37829eaf44d23bc8f42516876fb` |
 | `1.8.12` | Immutable prior release. It will not move to another build.         | `sha256:9ccee823388e437012143eaf622bf8e7d91ffaf6edb0d06cc861cff10fa27e90` |
 | `1.8`    | Floating minor track: newest accepted stable `1.8.x`.               | Same as `1.8.12`                                                          |
-| `2.0.0`  | Immutable prior release. It will not move to another build.         | `sha256:983eed000fd5639f46a3954bf518b90fb836848764cf7541feb050ee55b3c69a` |
+| `2.0.0`  | Immutable prior release. It will not move to another build.         | `sha256:983eed215f5d725ae26fd34818d16ea8c2ad7d0019f0ada3ae06e27257e8104d` |
 | `2.0.1`  | Immutable prior release. It will not move to another build.         | `sha256:b09d8843403671afbe523e69baedaa165a3ebd8db5a5cfa78b0b88d09eb59960` |
 | `2.0.2`  | Immutable exact current release. It will not move to another build. | `sha256:9aefe8907968300f9fd407ced251c688468d17d35482747c18343441ec11c417` |
 | `latest` | Floating newest accepted stable release.                            | Same as `2.0.2`                                                           |
