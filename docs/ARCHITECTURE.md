@@ -32,7 +32,7 @@ Browser / API client
 
 PostgreSQL is authoritative for accounts, configuration, current monitoring
 state, history, inventory, incidents, alerts, dashboards, notifications, and
-audit records. Schema 51 retains bounded dependency interpretations,
+audit records. Schema 53 retains bounded dependency interpretations,
 deterministic alert occurrence identity, historical cross-signal correlation
 evidence, Developer Support acknowledgement, and Status Page Public Hostnames.
 It also stores automatic Docker discovery preferences, Storage/NAS discovery

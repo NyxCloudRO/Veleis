@@ -1,13 +1,13 @@
 {
   "product": "Veleis",
-  "version": "2.0.2",
-  "git_tag": "v2.0.2",
-  "release_url": "https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.2",
+  "version": "2.0.3",
+  "git_tag": "v2.0.3",
+  "release_url": "https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.3",
   "docker_repository": "docker.io/nyxmael/veleis",
-  "docker_manifest_digest": "sha256:9aefe8907968300f9fd407ced251c688468d17d35482747c18343441ec11c417",
+  "docker_manifest_digest": "sha256:1b8202c9c008456b2654d670c46ec2cc5004aa72556d8c1fa89d0786ec9c0723",
   "platform": "linux/amd64",
-  "schema": 51,
-  "installer_image_tag": "2.0.2",
+  "schema": 53,
+  "installer_image_tag": "2.0.3",
   "backup_format_version": 1,
   "minimum_upgrade_version": "1.7.1",
   "supported_upgrade_sources": [
@@ -28,10 +28,11 @@
   ],
   "lifecycle_gated_upgrade_sources": [
     "2.0.0",
-    "2.0.1"
+    "2.0.1",
+    "2.0.2"
   ],
   "lifecycle_contract_version": 2,
-  "lifecycle_tool": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis",
+  "lifecycle_tool": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/veleis",
   "lifecycle_tool_sha256": "9a8dfc4d561963a4f8a21d065a14b1d5988a650597dc8679a8f0e093783876cd",
   "postgres_memory": {
     "minimum_mib": 1024,
@@ -41,18 +42,18 @@
     "adopt_managed_command": "sudo veleis postgres-memory adopt-managed"
   },
   "ravyr": {
-    "recommended_version": "1.8.5",
+    "recommended_version": "1.8.6",
     "minimum_supported_version": "1.7.0",
     "protocol_minimum": 1,
     "protocol_maximum": 1,
-    "manifest": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/manifest.json",
-    "manifest_sha256": "9c2cee2601fe1821f81041d3da26c81cd25c9f0cfb05712ce007aad0e8ea34b8",
+    "manifest": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/manifest.json",
+    "manifest_sha256": "ac3b78d9dac80476a6e2ccb56e00f1c09ef01b69bc2619d867616b49536728a7",
     "signature_algorithm": "Ed25519",
     "key_id": "226fc31b6ee01ca3",
-    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/release-public-key.pem",
+    "public_key": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/release-public-key.pem",
     "legacy_repair": {
       "affected": "historical 1.8.0 installations missing /usr/local/lib/veleis-ravyr",
-      "url": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/repair-ravyr.sh",
+      "url": "https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/repair-ravyr.sh",
       "sha256": "3dc0ee6cf771ba6693175553dcf322db50cc2dd038626ea9a82e29ab5a03db89"
     }
   }

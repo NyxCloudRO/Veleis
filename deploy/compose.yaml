@@ -69,6 +69,7 @@ services:
       VELEIS_MASTER_KEY: ${VELEIS_MASTER_KEY:?VELEIS_MASTER_KEY must be set}
       VELEIS_LOG_LEVEL: info
       VELEIS_INSTANCE_ID: veleis-production
+      VELEIS_DIAGNOSTICS_SUPPORT_ENABLED: "false"
       VELEIS_TLS_ENABLED: "true"
       VELEIS_TLS_SOURCE: custom
       VELEIS_TLS_CERTIFICATE_PATH: /var/lib/veleis/tls/veleis.crt

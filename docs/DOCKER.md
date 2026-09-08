@@ -6,7 +6,7 @@ Official repository:
 [docker.io/nyxmael/veleis](https://hub.docker.com/r/nyxmael/veleis)
 
 ```bash
-docker pull nyxmael/veleis:2.0.2
+docker pull nyxmael/veleis:2.0.3
 ```
 
 ## Tags
@@ -32,11 +32,12 @@ docker pull nyxmael/veleis:2.0.2
 | `1.8`    | Floating minor track: newest accepted stable `1.8.x`.               | Same as `1.8.12`                                                          |
 | `2.0.0`  | Immutable prior release. It will not move to another build.         | `sha256:983eed215f5d725ae26fd34818d16ea8c2ad7d0019f0ada3ae06e27257e8104d` |
 | `2.0.1`  | Immutable prior release. It will not move to another build.         | `sha256:b09d8843403671afbe523e69baedaa165a3ebd8db5a5cfa78b0b88d09eb59960` |
-| `2.0.2`  | Immutable exact current release. It will not move to another build. | `sha256:9aefe8907968300f9fd407ced251c688468d17d35482747c18343441ec11c417` |
-| `latest` | Floating newest accepted stable release.                            | Same as `2.0.2`                                                           |
+| `2.0.2`  | Immutable prior release. It will not move to another build.         | `sha256:9aefe8907968300f9fd407ced251c688468d17d35482747c18343441ec11c417` |
+| `2.0.3`  | Immutable exact current release. It will not move to another build. | `sha256:1b8202c9c008456b2654d670c46ec2cc5004aa72556d8c1fa89d0786ec9c0723` |
+| `latest` | Floating newest accepted stable release.                            | Same as `2.0.3`                                                           |
 
 The `1.7` tag remains on the newest accepted 1.7 patch, and `1.8` remains on the
-newest accepted 1.8 patch. `latest` resolves to the accepted 2.0.2 image.
+newest accepted 1.8 patch. `latest` resolves to the accepted 2.0.3 image.
 Immutable prior releases remain at their original digests.
 
 Each release installer deliberately uses its immutable exact tag, not a floating

@@ -5,6 +5,39 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-09-08
+
+### Reliability and monitoring continuity
+
+- Improved Docker Engine identity recovery after temporary socket or
+  permission failures while preserving container, event, metric, incident, and
+  discovery history.
+- Improved anomaly baseline continuity across host reboots and application
+  restarts using bounded historical reconstruction.
+- Improved shared-storage identification across monitored hosts for more
+  accurate capacity forecasting and risk reporting.
+- Updated the recommended signed Ravyr agent to 1.8.6, improving startup
+  inventory recovery when a primary collection attempt is temporarily
+  unavailable without changing enrollment identity or protocol version 1.
+
+### Upgrade and compatibility
+
+- Veleis 2.0.2 installations upgrade from schema 51 through migrations 52 and
+  53. The lifecycle requires a verified pre-upgrade backup, an immutable target
+  image, clean migration state, and HTTPS readiness before reporting success.
+- Existing users, agents, Docker history, monitoring data, configuration, TLS
+  identity, and the canonical database volume are preserved. Managed
+  PostgreSQL memory settings continue to converge through the established
+  upgrade workflow.
+- Ravyr 1.8.5 remains compatible with Veleis 2.0.3. Ravyr 1.8.6 retains the
+  linux/amd64 systemd deployment and protocol-1 update boundary.
+
+### Availability boundary
+
+- Diagnostics & Support is not enabled in the public Veleis 2.0.3 release. The
+  public image remains locked even if runtime configuration requests that
+  capability.
+
 ## [2.0.2] - 2026-09-07
 
 ### Production Hardening & Upgrade Reliability

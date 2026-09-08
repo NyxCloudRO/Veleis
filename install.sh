@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="2.0.2"
+readonly VELEIS_VERSION="2.0.3"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
-readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis"
+readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/veleis"
 readonly LIFECYCLE_SHA256="9a8dfc4d561963a4f8a21d065a14b1d5988a650597dc8679a8f0e093783876cd"
-readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/release.json"
-readonly RELEASE_METADATA_SHA256="b5787defa107bbbc34a93a69fce784b4f1ab3563b91109d7724712e735f42a2c"
-readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.2/veleis-postgres-memory.sh"
+readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/release.json"
+readonly RELEASE_METADATA_SHA256="a67f995ea666820b1fa46f7f63bbf05d713fea8bf0997c85a4c2f790b8525447"
+readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.3/veleis-postgres-memory.sh"
 readonly POSTGRES_MEMORY_SHA256="3aeb5a0ece0f77b80d7b7be9718471e76086be7d1cd613ada71fe91e0dfdf961"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
@@ -130,6 +130,7 @@ services:
       VELEIS_MASTER_KEY: ${VELEIS_MASTER_KEY:?VELEIS_MASTER_KEY must be set}
       VELEIS_LOG_LEVEL: info
       VELEIS_INSTANCE_ID: veleis-production
+      VELEIS_DIAGNOSTICS_SUPPORT_ENABLED: "false"
       VELEIS_TLS_ENABLED: "true"
       VELEIS_TLS_SOURCE: custom
       VELEIS_TLS_CERTIFICATE_PATH: /var/lib/veleis/tls/veleis.crt
@@ -291,7 +292,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "2.0.2" and .schema == 51 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "2.0.3" and .schema == 53 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 

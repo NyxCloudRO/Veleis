@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v2.0.2-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.2)
+[![Current release](https://img.shields.io/badge/release-v2.0.3-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.3)
 [![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 2.0.2** · Schema 51 · linux/amd64
+Current stable release: **Veleis 2.0.3** · Schema 53 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:2.0.2` image, detects effective cgroup memory, provisions a
+`nyxmael/veleis:2.0.3` image, detects effective cgroup memory, provisions a
 bounded PostgreSQL/TimescaleDB profile, applies schema migrations,
 and waits for HTTPS readiness.
 
@@ -49,7 +49,7 @@ then create the first Owner account. There are no default credentials.
 
 ## Supported platforms
 
-Veleis 2.0.2 is currently validated on the following amd64 platforms:
+Veleis 2.0.3 is currently validated on the following amd64 platforms:
 
 | Distribution | Version       | Status    |
 | ------------ | ------------- | --------- |
@@ -214,8 +214,8 @@ sudo veleis backup
 
 Existing 1.7.1 and 1.8.0 through 1.8.12 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 2.0.2`. Existing 2.0.0 and 2.0.1 installations must first
-refresh the lifecycle command as documented below. Installations created before
+`sudo veleis upgrade 2.0.3`. Existing 2.0.0, 2.0.1, and 2.0.2 installations
+must first refresh the lifecycle tooling as documented below. Installations created before
 the lifecycle command was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).
 Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See

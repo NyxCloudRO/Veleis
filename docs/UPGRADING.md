@@ -11,7 +11,7 @@ sudo veleis upgrade
 An exact target may be requested when it is the published stable release:
 
 ```bash
-sudo veleis upgrade 2.0.2
+sudo veleis upgrade 2.0.3
 ```
 
 Veleis retrieves public structured release metadata over HTTPS and validates
@@ -28,35 +28,35 @@ remains internally version-consistent and directly restorable.
 
 ## Current release state
 
-Veleis 2.0.2 is the current stable release. Veleis 1.7.1 and 1.8.0 through
-1.8.12 are explicit direct upgrade sources. Veleis 2.0.0 and 2.0.1 are
+Veleis 2.0.3 is the current stable release. Veleis 1.7.1 and 1.8.0 through
+1.8.12 are explicit direct upgrade sources. Veleis 2.0.0, 2.0.1, and 2.0.2 are
 lifecycle-gated sources: refresh the lifecycle tooling before the upgrade so
-the schema-51 compatibility contract and current
+the schema-53 compatibility contract and current
 PostgreSQL memory helper are installed:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install-lifecycle.sh | bash
 sudo veleis status
 sudo veleis postgres-memory status
-sudo veleis upgrade 2.0.2
+sudo veleis upgrade 2.0.3
 ```
 
-The exact target form is `sudo veleis upgrade 2.0.2`. Schema 51 is current.
-The 2.0.0 and 2.0.1 paths apply migration 51. Older supported sources advance
-through every required migration through schema 51 in order.
+The exact target form is `sudo veleis upgrade 2.0.3`. Schema 53 is current.
+The 2.0.2 path applies migrations 52 and 53; earlier supported sources advance
+through every required migration through schema 53 in order.
 Users and sessions, tokens, assets, probes/history, alerts/incidents,
 notifications and encrypted credentials, Status Pages, dashboards, Discovery,
 Ravyr enrollment/policy, retention, and TLS identity are preserved. Existing
 TLS probes begin Certificate Intelligence history on their next completed
 handshake; pre-upgrade observations cannot be reconstructed.
 
-On 2.0.2, `sudo veleis upgrade` and `sudo veleis upgrade 2.0.2` are safe
+On 2.0.3, `sudo veleis upgrade` and `sudo veleis upgrade 2.0.3` are safe
 no-ops: they create no backup, pull no image, run no migration, and restart no
-service. A downgrade from 2.0.2 remains rejected.
+service. A downgrade from 2.0.3 remains rejected.
 
 ## PostgreSQL memory profile
 
-New 2.0.2 installations select a managed database profile from the effective
+New 2.0.3 installations select a managed database profile from the effective
 cgroup or host memory limit. One GiB is the hard minimum and two GiB or more is
 recommended. Upgrades automatically converge fingerprinted Veleis-managed
 profiles and exact historical Veleis Compose definitions. Unknown or

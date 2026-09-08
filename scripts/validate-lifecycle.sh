@@ -31,14 +31,14 @@ chmod 0755 "$temporary_directory/veleis-2.0.0"
 cat >"$temporary_directory/release.json" <<'JSON'
 {
   "product": "Veleis",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "docker_repository": "docker.io/nyxmael/veleis",
   "docker_manifest_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "platform": "linux/amd64",
-  "schema": 51,
+  "schema": 53,
   "minimum_upgrade_version": "1.7.1",
   "supported_upgrade_sources": [],
-  "lifecycle_gated_upgrade_sources": ["2.0.0", "2.0.1"],
+  "lifecycle_gated_upgrade_sources": ["2.0.0", "2.0.1", "2.0.2"],
   "lifecycle_contract_version": 2,
   "lifecycle_tool_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
   "postgres_memory": {"sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}
@@ -72,7 +72,7 @@ if PATH="$fake_bin:$PATH" VELEIS_INSTALL_ROOT="$install_root" \
   VELEIS_RELEASE_METADATA_URL=https://release.invalid/release.json \
   VELEIS_TEST_RELEASE_METADATA="$temporary_directory/release.json" \
   VELEIS_TEST_DOCKER_MUTATIONS="$mutation_log" \
-  "$temporary_directory/veleis-2.0.0" upgrade 2.0.2 >"$temporary_directory/old-cli.out" 2>&1; then
+  "$temporary_directory/veleis-2.0.0" upgrade 2.0.3 >"$temporary_directory/old-cli.out" 2>&1; then
   echo 'released 2.0.0 CLI falsely accepted a lifecycle-gated upgrade' >&2
   exit 1
 fi
@@ -83,7 +83,7 @@ grep -Fq 'not in the published supported-source list' "$temporary_directory/old-
 
 # The released 2.0.1 CLI must fail closed in the same way. It does not know the
 # lifecycle-gated field and therefore cannot mutate a 2.0.1 installation before
-# the target 2.0.2 lifecycle tool has been installed.
+# the target 2.0.3 lifecycle tool has been installed.
 sed -i 's/^VELEIS_VERSION=.*/VELEIS_VERSION=2.0.1/; s#^VELEIS_IMAGE=.*#VELEIS_IMAGE=docker.io/nyxmael/veleis:2.0.1#' "$install_root/.env"
 printf '%s\n' 'Veleis 2.0.1' >"$install_root/.veleis-installation"
 git -C "$repository_root" show v2.0.1:deploy/compose.yaml >"$install_root/compose.yaml"
@@ -93,7 +93,7 @@ if PATH="$fake_bin:$PATH" VELEIS_INSTALL_ROOT="$install_root" \
   VELEIS_RELEASE_METADATA_URL=https://release.invalid/release.json \
   VELEIS_TEST_RELEASE_METADATA="$temporary_directory/release.json" \
   VELEIS_TEST_DOCKER_MUTATIONS="$mutation_log" \
-  "$temporary_directory/veleis-2.0.1" upgrade 2.0.2 >"$temporary_directory/old-cli-2.0.1.out" 2>&1; then
+  "$temporary_directory/veleis-2.0.1" upgrade 2.0.3 >"$temporary_directory/old-cli-2.0.1.out" 2>&1; then
   echo 'released 2.0.1 CLI falsely accepted a lifecycle-gated upgrade' >&2
   exit 1
 fi
@@ -115,7 +115,7 @@ if PATH="$fake_bin:$PATH" VELEIS_INSTALL_ROOT="$install_root" \
   VELEIS_RELEASE_METADATA_URL=https://release.invalid/release.json \
   VELEIS_TEST_RELEASE_METADATA="$temporary_directory/release.json" \
   VELEIS_TEST_DOCKER_MUTATIONS="$mutation_log" \
-  "$repository_root/veleis" upgrade 2.0.2 >"$temporary_directory/identity.out" 2>&1; then
+  "$repository_root/veleis" upgrade 2.0.3 >"$temporary_directory/identity.out" 2>&1; then
   echo 'candidate CLI accepted mismatched lifecycle artifacts' >&2
   exit 1
 fi
