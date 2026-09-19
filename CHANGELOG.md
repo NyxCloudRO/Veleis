@@ -5,6 +5,56 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.4] - 2026-09-19
+
+### Performance and reliability
+
+- Reduced Overview and Discovery query pressure and improved responsiveness on
+  large installations while keeping results bounded and failure-aware.
+- Improved Agent detail loading with bounded requests, retained data during
+  recoverable failures, and clearer recovery behavior.
+- Improved Anomalies request coalescing and recovery so temporary failures do
+  not create unbounded retries or disrupt the rest of the monitoring UI.
+- Strengthened Docker event ingestion and recovery across temporary connection,
+  permission, restart, and event-stream interruptions.
+
+### Monitoring and operations
+
+- Finalized native ICMP monitoring using unprivileged datagram sockets and a
+  narrow container-local ping-group range, without adding a Linux capability.
+- Added a customer-facing Diagnostics & Support workspace with redacted support
+  information and independent failure handling. Eligible Professional Support
+  capabilities use signed licensing; core Veleis monitoring remains free and
+  continues operating independently of support availability.
+- Hardened monitoring, authentication, licensing-client, and recovery paths to
+  fail safely without exposing credentials or weakening existing boundaries.
+
+### User experience and lifecycle
+
+- Refined navigation, responsive and mobile layouts, light/dark presentation,
+  Settings validation, dashboard management, Asset status, and Alert Rules
+  density and accessibility.
+- Clarified Agent disable, revoke, remove, uninstall, and purge actions, and
+  improved authenticated enrollment and lifecycle guidance.
+- Improved Ravyr lifecycle behavior with idempotent installation and removal,
+  credential-revocation handling, and explicit uninstall/purge guidance. Ravyr
+  1.8.6 remains the recommended signed agent.
+- Added configurable, server-authoritative session inactivity and absolute
+  lifetime policies, including an expiry warning and protected continuation.
+
+### Upgrade and compatibility
+
+- Upgrades from Veleis 2.0.3 advance schema 53 to 54 while preserving users,
+  sessions, agents, monitoring history, credentials, Discovery, incidents,
+  Status Pages, notifications, Anomalies, and TLS identity.
+- Create and verify a complete pre-upgrade backup before running
+  `sudo veleis upgrade 2.0.4`. Rolling back after migration requires restoring
+  the matching 2.0.3/schema-53 recovery point; application-only rollback is not
+  supported.
+- Docker image: `docker.io/nyxmael/veleis:2.0.4`
+- Manifest digest: `sha256:d621916892f6f908514b3ff25b0f51b008e37670e985673a735c2e0a2072eec0`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.4>
+
 ## [2.0.3] - 2026-09-08
 
 ### Reliability and monitoring continuity

@@ -25,6 +25,18 @@ Security vulnerabilities must follow [SECURITY.md](SECURITY.md) and private
 vulnerability reporting. Never post a vulnerability to the community or a
 public Issue.
 
+## Veleis Professional Support
+
+Veleis 2.0.4 integrates Professional Support status and eligible Diagnostics
+capabilities in the Diagnostics & Support workspace. These capabilities require
+a valid signed support entitlement and fail independently from monitoring.
+Veleis core monitoring remains free and continues operating when no support
+entitlement is present or a support service is temporarily unavailable.
+
+Diagnostics exports are designed to redact secrets, but review any material
+before sharing it and remove organization-specific addresses, names, and other
+sensitive context.
+
 ## Support Veleis
 
 Veleis is created by Nyxmael. If the project is useful to you, you can support

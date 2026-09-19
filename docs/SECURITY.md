@@ -21,7 +21,12 @@ accounts and network access even with this application-level boundary.
   role intersection. Their plaintext value is shown only once; stored values
   are hashes.
 - Browser mutations require authenticated server-side sessions and CSRF
-  validation. TOTP and recovery codes are available.
+  validation. Session inactivity and absolute lifetimes are enforced by the
+  server, with a protected continuation flow. TOTP and recovery codes are
+  available.
+- Professional Support and eligible Diagnostics capabilities use signed
+  entitlements. Entitlement or support-service failures do not disable core
+  monitoring.
 
 ## Secrets
 

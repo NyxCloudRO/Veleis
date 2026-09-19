@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v2.0.3-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.3)
+[![Current release](https://img.shields.io/badge/release-v2.0.4-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.4)
 [![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 2.0.3** · Schema 53 · linux/amd64
+Current stable release: **Veleis 2.0.4** · Schema 54 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:2.0.3` image, detects effective cgroup memory, provisions a
+`nyxmael/veleis:2.0.4` image, detects effective cgroup memory, provisions a
 bounded PostgreSQL/TimescaleDB profile, applies schema migrations,
 and waits for HTTPS readiness.
 
@@ -49,7 +49,7 @@ then create the first Owner account. There are no default credentials.
 
 ## Supported platforms
 
-Veleis 2.0.3 is currently validated on the following amd64 platforms:
+Veleis 2.0.4 is currently validated on the following amd64 platforms:
 
 | Distribution | Version       | Status    |
 | ------------ | ------------- | --------- |
@@ -134,6 +134,8 @@ preserving their source truth:
 ### Operations
 
 - Unified Overview and asset details.
+- Bounded Overview, Discovery, Agent detail, and Anomalies loading with
+  recoverable failure states for responsive large-installation operation.
 - Supported `veleis` status, log, complete backup, validated restore, and
   compatibility-gated upgrade commands.
 - Effective-memory PostgreSQL diagnostics and explicit managed-profile adoption
@@ -152,12 +154,16 @@ preserving their source truth:
   bulk actions, scalable ordering, privacy-safe incident updates, and an
   optional dedicated hostname for rendering a published page at `/`.
 - Configurable raw probe-result retention and capacity visibility.
+- Diagnostics & Support with redacted support information and independently
+  licensed Professional Support capabilities; core monitoring remains free and
+  operates independently of support availability.
 
 ### Security and governance
 
 - Local first-Owner bootstrap; Owner, Admin, and read-only Viewer roles.
-- Server-side sessions, CSRF protection, TOTP/recovery, account disable/reset,
-  forced password replacement, and immutable audit history.
+- Server-side sessions with configurable inactivity and absolute lifetimes,
+  CSRF protection, TOTP/recovery, account disable/reset, forced password
+  replacement, and immutable audit history.
 - Hashed, scoped, expiring, revocable personal API tokens.
 - Encrypted stored integration credentials and installation-specific secrets.
 - HTTPS enabled by default.
@@ -214,7 +220,7 @@ sudo veleis backup
 
 Existing 1.7.1 and 1.8.0 through 1.8.12 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 2.0.3`. Existing 2.0.0, 2.0.1, and 2.0.2 installations
+`sudo veleis upgrade 2.0.4`. Existing 2.0.0 through 2.0.3 installations
 must first refresh the lifecycle tooling as documented below. Installations created before
 the lifecycle command was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).

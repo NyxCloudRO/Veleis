@@ -1,4 +1,4 @@
-# Features in Veleis 2.0.3
+# Features in Veleis 2.0.4
 
 [← Documentation home](../README.md)
 
@@ -7,7 +7,8 @@ This inventory describes implemented release functionality, not planned ideas.
 ## Service monitoring
 
 - HTTP/HTTPS status, redirects, bounded response checks, timing, and history.
-- ICMP/Ping reachability and latency.
+- Native ICMP/Ping reachability and latency through unprivileged datagram
+  sockets and a narrow container-local ping-group range.
 - TCP connection checks.
 - Advanced DNS checks for A, AAAA, CNAME, MX, NS, TXT, SRV, CAA, and PTR,
   including typed expectations, resolver/authoritative comparison,
@@ -43,6 +44,10 @@ The Agents list retrieves latest CPU and memory through bounded indexed probes
 per agent and metric key. Requests have propagated server, PostgreSQL, and
 browser cancellation; search is debounced; live refreshes are coalesced; and
 existing rows remain visible during recoverable background failures.
+
+Agent detail views use bounded loading and explicit recovery behavior. Disable,
+revoke, remove, host uninstall, and purge are presented as distinct lifecycle
+actions so credential and historical-data effects remain clear.
 
 Ravyr 1.8.6 reports coherent filesystem total, used, and unprivileged-available
 capacity together with stable backing identity, mount provenance, and storage
@@ -110,6 +115,8 @@ widgets with explicit provider scope and collection freshness. See
 
 - Unified Overview, asset details, and an Infrastructure summary that includes
   Discovery providers/inventory and Proxmox workloads.
+- Lower-pressure Overview and Discovery loading, bounded Agent detail behavior,
+  coalesced Anomalies failures, and resilient Docker event-stream recovery.
 - User-owned custom dashboards and configurable monitoring, Discovery, and
   Proxmox widgets.
 - Alert rules, silences, maintenance windows, no-data handling, overlap guidance,
@@ -147,13 +154,17 @@ widgets with explicit provider scope and collection freshness. See
 - Configurable raw probe-result retention (7–365 days, 90-day clean-install
   default) and capacity visibility. Incident and audit truth is separate from
   raw probe-result retention.
+- Diagnostics & Support exposes redacted support information and recovery-aware
+  status. Eligible Professional Support capabilities require a valid signed
+  entitlement; core monitoring remains free and independently available.
 
 ## Identity and security
 
 - First-owner bootstrap without default credentials.
 - Owner, Admin, and read-only Viewer roles with server-side enforcement.
-- Server-side sessions, CSRF protection, Argon2id passwords, throttling, TOTP,
-  and recovery codes.
+- Server-side sessions with configurable inactivity and absolute lifetimes,
+  expiry warning and protected continuation, CSRF protection, Argon2id
+  passwords, throttling, TOTP, and recovery codes.
 - Scoped, expiring, revocable personal API tokens stored as hashes and displayed
   only once.
 - Account disable/re-enable, administrative reset, forced password replacement,
