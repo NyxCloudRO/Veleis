@@ -90,7 +90,7 @@ per-host SSH action.
 Ravyr downloads the strict same-origin release manifest and candidate into
 private staging. Before activation it validates server/protocol compatibility,
 Linux/amd64, exact path, bounded size, SHA-256, Ed25519 signature, and trusted
-key ID. Veleis 2.0.5 recommends signed Ravyr 1.8.6 and retains trusted key
+key ID. Veleis 2.0.5 recommends signed Ravyr 1.8.7 and retains trusted key
 `226fc31b6ee01ca3`; unsigned metadata cannot replace the trusted key.
 
 Activation preflights disk and permissions, retains one previous binary, stages
@@ -109,7 +109,7 @@ fail every updater start with `status=226/NAMESPACE` because
 `/usr/local/lib/veleis-ravyr` is absent. A successful timer alone is not proof
 of upgrade: verify the installed binary with `ravyr version` and confirm the
 Agents workspace reaches **Current** only after it reports the recommended
-Ravyr 1.8.6 release.
+Ravyr 1.8.7 release.
 
 The updater cannot repair a privileged systemd namespace path when systemd
 refuses to start it. Run the official one-time repair through the operator's

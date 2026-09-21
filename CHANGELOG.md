@@ -5,6 +5,13 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+### Ravyr agent
+
+- Published signed Ravyr 1.8.7 for Veleis 2.0.5. Rootless Docker discovery now
+  uses exact kernel Unix-socket evidence to distinguish an absent speculative
+  candidate from a genuine inaccessible socket, while preserving actionable
+  system, rootless, and explicitly configured socket permission failures.
+
 ## [2.0.5] - 2026-09-21
 
 ### Monitoring and incident clarity
@@ -28,9 +35,9 @@ versioning; the corresponding Git tag uses a `v` prefix.
 - Improved Diagnostics fleet and notification delivery tables across desktop,
   tablet, and mobile layouts.
 - Added bounded support for richer Ravyr degraded and spool telemetry while
-  retaining compatibility with the recommended signed Ravyr 1.8.6 agent.
-  Ravyr 1.8.6 remains the customer release bundled with Veleis 2.0.5 and does
-  not emit the new optional spool detail.
+  retaining compatibility with the signed Ravyr 1.8.6 agent originally
+  bundled with Veleis 2.0.5. Ravyr 1.8.6 does not emit the new optional spool
+  detail; the current recommended signed agent is Ravyr 1.8.7.
 
 ### Security and user experience
 
