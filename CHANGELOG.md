@@ -5,6 +5,54 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.5] - 2026-09-21
+
+### Monitoring and incident clarity
+
+- Made alert and incident transitions easier to scan while preserving the
+  complete audit history and its original semantics.
+- Added adaptive stable-new-baseline behavior for sustained, consistent metric
+  regimes, with safeguards for saturation, gaps, outliers, and material drift.
+- Refined Overview anomaly severity so statistical warnings provide useful
+  context without automatically marking the platform Critical.
+- Reorganized Incidents around current action, historical review, and clearer
+  detail presentation.
+- Reconciled removed and replaced Docker container identities by retiring their
+  active incidents into auditable, non-actionable history. Temporary Docker
+  engine failures do not retire incidents.
+
+### Diagnostics and operations
+
+- Corrected Docker capability diagnostics so speculative rootless-socket
+  permission failures do not produce false Permission Denied findings.
+- Improved Diagnostics fleet and notification delivery tables across desktop,
+  tablet, and mobile layouts.
+- Added bounded support for richer Ravyr degraded and spool telemetry while
+  retaining compatibility with the recommended signed Ravyr 1.8.6 agent.
+  Ravyr 1.8.6 remains the customer release bundled with Veleis 2.0.5 and does
+  not emit the new optional spool detail.
+
+### Security and user experience
+
+- Added persistent, server-authoritative session policy controls for optional
+  inactivity expiry and mandatory absolute lifetime limits.
+- Clarified Professional Support purchase, activation, status, and recovery
+  journeys without hard-coded pricing.
+- Improved contextual action menus, sidebar navigation hierarchy, and the
+  Support Veleis and Community actions across supported viewport sizes.
+
+### Upgrade and compatibility
+
+- Veleis 2.0.5 keeps schema 54. Upgrading from 2.0.4 changes the application
+  image only and preserves users, agents, credentials, providers, probes,
+  incidents and history, notifications, monitoring and anomaly history,
+  session policy, and licensing client state.
+- Create and verify a complete backup before running
+  `sudo veleis upgrade 2.0.5`.
+- Docker image: `docker.io/nyxmael/veleis:2.0.5`
+- Manifest digest: `sha256:4df185a3ceee52bc57441adaa02ff4c639b22fc5abbac970ec03f62638ecc3b3`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.5>
+
 ## [2.0.4] - 2026-09-19
 
 ### Performance and reliability

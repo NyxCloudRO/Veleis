@@ -44,7 +44,7 @@ deletes old backups automatically. Before copying, check capacity with `df -h`.
 After copying, verify the sidecar in its destination directory:
 
 ```bash
-sha256sum --check veleis-backup-2.0.4-YYYYMMDDTHHMMSSZ.tar.gz.sha256
+sha256sum --check veleis-backup-2.0.5-YYYYMMDDTHHMMSSZ.tar.gz.sha256
 ```
 
 ## Restore
@@ -53,7 +53,7 @@ Restore is deliberately explicit and currently requires a working Veleis
 installation at the same application version as the backup:
 
 ```bash
-sudo veleis restore /secure/path/veleis-backup-2.0.4-YYYYMMDDTHHMMSSZ.tar.gz --force
+sudo veleis restore /secure/path/veleis-backup-2.0.5-YYYYMMDDTHHMMSSZ.tar.gz --force
 ```
 
 Before changing state, the command rejects unreadable, corrupt, malformed,
@@ -92,8 +92,8 @@ readiness and sign-in checks before declaring recovery complete.
 ## Tested recovery boundary
 
 The public workflow was accepted with PostgreSQL 18, TimescaleDB 2.28.3,
-Veleis 2.0.4/schema 54, and complete same-version restore coverage on
-linux/amd64. The validated 2.0.3 to 2.0.4 lifecycle preserved populated state,
+Veleis 2.0.5/schema 54, and complete same-version restore coverage on
+linux/amd64. The validated 2.0.4 to 2.0.5 lifecycle preserved populated state,
 backups, the database volume, and TLS identity through upgrade, reboot, and a
 zero-data-loss restore. TimescaleDB's documented
 full-database `pg_dump`/`pg_restore` flow

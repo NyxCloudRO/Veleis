@@ -1,4 +1,4 @@
-# Features in Veleis 2.0.4
+# Features in Veleis 2.0.5
 
 [← Documentation home](../README.md)
 
@@ -64,6 +64,11 @@ minimum-duration settings keep detection bounded. A Learning state is shown
 when evidence is insufficient or the statistical range is too broad. Detection
 does not remediate or control infrastructure.
 
+A sustained, consistent regime can become a stable new baseline only after
+enough contiguous evidence. Saturation, material drift, gaps, and outliers block
+normalization. Statistical anomaly warnings add Overview context without by
+themselves making overall platform health Critical.
+
 ## Capacity Intelligence
 
 Capacity forecasts cover capacity-bearing Ravyr host filesystems with sufficient
@@ -83,6 +88,11 @@ Docker socket access is security-sensitive because the socket itself is broadly
 powerful. Grant it only on hosts you intend to monitor, restrict access to the
 agent service, and understand that Veleis code uses it only for observational
 API calls.
+
+When a container identity is removed, its active incident moves into auditable,
+non-actionable history without being presented as a healthy recovery. A
+replacement container is evaluated independently, while temporary engine
+failures retain existing incidents.
 
 ## Proxmox monitoring
 
@@ -122,7 +132,8 @@ widgets with explicit provider scope and collection freshness. See
 - Alert rules, silences, maintenance windows, no-data handling, overlap guidance,
   acknowledgement, and an active-by-default operational view.
 - Open/acknowledged/resolved incident lifecycle and recovery history, with a
-  compact operational summary and dense accessible timeline presentation.
+  compact operational summary, clearer transition history, separate current and
+  historical views, and dense accessible timeline presentation.
 - Dependency-aware incident explanations with optional notification-only
   suppression; raw alerts and incidents remain visible.
 - Deterministic alert deduplication keeps repeated observations of one logical
@@ -156,7 +167,9 @@ widgets with explicit provider scope and collection freshness. See
   raw probe-result retention.
 - Diagnostics & Support exposes redacted support information and recovery-aware
   status. Eligible Professional Support capabilities require a valid signed
-  entitlement; core monitoring remains free and independently available.
+  entitlement; core monitoring remains free and independently available. Its
+  fleet table and Notifications delivery history remain bounded and responsive
+  across supported viewport sizes.
 
 ## Identity and security
 
