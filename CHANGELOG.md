@@ -5,12 +5,44 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
-### Ravyr agent
+## [2.0.6] - 2026-09-22
 
-- Published signed Ravyr 1.8.7 for Veleis 2.0.5. Rootless Docker discovery now
-  uses exact kernel Unix-socket evidence to distinguish an absent speculative
-  candidate from a genuine inaccessible socket, while preserving actionable
-  system, rootless, and explicitly configured socket permission failures.
+### Agent compatibility and lifecycle
+
+- Reconciled agent state after credential revocation and removal, with clearer
+  recovery from Docker socket capability and permission changes.
+- Bundled the signed Ravyr 1.8.7 agent. Its rootless Docker discovery better
+  distinguishes absent sockets from permission failures; protocol-1 agents
+  remain compatible.
+
+### Diagnostics and support
+
+- Eligible Professional Support installations can upload a redacted support
+  bundle directly from Diagnostics and receive a Support ID for follow-up.
+  Download support bundle remains available. Uploads are limited to
+  99,000,000 bytes with configurable retention that defaults to 30 days.
+
+### UI and UX
+
+- Stabilized the Agents sorting toolbar and made Discovery navigation show
+  exactly one active section.
+- Reworked Status Pages incident selection into a full-width, searchable,
+  paginated list with clearer selection and unavailable states.
+- Kept sidebar row geometry stable, refined the shared accent and interactive
+  controls in dark and light modes, and improved Agent Actions placement and
+  keyboard behavior.
+
+### Upgrade and compatibility
+
+- Veleis 2.0.6 keeps schema 54. An upgrade from 2.0.5 replaces the application
+  image without a database migration or volume replacement; users, agents,
+  credentials, monitoring history, incidents, Status Pages, and licensing
+  client state remain in place.
+- Create and verify a complete backup before running
+  `sudo veleis upgrade 2.0.6`.
+- Docker image: `docker.io/nyxmael/veleis:2.0.6`
+- Manifest digest: `sha256:d528e2b1dd5c23e1f8477c4bf068763788e438508cfb960c137ec91454ef053a`
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.6>
 
 ## [2.0.5] - 2026-09-21
 

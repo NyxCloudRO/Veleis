@@ -27,11 +27,15 @@ public Issue.
 
 ## Veleis Professional Support
 
-Veleis 2.0.5 integrates Professional Support status and eligible Diagnostics
+Veleis 2.0.6 integrates Professional Support status and eligible Diagnostics
 capabilities in the Diagnostics & Support workspace. These capabilities require
 a valid signed support entitlement and fail independently from monitoring.
 Veleis core monitoring remains free and continues operating when no support
 entitlement is present or a support service is temporarily unavailable.
+
+Eligible installations can upload a redacted bundle from Diagnostics and use
+the resulting Support ID in follow-up correspondence. The existing bundle
+download remains available. Review exported content before sharing it.
 
 Diagnostics exports are designed to redact secrets, but review any material
 before sharing it and remove organization-specific addresses, names, and other

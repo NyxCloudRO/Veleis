@@ -1,4 +1,4 @@
-# Features in Veleis 2.0.5
+# Features in Veleis 2.0.6
 
 [← Documentation home](../README.md)
 
@@ -49,7 +49,7 @@ Agent detail views use bounded loading and explicit recovery behavior. Disable,
 revoke, remove, host uninstall, and purge are presented as distinct lifecycle
 actions so credential and historical-data effects remain clear.
 
-Ravyr 1.8.6 reports coherent filesystem total, used, and unprivileged-available
+Ravyr 1.8.7 reports coherent filesystem total, used, and unprivileged-available
 capacity together with stable backing identity, mount provenance, and storage
 classification. Veleis counts each assigned/local backing filesystem once,
 keeps real shared/external storage available for explicit monitoring, and
@@ -170,6 +170,10 @@ widgets with explicit provider scope and collection freshness. See
   entitlement; core monitoring remains free and independently available. Its
   fleet table and Notifications delivery history remain bounded and responsive
   across supported viewport sizes.
+- Eligible installations can upload a redacted support bundle and receive a
+  Support ID. The existing local support-bundle download remains available.
+- Agents sorting, Discovery active navigation, sidebar rows, Agent Actions,
+  and Status Pages incident selection are responsive and keyboard-accessible.
 
 ## Identity and security
 
