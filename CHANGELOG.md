@@ -5,6 +5,41 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.7] - 2026-09-23
+
+### Performance and reliability
+
+- Reduced redundant requests across operational dashboards, Discovery, and
+  agent identity views with bounded freshness and explicit mutation refresh.
+- Bounded Discovery overview/history reads, provider duration averages, and
+  recent per-agent event retrieval to keep large retained histories responsive.
+- Distinguished invalid agent credentials from temporary database failures:
+  genuine rejection remains HTTP 401, while infrastructure failures return a
+  retryable HTTP 503. Credential evidence writes are limited to at most once
+  per minute per active credential.
+
+### Interface
+
+- Reworked the compact shared sidebar hierarchy, icon zones, selected states,
+  bottom identities, collapsed mode, and responsive behavior.
+- Improved Managed Hosts controls, Diagnostics & Support navigation and full
+  label, and compact Agent Actions with keyboard/focus behavior.
+- Refined dark and light surfaces, panels, controls, and visual separation.
+- Removed the visible top sidebar wordmark while preserving its spacing and
+  introduced the compact Veleis V browser favicon.
+
+### Upgrade and compatibility
+
+- Veleis 2.0.7 keeps schema 54. Upgrading from 2.0.6 requires no database
+  migration or volume replacement; the normal upgrade path preserves existing
+  monitoring history, agents, credentials, configuration, and user state.
+- Create and verify a complete pre-upgrade backup before running
+  `sudo veleis upgrade 2.0.7`.
+- The signed Ravyr 1.8.7 agent remains the recommended bundled version.
+- Docker image: `docker.io/nyxmael/veleis:2.0.7`.
+- Immutable manifest digest is recorded in `release.json`.
+- Release: <https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.7>.
+
 ## [2.0.6] - 2026-09-22
 
 ### Agent compatibility and lifecycle

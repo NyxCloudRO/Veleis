@@ -44,7 +44,7 @@ deletes old backups automatically. Before copying, check capacity with `df -h`.
 After copying, verify the sidecar in its destination directory:
 
 ```bash
-sha256sum --check veleis-backup-2.0.6-YYYYMMDDTHHMMSSZ.tar.gz.sha256
+sha256sum --check veleis-backup-2.0.7-YYYYMMDDTHHMMSSZ.tar.gz.sha256
 ```
 
 ## Restore
@@ -53,7 +53,7 @@ Restore is deliberately explicit and currently requires a working Veleis
 installation at the same application version as the backup:
 
 ```bash
-sudo veleis restore /secure/path/veleis-backup-2.0.6-YYYYMMDDTHHMMSSZ.tar.gz --force
+sudo veleis restore /secure/path/veleis-backup-2.0.7-YYYYMMDDTHHMMSSZ.tar.gz --force
 ```
 
 Before changing state, the command rejects unreadable, corrupt, malformed,

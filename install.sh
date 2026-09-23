@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly VELEIS_VERSION="2.0.6"
+readonly VELEIS_VERSION="2.0.7"
 readonly VELEIS_IMAGE="docker.io/nyxmael/veleis:${VELEIS_VERSION}"
-readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.6/veleis"
+readonly LIFECYCLE_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.7/veleis"
 readonly LIFECYCLE_SHA256="9a8dfc4d561963a4f8a21d065a14b1d5988a650597dc8679a8f0e093783876cd"
-readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.6/release.json"
-readonly RELEASE_METADATA_SHA256="6d203d22b080a1b1d0c980d81df8effa70087fac759a3e5766a884a1c091a3ec"
-readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.6/veleis-postgres-memory.sh"
+readonly RELEASE_METADATA_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.7/release.json"
+readonly RELEASE_METADATA_SHA256="018c176adfd97398bccf0a2d045f6899c9ab20827b17d61497fc294476643bc4"
+readonly POSTGRES_MEMORY_URL="https://github.com/NyxCloudRO/Veleis/releases/download/v2.0.7/veleis-postgres-memory.sh"
 readonly POSTGRES_MEMORY_SHA256="3aeb5a0ece0f77b80d7b7be9718471e76086be7d1cd613ada71fe91e0dfdf961"
 readonly INSTALL_ROOT="${VELEIS_INSTALL_ROOT:-/opt/veleis}"
 readonly HTTPS_PORT="${VELEIS_HTTPS_PORT:-443}"
@@ -295,7 +295,7 @@ curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$RELEAS
 printf '%s  %s\n' "$LIFECYCLE_SHA256" "$TEMPORARY_DIRECTORY/veleis" | sha256sum --check --status || fail "lifecycle tool checksum mismatch"
 printf '%s  %s\n' "$RELEASE_METADATA_SHA256" "$TEMPORARY_DIRECTORY/release.json" | sha256sum --check --status || fail "release metadata checksum mismatch"
 bash -n "$TEMPORARY_DIRECTORY/veleis"
-jq -e '.product == "Veleis" and .version == "2.0.6" and .schema == 54 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
+jq -e '.product == "Veleis" and .version == "2.0.7" and .schema == 54 and .backup_format_version == 1' "$TEMPORARY_DIRECTORY/release.json" >/dev/null || fail "release metadata is incompatible"
 database_password=$(openssl rand -hex 32)
 master_key=$(openssl rand -base64 32 | tr -d '\n')
 

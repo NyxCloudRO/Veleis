@@ -4,7 +4,7 @@
 
 ![Veleis — Unified Monitoring Platform](assets/veleis-social-preview.svg)
 
-[![Current release](https://img.shields.io/badge/release-v2.0.6-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.6)
+[![Current release](https://img.shields.io/badge/release-v2.0.7-14b8a6)](https://github.com/NyxCloudRO/Veleis/releases/tag/v2.0.7)
 [![Docker pulls](https://nyxcloud.ro/veleis/data/docker-pulls.svg)](https://hub.docker.com/r/nyxmael/veleis)
 [![Platform](https://img.shields.io/badge/platform-linux%2Famd64-334155)](docs/SYSTEM-REQUIREMENTS.md)
 [![Hosts](https://img.shields.io/badge/tested-5_amd64_host_releases-334155)](docs/SYSTEM-REQUIREMENTS.md)
@@ -21,7 +21,7 @@ current state and history locally under your control.
 > Docker, Proxmox, agents, and Discovery are intentionally observational—there
 > are no VM/container start, stop, reboot, remediation, or remote-shell actions.
 
-Current stable release: **Veleis 2.0.6** · Schema 54 · linux/amd64
+Current stable release: **Veleis 2.0.7** · Schema 54 · linux/amd64
 
 ## Quick start
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/NyxCloudRO/Veleis/main/install.sh |
 The installer detects root or ordinary sudo access, installs missing Docker
 components from the operating-system repositories, creates `/opt/veleis`,
 generates unique secrets and a self-signed TLS certificate, pulls the immutable
-`nyxmael/veleis:2.0.6` image, detects effective cgroup memory, provisions a
+`nyxmael/veleis:2.0.7` image, detects effective cgroup memory, provisions a
 bounded PostgreSQL/TimescaleDB profile, applies schema migrations,
 and waits for HTTPS readiness.
 
@@ -49,7 +49,7 @@ then create the first Owner account. There are no default credentials.
 
 ## Supported platforms
 
-Veleis 2.0.6 is currently validated on the following amd64 platforms:
+Veleis 2.0.7 is currently validated on the following amd64 platforms:
 
 | Distribution | Version       | Status    |
 | ------------ | ------------- | --------- |
@@ -175,16 +175,10 @@ See the [complete feature inventory](docs/FEATURES.md).
 
 ## Product preview
 
-Screenshots use isolated demonstration data created specifically for public
-documentation.
+This 2.0.7 preview shows the accepted DEV interface. Operational values reflect
+the acceptance environment and may differ from your installation.
 
-| Overview                                                                               | Discovery                                                                                 |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [![Veleis Overview](assets/screenshots/overview.png)](assets/screenshots/overview.png) | [![Veleis Discovery](assets/screenshots/discovery.png)](assets/screenshots/discovery.png) |
-
-| Dashboards                                                                                   | Security                                                                               |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [![Veleis Dashboards](assets/screenshots/dashboards.png)](assets/screenshots/dashboards.png) | [![Veleis Security](assets/screenshots/security.png)](assets/screenshots/security.png) |
+[![Veleis 2.0.7 Overview](assets/screenshots/overview.png)](assets/screenshots/overview.png)
 
 ## Requirements
 
@@ -221,9 +215,9 @@ sudo veleis logs --tail=200 veleis
 sudo veleis backup
 ```
 
-Existing 1.7.1 and 1.8.0 through 1.8.12 installations can upgrade with
+Existing 1.7.1, 1.8.0 through 1.8.12, and 2.0.6 installations can upgrade with
 `sudo veleis upgrade`; the exact version alternative is
-`sudo veleis upgrade 2.0.6`. Existing 2.0.0 through 2.0.5 installations
+`sudo veleis upgrade 2.0.7`. Existing 2.0.0 through 2.0.5 installations
 must first refresh the lifecycle tooling as documented below. Installations created before
 the lifecycle command was published can add it with the bootstrap documented in
 [Installation](docs/INSTALLATION.md).

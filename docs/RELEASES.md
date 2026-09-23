@@ -4,20 +4,20 @@
 
 ## Current stable release
 
-Veleis **2.0.6** is the current stable release.
+Veleis **2.0.7** is the current stable release.
 
 | Component                  | Release identity                 |
 | -------------------------- | -------------------------------- |
-| Application                | `2.0.6`                          |
-| Git tag and GitHub Release | `v2.0.6`                         |
-| Installer target           | `docker.io/nyxmael/veleis:2.0.6` |
+| Application                | `2.0.7`                          |
+| Git tag and GitHub Release | `v2.0.7`                         |
+| Installer target           | `docker.io/nyxmael/veleis:2.0.7` |
 | Docker manifest            | Recorded in `release.json`       |
 | Schema                     | 54                               |
 | Backup format              | 1                                |
 
 All prior releases remain immutable at their original Docker digests and
 GitHub releases. Upgrades from 1.7.1, 1.8.0 through 1.8.12, or 2.0.0 through
-2.0.5 to 2.0.6 use a mandatory pre-upgrade backup. Schema 54 is current;
+2.0.6 to 2.0.7 use a mandatory pre-upgrade backup. Schema 54 is current;
 upgrades apply every required migration through schema 54. Sources on 2.0.0
 through 2.0.5 refresh the lifecycle tool before upgrading.
 
@@ -25,15 +25,16 @@ through 2.0.5 refresh the lifecycle tool before upgrading.
 
 | Version | Status                                          |
 | ------- | ----------------------------------------------- |
-| 2.0.6   | Current public stable release                   |
-| 2.0.5   | Lifecycle-gated upgrade source for 2.0.6        |
-| 2.0.4   | Lifecycle-gated upgrade source for 2.0.6        |
-| 2.0.3   | Lifecycle-gated upgrade source for 2.0.6        |
-| 2.0.2   | Lifecycle-gated upgrade source for 2.0.6        |
-| 2.0.1   | Lifecycle-gated upgrade source for 2.0.6        |
-| 2.0.0   | Lifecycle-gated upgrade source for 2.0.6        |
-| 1.8.x   | Supported upgrade source line for 2.0.6         |
-| 1.7.1   | Supported upgrade source for 2.0.6              |
+| 2.0.7   | Current public stable release                   |
+| 2.0.6   | Supported direct upgrade source for 2.0.7       |
+| 2.0.5   | Lifecycle-gated upgrade source for 2.0.7        |
+| 2.0.4   | Lifecycle-gated upgrade source for 2.0.7        |
+| 2.0.3   | Lifecycle-gated upgrade source for 2.0.7        |
+| 2.0.2   | Lifecycle-gated upgrade source for 2.0.7        |
+| 2.0.1   | Lifecycle-gated upgrade source for 2.0.7        |
+| 2.0.0   | Lifecycle-gated upgrade source for 2.0.7        |
+| 1.8.x   | Supported upgrade source line for 2.0.7         |
+| 1.7.1   | Supported upgrade source for 2.0.7              |
 | 1.7.0   | Prior immutable release; upgrade to 1.7.1 first |
 | <1.7    | Pre-public development; no public support       |
 
@@ -43,11 +44,11 @@ supported.
 
 ## Version and channel policy
 
-- Exact version tags such as `2.0.0` through `2.0.6` are immutable.
+- Exact version tags such as `2.0.0` through `2.0.7` are immutable.
 - Minor tags such as `1.8` move only to the newest accepted stable patch in that
   minor line.
 - `latest` moves only to the newest accepted stable public release.
-- Git tags use `v` (`v2.0.6`); application and Docker versions do not.
+- Git tags use `v` (`v2.0.7`); application and Docker versions do not.
 
 See [Docker image and tag policy](DOCKER.md).
 

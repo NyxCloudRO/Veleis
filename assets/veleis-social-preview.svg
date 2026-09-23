@@ -6,11 +6,9 @@
       <stop stop-color="#06131a"/>
       <stop offset="1" stop-color="#09111f"/>
     </linearGradient>
-    <linearGradient id="neon" x1="3" y1="4" x2="21" y2="18" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#20d9ff"/>
-      <stop offset=".46" stop-color="#885cff"/>
-      <stop offset=".72" stop-color="#f02bd6"/>
-      <stop offset="1" stop-color="#ff7a18"/>
+    <linearGradient id="veleis-v" x1="12" y1="15" x2="52" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#36d7e8"/>
+      <stop offset="1" stop-color="#9773f7"/>
     </linearGradient>
     <linearGradient id="signal" x1="745" y1="375" x2="1180" y2="375" gradientUnits="userSpaceOnUse">
       <stop stop-color="#20d9ff" stop-opacity=".05"/>
@@ -28,10 +26,9 @@
     <path d="M64 112h1152M64 208h1152M64 304h1152M64 400h1152M64 496h1152"/>
     <path d="M160 72v496M352 72v496M544 72v496M736 72v496M928 72v496M1120 72v496"/>
   </g>
-  <g transform="translate(104 148) scale(12)">
-    <rect x="1" y="1" width="22" height="22" rx="5.7" fill="#070b16"/>
-    <path d="M4.4 5 12 9.8 19.6 5v9.8L12 21 4.4 14.8Z" fill="#111827" stroke="url(#neon)" stroke-width="1.85" stroke-linejoin="round" filter="url(#glow)"/>
-    <path d="m8.6 11.9 3.4 2.2 3.4-2.2v3.3L12 18l-3.4-2.8Z" fill="#0a0f1e" stroke="url(#neon)" stroke-width="1.35" stroke-linejoin="round"/>
+  <g transform="translate(104 148) scale(4.5)">
+    <rect width="64" height="64" rx="15" fill="#101827"/>
+    <path d="M11 14h11l10 28 10-28h11L38 51H26L11 14Z" fill="url(#veleis-v)"/>
   </g>
   <text x="458" y="284" fill="#f1f5f9" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="104" font-weight="650" letter-spacing="-3">Veleis</text>
   <text x="463" y="344" fill="#94a3b8" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="32" letter-spacing="5">UNIFIED MONITORING PLATFORM</text>
