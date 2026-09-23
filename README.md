@@ -248,7 +248,6 @@ Do not remove the `veleis-database-pg18` volume or `/opt/veleis` data. See
 - [Upgrading](docs/UPGRADING.md)
 - [Backup and restore](docs/BACKUP-RESTORE.md)
 - [Releases and supported versions](docs/RELEASES.md)
-- [Production operability hardening](docs/OPERABILITY-HARDENING.md)
 - [FAQ](docs/FAQ.md)
 
 ## Distribution and source model

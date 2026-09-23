@@ -1,6 +1,6 @@
 # Status Pages
 
-[← Documentation home](../README.md) · [Security](SECURITY.md) · [Operability hardening](OPERABILITY-HARDENING.md)
+[← Documentation home](../README.md) · [Security](SECURITY.md)
 
 Status Pages publish a deliberately selected, privacy-safe view of monitoring
 health and incident communication. A page remains private until explicitly

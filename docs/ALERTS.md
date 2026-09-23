@@ -1,6 +1,6 @@
 # Alert Rules, Evaluations, and Active Alerts
 
-[← Documentation home](../README.md) · [Features](FEATURES.md) · [Operability hardening](OPERABILITY-HARDENING.md)
+[← Documentation home](../README.md) · [Features](FEATURES.md) · [Notifications](NOTIFICATIONS.md)
 
 An **Alert Rule** is configuration. An **Evaluation** is the rule's current
 result for a target. **Active Alerts** is the bounded operational view of

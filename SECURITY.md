@@ -2,12 +2,13 @@
 
 ## Supported versions
 
-| Version | Public security support |
-| ------- | ----------------------- |
-| 1.7.x   | Yes                     |
-| < 1.7   | No; pre-public builds   |
+| Version                 | Public security support                       |
+| ----------------------- | --------------------------------------------- |
+| 2.0.7                   | Current stable release; eligible for fixes    |
+| Earlier public releases | No current support commitment in this policy  |
+| Pre-public builds       | No                                            |
 
-Support means the current stable 1.7 line is eligible for security corrections.
+Support means the current stable release is eligible for security corrections.
 It is not a contractual support or response-time commitment.
 
 ## Reporting a vulnerability
