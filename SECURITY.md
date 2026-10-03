@@ -4,7 +4,7 @@
 
 | Version                 | Public security support                       |
 | ----------------------- | --------------------------------------------- |
-| 2.0.7                   | Current stable release; eligible for fixes    |
+| 2.0.8                   | Current stable release; eligible for fixes    |
 | Earlier public releases | No current support commitment in this policy  |
 | Pre-public builds       | No                                            |
 

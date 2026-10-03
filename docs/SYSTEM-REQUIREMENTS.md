@@ -2,9 +2,9 @@
 
 [← Documentation home](../README.md)
 
-## Tested and supported platforms
+## Supported platforms
 
-Veleis 2.0.7 installation is validated on the following host platforms:
+Veleis 2.0.8 installation supports the following host platforms:
 
 | Distribution | Version       | Status                |
 | ------------ | ------------- | --------------------- |

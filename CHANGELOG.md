@@ -5,6 +5,41 @@ versioning; the corresponding Git tag uses a `v` prefix.
 
 ## [Unreleased]
 
+## [2.0.8] - 2026-10-03
+
+### Capacity and monitoring
+
+- Corrected false gaps in Capacity history while retaining genuine telemetry
+  gaps. Forecasts recover after enough recent observations, and capacity
+  changes and resets remain distinct from ordinary growth.
+- Clarified Capacity states when history is insufficient, stale, stable, or
+  affected by a capacity change.
+- Bounded the anomaly list and corrected agent telemetry freshness and Docker
+  current-state selection so stale or older samples are not shown as current.
+
+### Licensing and support
+
+- Improved licensing and support entitlement status, including clearer
+  unavailable and recovery states. Core monitoring remains free and operates
+  independently of support services. Premium commerce is not activated by
+  this release.
+- Improved Diagnostics & Support state accuracy and retained privacy checks
+  for exported support information.
+
+### Interface and upgrade
+
+- Strengthened regression coverage for Capacity recovery, licensing boundaries,
+  telemetry state, migration preservation, and responsive browser behavior.
+- Refined responsive sidebar and navigation behavior across desktop, tablet,
+  and mobile widths.
+- Veleis 2.0.8 keeps schema 54. Isolated fresh-install and 2.0.7-to-2.0.8
+  upgrade acceptance preserved users, agents, settings, licensing identity,
+  retention, and Capacity history through application and database restarts.
+- Create and verify a complete pre-upgrade backup before running
+  `sudo veleis upgrade 2.0.8`.
+- Docker image: `docker.io/nyxmael/veleis:2.0.8`; the immutable digest is
+  recorded in `release.json`.
+
 ## [2.0.7] - 2026-09-23
 
 ### Performance and reliability
